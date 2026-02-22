@@ -62,8 +62,20 @@ public class RabbitMQConfig {
             .build();
     }
 
-    // “Jika ada pesan masuk ke exchange messageExchange dengan routing key MESSAGE_ROUTING_KEY_OBJECT, maka masukkan pesan itu ke queue messageObjectQueue.”
-    // Satu key bisa ke banyak queue, dan satu queue bisa terkoneksi ke banyak key (many to many)
+    /**
+     * Configures a Binding between a Queue and a TopicExchange.
+     * * Logic: "If a message arrives at 'messageExchange' with a routing key that matches 
+     * 'MESSAGE_ROUTING_KEY_OBJECT', route that message into 'messageObjectQueue'."
+     * * Relationship Details:
+     * - Topic Exchange: Allows for wildcard matching (e.g., 'stock.*' or 'stock.#').
+     * - Many-to-Many Mapping: 
+     * 1. One Routing Key can trigger multiple Queues (Fan-out behavior).
+     * 2. One Queue can be bound to multiple Routing Keys/Exchanges.
+     *
+     * @param messageObjectQueue The destination queue injected via @Qualifier.
+     * @param messageExchange The source exchange where messages are initially published.
+     * @return A Binding object that defines the routing rule.
+     */
     @Bean
     public Binding messageObjectSent(@Qualifier("messageObject") Queue messageObjectQueue, TopicExchange messageExchange) {
         return BindingBuilder

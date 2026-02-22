@@ -53,9 +53,12 @@ public class FileUtil {
             Files.copy(photo.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
             return path.toString();
-        } catch (Exception e) {
-            logger.error("Failed to save profile picture: " + e.getMessage());
+        } catch (IOException e) {
+            logger.error("Disk/File error: " + e.getMessage());
             throw new RuntimeException("Failed to save profile picture: " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Unexpected error to save profile picture: " + e.getMessage());
+            throw new RuntimeException("Unexpected error to save profile picture: " + e.getMessage());
         }
     }
 
@@ -66,13 +69,12 @@ public class FileUtil {
 
         try {
             Path path = Paths.get(filePath);
-            
-            if (Files.exists(path)) {
-                Files.delete(path);
-                logger.info("Profile pic deleted successfully: " + filePath);
-            }
+            Files.deleteIfExists(path);
+            logger.info("Profile picture deleted successfully: " + filePath);
         } catch (IOException e) {
-            logger.error("Failed to delete profile picture: " + e.getMessage());
+            logger.error("Disk/File error: " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Unexpected error deleting profile picture: " + e.getMessage());
         }
     }
 }

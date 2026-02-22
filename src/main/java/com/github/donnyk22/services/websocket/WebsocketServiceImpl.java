@@ -16,7 +16,7 @@ import com.github.donnyk22.models.forms.WebSocketUsersForm;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor //creates constructor automatically
+@RequiredArgsConstructor
 public class WebsocketServiceImpl implements WebSocketService {
 
     private final SimpMessagingTemplate messagingTemplate;
