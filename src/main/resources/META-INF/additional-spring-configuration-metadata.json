@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "name": "app.jwt.ttl-minutes",
+      "type": "java.lang.Integer",
+      "description": "TTL in minutes for JWT tokens"
+    },
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret key for signing JWT tokens"
+    },
+    {
+      "name": "app.cache.ttl-minutes",
+      "type": "java.lang.Integer",
+      "description": "TTL in minutes for API caching"
+    },
+    {
+      "name": "app.ratelimit.max-req",
+      "type": "java.lang.String",
+      "description": "Max request per minutes"
+    },
+    {
+      "name": "app.ratelimit.max-req-minutes",
+      "type": "java.lang.String",
+      "description": "Reset rate limit per minutes"
+    },
+    {
+      "name": "app.async.max-worker",
+      "type": "java.lang.String",
+      "description": "Maximum number of threads the pool is allowed to create."
+    },
+    {
+      "name": "app.async.max-queue",
+      "type": "java.lang.String",
+      "description": "Maximum number of tasks that can be queued. More than this will be rejected (TaskRejectedException/RejectedExecutionException)"
+    },
+    {
+      "name": "upload.profile-pic.path",
+      "type": "java.lang.String",
+      "description": "Upload directory for profile pictures"
+    },
+    {
+      "name": "upload.profile-pic.max-size",
+      "type": "java.lang.String",
+      "description": "Maximum file size for profile pictures"
+    }
+  ]
+}
