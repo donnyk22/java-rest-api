@@ -19,6 +19,7 @@ public class AttendancesCreateForm {
     private Integer studentId;
     @NotNull(message = "Date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @Schema(example = "2026-01-21", description = "Date of attendance (YYYY-MM-DD)")
     private LocalDate date; // For Json body (POST)
     @NotNull(message = "Status is required")
     @Schema(implementation = StudentAttendanceStatus.class, allowableValues = {"PRESENT", "ABSENT", "LATE", "SICK", "PERMIT"})

@@ -27,6 +27,12 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
+            // If in the front end you are using cookies for authentication, you should enable CSRF protection
+            // Disable CRSF if using local storage or session storage for authentication tokens (e.g., JWT in Authorization header)
+            // .csrf(csrf -> csrf
+            //     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) 
+            //     .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+            // )
             .authorizeHttpRequests(auth -> auth
                 .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll() // Allow async requests
                 .requestMatchers(
@@ -53,7 +59,7 @@ public class SecurityConfig {
             .frameOptions(frame -> frame.deny())
             // MIME-Sniffing Protection
             .contentTypeOptions(Customizer.withDefaults())
-            // Must Use HTTPS (1 year)
+            // Origin Must Use HTTPS (with duration of 1 year)
             // .httpStrictTransportSecurity(hsts ->
             //     hsts.includeSubDomains(true).maxAgeInSeconds(31536000)
             // )
@@ -74,19 +80,23 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+        // Allow specific origins only (e.g., your frontend app domains)
         config.setAllowedOrigins(List.of(
             "https://donnyk22.com",
             "http://localhost:8080"
         ));
+        // Allow specific HTTP methods
         config.setAllowedMethods(List.of(
             "GET", "POST", "PUT", "PATCH", "DELETE"
         ));
+        // Allow specific headers (e.g., Authorization for JWT tokens)
         config.setAllowedHeaders(List.of(
             "Authorization", "Content-Type"
         ));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // Apply CORS configuration to all endpoints
         source.registerCorsConfiguration("/**", config);
         return source;
     }

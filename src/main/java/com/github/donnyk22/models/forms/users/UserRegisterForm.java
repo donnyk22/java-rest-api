@@ -21,11 +21,13 @@ public class UserRegisterForm {
     @Email(message = "Email is not valid")
     private String email;
     @NotNull(message = "Role is required")
-    @Schema(implementation = UserRole.class, allowableValues = {"STUDENT", "TEACHER"})
+    @Schema(implementation = UserRole.class, allowableValues = {"ADMIN", "STUDENT", "TEACHER"})
     private UserRole role;
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
+    @Schema(description = "Password must be at least 8 characters")
     private String password;
     @NotBlank(message = "Please retype you password")
+    @Schema(description = "Please retype you password")
     private String rePassword;
 }
