@@ -24,13 +24,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 
 @Tag(
-    name = "Experimental Async Funtion",
-    description = "Async APIs for experimental purposes"
+    name = "Async Function APIs",
+    description = "Asynchronous function implementation APIs for testing purpose"
 )
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/experimental/async")
-@Validated //@Validated is for validating @RequestParam, @PathVariable, @RequestHeader
+@RequestMapping("/api/v1/async")
+@Validated
 public class AsyncFunctionController {
 
     private final AsyncFuncService asyncFuncService;

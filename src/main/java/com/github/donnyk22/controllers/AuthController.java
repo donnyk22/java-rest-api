@@ -31,7 +31,7 @@ public class AuthController {
     private final AuthService authService;
 
     @Operation(
-        summary = "Register user [Public API]",
+        summary = "Register user",
         description = "Create a new user account."
     )
     @PostMapping("/register")
@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @Operation(
-        summary = "User login [Public API]",
+        summary = "User login",
         description = "Authenticate user and return credentials."
     )
     @PostMapping("/login")
@@ -70,7 +70,7 @@ public class AuthController {
     }
 
     @Operation(
-        summary = "User logout [Public API]",
+        summary = "User logout",
         description = "Invalidate current user session."
     )
     @PostMapping("/logout")

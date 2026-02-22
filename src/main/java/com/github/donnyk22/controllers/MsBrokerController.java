@@ -18,12 +18,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 
 @Tag(
-    name = "Experimental Message Broker",
-    description = "Message Broker management APIs for experimental purposes"
+    name = "Message Broker APIs",
+    description = "Message Broker implementation APIs for testing purpose"
 )
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/experimental/ms-broker")
+@RequestMapping("/api/v1/ms-broker")
 public class MsBrokerController {
 
     private final MsBrokerService msBrokerService;

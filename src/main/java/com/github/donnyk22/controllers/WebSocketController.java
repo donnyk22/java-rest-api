@@ -23,12 +23,12 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @Tag(
-    name = "Experimental WebSocket",
-    description = "WebSocket management APIs for experimental purposes"
+    name = "WebSocket APIs",
+    description = "WebSocket implementation APIs for testing purpose"
 )
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/experimental/ws")
+@RequestMapping("/api/v1/ws")
 public class WebSocketController {
 
     private final WebSocketService websocketService;

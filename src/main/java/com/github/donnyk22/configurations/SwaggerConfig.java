@@ -19,8 +19,8 @@ public class SwaggerConfig {
         .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
         .components(new Components().addSecuritySchemes("BearerAuth",
             new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-        .info(new Info().title("Bookstore")
-            .description("Simple CRUD Bookstore API with AUTH")
+        .info(new Info().title("Java REST API")
+            .description("Minimal Rest API of Java Spring with implementing some industry standard of back-end utility")
             .version("v1.0.0")
             .license(new License().name("Apache 2.0").url("https://springdoc.org")))
             .externalDocs(new ExternalDocumentation()
