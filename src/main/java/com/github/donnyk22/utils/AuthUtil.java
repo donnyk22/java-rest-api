@@ -6,13 +6,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.github.donnyk22.exceptions.InternalServerErrorException;
+
 @Component
 public class AuthUtil {
 
     private Authentication getAuth(){
-        return SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            throw new InternalServerErrorException("No authentication found in security context");
+        }
+        return auth;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> getDetails(){
         return (Map<String, Object>) getAuth().getDetails();
     }
