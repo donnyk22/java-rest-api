@@ -8,7 +8,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.donnyk22.configurations.RabbitMQConfig;
 import com.github.donnyk22.models.forms.MsBrokerForm;
 import com.github.donnyk22.utils.ConverterUtil;
@@ -20,7 +19,7 @@ public class MsBrokerServiceImpl implements MsBrokerService {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public MsBrokerServiceImpl(RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
+    public MsBrokerServiceImpl(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
