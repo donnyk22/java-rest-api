@@ -1,5 +1,7 @@
 package com.github.donnyk22.models.mappers;
 
+import com.github.donnyk22.models.dtos.StudentsDto;
+import com.github.donnyk22.models.dtos.TeachersDto;
 import com.github.donnyk22.models.dtos.UsersDto;
 import com.github.donnyk22.models.entities.Users;
 import com.github.donnyk22.models.forms.users.UserRegisterForm;
@@ -20,15 +22,19 @@ public class UsersMapper {
 
     public static UsersDto toDto(Users users) {
         String fullname = null;
-        if (users.getStudent() != null) {
-            fullname = users.getStudent().getFullName();
-        } else if (users.getTeachers() != null) {
-            fullname = users.getTeachers().getFullName();
+        StudentsDto studentDto = null;
+        TeachersDto teacherDto = null;
+        if (users.getStudentData() != null) {
+            fullname = users.getStudentData().getFullName();
+            studentDto = StudentsMapper.toBaseDto(users.getStudentData());
+        } else if (users.getTeacherData() != null) {
+            fullname = users.getTeacherData().getFullName();
+            teacherDto = TeachersMapper.toBaseDto(users.getTeacherData());
         }
         UsersDto dto = toBaseDto(users)
             .setName(fullname)
-            .setStudent(StudentsMapper.toBaseDto(users.getStudent()))
-            .setTeacher(TeachersMapper.toBaseDto(users.getTeachers()));
+            .setStudent(studentDto)
+            .setTeacher(teacherDto);
         return dto;
     }
 

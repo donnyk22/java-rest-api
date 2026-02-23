@@ -30,6 +30,7 @@
 		<java.version>25</java.version>
 	</properties>
 	<dependencies>
+
 		<!-- Default dependency -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -40,6 +41,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<!-- Provides all of Spring Boot’s production-ready features (ex: /actuator/health) -->
+		<!-- All end-points available: https://docs.spring.io/spring-boot/reference/actuator/endpoints.html -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 		<!-- Rest API -->

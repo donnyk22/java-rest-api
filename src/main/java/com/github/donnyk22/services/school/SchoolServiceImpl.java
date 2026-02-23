@@ -466,18 +466,18 @@ public class SchoolServiceImpl implements SchoolService{
         Specification<Users> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            Join<Users, Teachers> teacherJoin = root.join("teachers", JoinType.LEFT);
-            Join<Users, Students> studentJoin = root.join("students", JoinType.LEFT);
+            Join<Users, Teachers> teacherJoin = root.join("teacherData", JoinType.LEFT);
+            Join<Users, Students> studentJoin = root.join("studentData", JoinType.LEFT);
 
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
                     cb.like(cb.lower(root.get("username")), likePattern),
                     cb.like(cb.lower(root.get("email")), likePattern),
-                    cb.like(cb.lower(teacherJoin.get("full_name")), likePattern),
+                    cb.like(cb.lower(teacherJoin.get("fullName")), likePattern),
                     cb.like(cb.lower(teacherJoin.get("phone")), likePattern),
                     cb.like(cb.lower(teacherJoin.get("address")), likePattern),
-                    cb.like(cb.lower(studentJoin.get("full_name")), likePattern),
+                    cb.like(cb.lower(studentJoin.get("fullName")), likePattern),
                     cb.like(cb.lower(studentJoin.get("address")), likePattern)                    
                 );
                 predicates.add(predicate);
@@ -487,9 +487,9 @@ public class SchoolServiceImpl implements SchoolService{
                 predicates.add(cb.equal(root.get("role"), form.getRole()));
             }
             
-            Boolean isActive = form.isActive();
+            Boolean isActive = form.getIsActive();
             if (isActive != null) {
-                predicates.add(cb.equal(root.get("is_active"), isActive));
+                predicates.add(cb.equal(root.get("isActive"), isActive));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

@@ -9,8 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.Getter;
@@ -21,9 +20,9 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 @Entity
-@Table(name = "teachers")
+@Table(name = "users")
 //override delete behaviour by JPA to soft delete
-@SQLDelete(sql = "UPDATE teachers SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE Users SET deleted = true WHERE id = ?")
 //automatically add "where deleted = false"
 @SQLRestriction("deleted = false")
 public class Users extends BaseTimestampCreateUpdate {
@@ -44,11 +43,9 @@ public class Users extends BaseTimestampCreateUpdate {
 
     // ==== Relation ====
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private Students student;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private Students studentData;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private Teachers teachers;
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private Teachers teacherData;
 }

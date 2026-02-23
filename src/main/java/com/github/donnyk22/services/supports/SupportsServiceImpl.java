@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -57,6 +58,11 @@ public class SupportsServiceImpl implements SupportsService {
         result.put("issuedAt", claims.getIssuedAt().toInstant());
         result.put("expiresAt", claims.getExpiration().toInstant());
         return result;
+    }
+
+    @Override
+    public String encodedPasswordGenerator(String password) {
+        return new BCryptPasswordEncoder().encode(password);
     }
 
     @Override

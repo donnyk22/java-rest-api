@@ -44,8 +44,6 @@ public class AuthServiceImpl implements AuthService{
         if(usersRepository.findByUsername(form.getUsername()) != null){
             throw new ConflictException("Username already exist");
         }
-
-        //todo: upload pict
         
         if(!form.getPassword().equals(form.getRePassword())){
             throw new BadRequestException("Retype password doesn't match. Please try again!");

@@ -14,5 +14,5 @@ import lombok.experimental.Accessors;
 public class UsersFindForm extends SearchForm {
     @Schema(implementation = UserRole.class, allowableValues = {"ADMIN", "STUDENT", "TEACHER"})
     private String role;
-    private boolean isActive;
+    private Boolean isActive;
 }

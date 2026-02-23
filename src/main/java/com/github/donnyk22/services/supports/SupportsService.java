@@ -6,5 +6,6 @@ import java.util.Map;
 public interface SupportsService {
     String redisCheckConnection();
     Map<String, Object> checkUserLoginCredential();
+    String encodedPasswordGenerator(String password);
     List<String> getBeanList();
 }
