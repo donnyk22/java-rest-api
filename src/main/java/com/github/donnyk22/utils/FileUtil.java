@@ -14,6 +14,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.github.donnyk22.exceptions.InternalServerErrorException;
+
 public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
@@ -55,10 +57,10 @@ public class FileUtil {
             return path.toString();
         } catch (IOException e) {
             logger.error("Disk/File error: " + e.getMessage());
-            throw new RuntimeException("Failed to save profile picture: " + e.getMessage());
+            throw new InternalServerErrorException("Failed to save profile picture: " + e.getMessage());
         } catch (Exception e) {
             logger.error("Unexpected error to save profile picture: " + e.getMessage());
-            throw new RuntimeException("Unexpected error to save profile picture: " + e.getMessage());
+            throw new InternalServerErrorException("Unexpected error to save profile picture: " + e.getMessage());
         }
     }
 
