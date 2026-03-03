@@ -22,13 +22,13 @@ public class HomeroomTeachersMapper {
 
     public static HomeroomTeachersDto toBaseDtoWithTeacher(HomeroomTeachers homeroomTeachers) {
         HomeroomTeachersDto toBaseDtoWithTeacher = toBaseDto(homeroomTeachers)
-            .setTeacher(TeachersMapper.toBaseDto(homeroomTeachers.getTeacher()));
+            .setTeacher(TeachersMapper.toBaseDto(homeroomTeachers.getTeacherData()));
         return toBaseDtoWithTeacher;
     }
 
     public static HomeroomTeachersDto toDto(HomeroomTeachers homeroomTeachers) {
         HomeroomTeachersDto dto = toBaseDtoWithClassroom(homeroomTeachers)
-            .setTeacher(TeachersMapper.toBaseDto(homeroomTeachers.getTeacher()));
+            .setTeacher(TeachersMapper.toBaseDto(homeroomTeachers.getTeacherData()));
         return dto;
     }
 

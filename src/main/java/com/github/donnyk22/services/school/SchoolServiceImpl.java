@@ -225,7 +225,7 @@ public class SchoolServiceImpl implements SchoolService{
         Specification<Students> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            Join<Students, Classes> classJoin = root.join("classes", JoinType.LEFT);
+            Join<Students, Classes> classJoin = root.join("classroom", JoinType.LEFT);
 
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
@@ -333,8 +333,8 @@ public class SchoolServiceImpl implements SchoolService{
         Specification<Teachers> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            Join<Teachers, HomeroomTeachers> homeroomJoin = root.join("homeroom_teachers", JoinType.LEFT);
-            Join<HomeroomTeachers, Classes> classJoin = homeroomJoin.join("classes", JoinType.LEFT);
+            Join<Teachers, HomeroomTeachers> homeroomJoin = root.join("homeroomTeachers", JoinType.LEFT);
+            Join<HomeroomTeachers, Classes> classJoin = homeroomJoin.join("classData", JoinType.LEFT);
 
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
@@ -443,8 +443,8 @@ public class SchoolServiceImpl implements SchoolService{
         Specification<HomeroomTeachers> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            Join<HomeroomTeachers, Classes> classJoin = root.join("classes", JoinType.LEFT);
-            Join<HomeroomTeachers, Teachers> teacherJoin = root.join("teachers", JoinType.LEFT);
+            Join<HomeroomTeachers, Classes> classJoin = root.join("classData", JoinType.LEFT);
+            Join<HomeroomTeachers, Teachers> teacherJoin = root.join("teacherData", JoinType.LEFT);
 
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
@@ -469,7 +469,7 @@ public class SchoolServiceImpl implements SchoolService{
 
         Page<HomeroomTeachers> result = homeroomTeachersRepository.findAll(spec, pageable);
         return new FindResponse<HomeroomTeachersDto>()
-            .setRecords(result.getContent().stream().map(HomeroomTeachersMapper::toBaseDtoWithTeacher).toList())
+            .setRecords(result.getContent().stream().map(HomeroomTeachersMapper::toDto).toList())
             .setTotalPage(result.getTotalPages())
             .setTotalItem((int) result.getTotalElements())
             .setHasNext(result.hasNext())

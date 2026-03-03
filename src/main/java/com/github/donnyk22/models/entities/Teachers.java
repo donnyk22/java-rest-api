@@ -49,7 +49,7 @@ public class Teachers extends BaseTimestampCreateUpdate {
 
     // ==== Relation ====
 
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "teacherData", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HomeroomTeachers> homeroomTeachers;
     
     @OneToOne(fetch = FetchType.LAZY)
