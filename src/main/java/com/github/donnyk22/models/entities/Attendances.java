@@ -33,6 +33,6 @@ public class Attendances extends BaseTimestampCreate {
     // ==== Relation ====
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", insertable = false, updatable = false)
-    private Students student;
+    @JoinColumn(name = "student_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Students studentData;
 }

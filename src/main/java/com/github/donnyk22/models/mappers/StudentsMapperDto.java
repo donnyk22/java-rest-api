@@ -20,7 +20,7 @@ public class StudentsMapperDto {
 
     public static StudentsDto toDto(Students students) {
         StudentsDto dto = toBaseDto(students)
-            .setClassroom(ClassesMapper.toBaseDtoWithHomeroomTeachers(students.getClassroom()));
+            .setClassroom(ClassesMapper.toBaseDto(students.getClassroom()));
         return dto;
     }
 }

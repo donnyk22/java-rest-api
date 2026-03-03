@@ -31,7 +31,7 @@ public class HomeroomTeachers extends BaseTimestampCreate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id", insertable = false, updatable = false)
-    private Classes classroom;
+    private Classes classData;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", insertable = false, updatable = false)

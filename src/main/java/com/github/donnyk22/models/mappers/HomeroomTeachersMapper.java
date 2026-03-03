@@ -16,7 +16,7 @@ public class HomeroomTeachersMapper {
 
     public static HomeroomTeachersDto toBaseDtoWithClassroom(HomeroomTeachers homeroomTeachers) {
         HomeroomTeachersDto toBaseDtoWithClassroom = toBaseDto(homeroomTeachers)
-            .setClassroom(ClassesMapper.toBaseDto(homeroomTeachers.getClassroom()));
+            .setClassroom(ClassesMapper.toBaseDto(homeroomTeachers.getClassData()));
         return toBaseDtoWithClassroom;
     }
 

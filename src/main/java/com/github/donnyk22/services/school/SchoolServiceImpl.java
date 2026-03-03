@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
 
 import com.github.donnyk22.exceptions.BadRequestException;
+import com.github.donnyk22.exceptions.ConflictException;
 import com.github.donnyk22.exceptions.ResourceNotFoundException;
 import com.github.donnyk22.models.dtos.AttendancesDto;
 import com.github.donnyk22.models.dtos.ClassesDto;
@@ -87,24 +88,24 @@ public class SchoolServiceImpl implements SchoolService{
         Specification<Attendances> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             
-            Join<Attendances, Students> studentJoin = root.join("students", JoinType.LEFT);
-            Join<Students, Classes> classJoin = studentJoin.join("classes", JoinType.LEFT);
+            Join<Attendances, Students> studentJoin = root.join("studentData", JoinType.LEFT);
+            Join<Students, Classes> classJoin = studentJoin.join("classroom", JoinType.LEFT);
 
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
                     cb.like(cb.lower(root.get("status")), likePattern),
                     cb.like(cb.lower(root.get("note")), likePattern),
-                    cb.like(cb.lower(studentJoin.get("full_name")), likePattern),
-                    cb.like(cb.lower(classJoin.get("class_name")), likePattern),
-                    cb.like(cb.lower(classJoin.get("grade_level")), likePattern)
+                    cb.like(cb.lower(studentJoin.get("fullName")), likePattern),
+                    cb.like(cb.lower(classJoin.get("className")), likePattern),
+                    cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern)
                 );
                 predicates.add(predicate);
             }
 
             if (StringUtils.hasText(form.getAcademicYear())){
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
-                Predicate predicate = cb.like(cb.lower(classJoin.get("academic_year")), likePattern);
+                Predicate predicate = cb.like(cb.lower(classJoin.get("academicYear")), likePattern);
                 predicates.add(predicate);
             }
 
@@ -159,16 +160,16 @@ public class SchoolServiceImpl implements SchoolService{
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("class_name")), likePattern),
-                    cb.like(cb.lower(root.get("grade_level")), likePattern),
-                    cb.like(cb.lower(root.get("academic_year")), likePattern)
+                    cb.like(cb.lower(root.get("className")), likePattern),
+                    cb.like(cb.lower(root.get("gradeLevel")), likePattern),
+                    cb.like(cb.lower(root.get("academicYear")), likePattern)
                 );
                 predicates.add(predicate);
             }
 
             if (StringUtils.hasText(form.getAcademicYear())){
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
-                Predicate predicate = cb.like(cb.lower(root.get("academic_year")), likePattern);
+                Predicate predicate = cb.like(cb.lower(root.get("academicYear")), likePattern);
                 predicates.add(predicate);
             }
 
@@ -177,7 +178,7 @@ public class SchoolServiceImpl implements SchoolService{
 
         Page<Classes> result = classesRepository.findAll(spec, pageable);
         return new FindResponse<ClassesDto>()
-            .setRecords(result.getContent().stream().map(ClassesMapper::toBaseDto).toList())
+            .setRecords(result.getContent().stream().map(ClassesMapper::toBaseDtoWithHomeroomTeachers).toList())
             .setTotalPage(result.getTotalPages())
             .setTotalItem((int) result.getTotalElements())            
             .setHasNext(result.hasNext())
@@ -229,17 +230,17 @@ public class SchoolServiceImpl implements SchoolService{
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("full_name")), likePattern),
+                    cb.like(cb.lower(root.get("fullName")), likePattern),
                     cb.like(cb.lower(root.get("address")), likePattern),
-                    cb.like(cb.lower(classJoin.get("class_name")), likePattern),
-                    cb.like(cb.lower(classJoin.get("grade_level")), likePattern)
+                    cb.like(cb.lower(classJoin.get("className")), likePattern),
+                    cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern)
                 );
                 predicates.add(predicate);
             }
 
             if (StringUtils.hasText(form.getAcademicYear())){
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
-                Predicate predicate = cb.like(cb.lower(classJoin.get("academic_year")), likePattern);
+                Predicate predicate = cb.like(cb.lower(classJoin.get("academicYear")), likePattern);
                 predicates.add(predicate);
             }
 
@@ -265,6 +266,16 @@ public class SchoolServiceImpl implements SchoolService{
 
     @Override
     public StudentsDto createStudent(StudentsCreateForm form, MultipartFile photo) {
+        if (form.getUserId() != null) {
+            Users user = usersRepository.findById(form.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
+            if (user.getStudentData() != null) {
+                throw new ConflictException("User is already associated with a student: " + form.getUserId());
+            }
+            if (user.getTeacherData() != null) {
+                throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
+            }
+        }
         form.setPhoto(FileUtil.saveProfilePic(photo));
         Students student = StudentsMapper.toEntity(new Students(), form);
         return StudentsMapper.toBaseDto(studentsRepository.save(student));
@@ -275,6 +286,16 @@ public class SchoolServiceImpl implements SchoolService{
     public StudentsDto updateStudent(Integer id, StudentsCreateForm form, MultipartFile photo) {
         Students student = studentsRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
+        if (form.getUserId() != null) {
+            Users user = usersRepository.findById(form.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
+            if (user.getStudentData() != null) {
+                throw new ConflictException("User is already associated with a student: " + form.getUserId());
+            }
+            if (user.getTeacherData() != null) {
+                throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
+            }
+        }
         if (photo != null) {
             form.setPhoto(FileUtil.saveProfilePic(photo));
         } else {
@@ -318,18 +339,18 @@ public class SchoolServiceImpl implements SchoolService{
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("full_name")), likePattern),
+                    cb.like(cb.lower(root.get("fullName")), likePattern),
                     cb.like(cb.lower(root.get("phone")), likePattern),
                     cb.like(cb.lower(root.get("address")), likePattern),
-                    cb.like(cb.lower(classJoin.get("class_name")), likePattern),
-                    cb.like(cb.lower(classJoin.get("grade_level")), likePattern)
+                    cb.like(cb.lower(classJoin.get("className")), likePattern),
+                    cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern)
                 );
                 predicates.add(predicate);
             }
 
             if (StringUtils.hasText(form.getAcademicYear())){
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
-                Predicate predicate = cb.like(cb.lower(classJoin.get("academic_year")), likePattern);
+                Predicate predicate = cb.like(cb.lower(classJoin.get("academicYear")), likePattern);
                 predicates.add(predicate);
             }
 
@@ -355,6 +376,16 @@ public class SchoolServiceImpl implements SchoolService{
 
     @Override
     public TeachersDto createTeacher(TeachersCreateForm form, MultipartFile photo) {
+        if (form.getUserId() != null) {
+            Users user = usersRepository.findById(form.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
+            if (user.getStudentData() != null) {
+                throw new ConflictException("User is already associated with a student: " + form.getUserId());
+            }
+            if (user.getTeacherData() != null) {
+                throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
+            }
+        }
         form.setPhoto(FileUtil.saveProfilePic(photo));
         Teachers teacher = TeachersMapper.toEntity(new Teachers(), form);
         return TeachersMapper.toBaseDto(teachersRepository.save(teacher));
@@ -365,6 +396,16 @@ public class SchoolServiceImpl implements SchoolService{
     public TeachersDto updateTeacher(Integer id, TeachersCreateForm form, MultipartFile photo) {
         Teachers teacher = teachersRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
+        if (form.getUserId() != null) {
+            Users user = usersRepository.findById(form.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
+            if (user.getStudentData() != null) {
+                throw new ConflictException("User is already associated with a student: " + form.getUserId());
+            }
+            if (user.getTeacherData() != null) {
+                throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
+            }
+        }
         if (photo != null) {
             form.setPhoto(FileUtil.saveProfilePic(photo));
         } else {
@@ -408,9 +449,9 @@ public class SchoolServiceImpl implements SchoolService{
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(classJoin.get("class_name")), likePattern),
-                    cb.like(cb.lower(classJoin.get("grade_level")), likePattern),
-                    cb.like(cb.lower(teacherJoin.get("full_name")), likePattern),
+                    cb.like(cb.lower(classJoin.get("className")), likePattern),
+                    cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern),
+                    cb.like(cb.lower(teacherJoin.get("fullName")), likePattern),
                     cb.like(cb.lower(teacherJoin.get("phone")), likePattern),
                     cb.like(cb.lower(teacherJoin.get("address")), likePattern)
                 );
@@ -419,7 +460,7 @@ public class SchoolServiceImpl implements SchoolService{
 
             if (StringUtils.hasText(form.getAcademicYear())){
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
-                Predicate predicate = cb.like(cb.lower(classJoin.get("academic_year")), likePattern);
+                Predicate predicate = cb.like(cb.lower(classJoin.get("academicYear")), likePattern);
                 predicates.add(predicate);
             }
 

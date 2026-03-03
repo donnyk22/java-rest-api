@@ -1,5 +1,7 @@
 package com.github.donnyk22.models.entities;
 
+import java.util.List;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -54,4 +57,7 @@ public class Students extends BaseTimestampCreateUpdate {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Users user;
+
+    @OneToMany(mappedBy = "studentData", fetch = FetchType.LAZY)
+    private List<Attendances> attendances;
 }

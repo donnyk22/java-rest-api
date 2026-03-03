@@ -18,7 +18,7 @@ public class AttendancesMapper {
 
     public static AttendancesDto toDto(Attendances attendances) {
         AttendancesDto dto = toBaseDto(attendances)
-            .setStudent(StudentsMapper.toBaseDto(attendances.getStudent()));
+            .setStudent(StudentsMapper.toBaseDto(attendances.getStudentData()));
         return dto;
     }
 
