@@ -14,7 +14,7 @@ import lombok.Setter;
 @MappedSuperclass
 public class BaseTimestampCreateUpdate extends BaseTimestampCreate {
 
-    @Column(name = "updated_at", updatable = false)
+    @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 
     @Override

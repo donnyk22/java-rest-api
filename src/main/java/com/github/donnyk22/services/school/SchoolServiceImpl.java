@@ -13,7 +13,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
 
 import com.github.donnyk22.exceptions.BadRequestException;
@@ -32,16 +31,20 @@ import com.github.donnyk22.models.entities.HomeroomTeachers;
 import com.github.donnyk22.models.entities.Students;
 import com.github.donnyk22.models.entities.Teachers;
 import com.github.donnyk22.models.entities.Users;
+import com.github.donnyk22.models.enums.UserRole;
 import com.github.donnyk22.models.forms.attendances.AttendancesCreateForm;
 import com.github.donnyk22.models.forms.attendances.AttendancesFindForm;
 import com.github.donnyk22.models.forms.classes.ClassesCreateForm;
 import com.github.donnyk22.models.forms.classes.ClassesFindForm;
+import com.github.donnyk22.models.forms.classes.ClassesUpdateForm;
 import com.github.donnyk22.models.forms.homeroomteachers.HomeroomTeachersCreateForm;
 import com.github.donnyk22.models.forms.homeroomteachers.HomeroomTeachersFindForm;
 import com.github.donnyk22.models.forms.students.StudentsCreateForm;
 import com.github.donnyk22.models.forms.students.StudentsFindForm;
+import com.github.donnyk22.models.forms.students.StudentsUpdateForm;
 import com.github.donnyk22.models.forms.teachers.TeachersCreateForm;
 import com.github.donnyk22.models.forms.teachers.TeachersFindForm;
+import com.github.donnyk22.models.forms.teachers.TeachersUpdateForm;
 import com.github.donnyk22.models.forms.users.UsersCreateForm;
 import com.github.donnyk22.models.forms.users.UsersFindForm;
 import com.github.donnyk22.models.forms.users.UsersUpdateForm;
@@ -60,6 +63,7 @@ import com.github.donnyk22.repositories.TeachersRepository;
 import com.github.donnyk22.repositories.UsersRepository;
 import com.github.donnyk22.utils.FileUtil;
 import com.github.donnyk22.utils.MediaUtil;
+import com.github.donnyk22.utils.Util;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -79,6 +83,7 @@ public class SchoolServiceImpl implements SchoolService{
     private final TeachersRepository teachersRepository;
     private final HomeroomTeachersRepository homeroomTeachersRepository;
     private final UsersRepository usersRepository;
+    private final FileUtil fileUtil;
 
     // === Attendances ===
 
@@ -195,17 +200,18 @@ public class SchoolServiceImpl implements SchoolService{
 
     @Override
     public ClassesDto createClass(ClassesCreateForm body) {
-        Classes classes = ClassesMapper.toEntity(new Classes(), body);
+        Classes classes = ClassesMapper.toEntity(body);
         return ClassesMapper.toBaseDto(classesRepository.save(classes));
     }
 
     @Override
     @CachePut(value = "classes", key = "#id")
-    public ClassesDto updateClass(Integer id, ClassesCreateForm body) {
+    public ClassesDto updateClass(Integer id, ClassesUpdateForm body) {
         Classes classes = classesRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
+        Util.compareVersion(classes.getVersion(), body.getVersion());
         classes = ClassesMapper.toEntity(classes, body);
-        return ClassesMapper.toDto(classesRepository.save(classes));
+        return ClassesMapper.toDto(classesRepository.saveAndFlush(classes));
     }
 
     @Override
@@ -265,7 +271,7 @@ public class SchoolServiceImpl implements SchoolService{
     }
 
     @Override
-    public StudentsDto createStudent(StudentsCreateForm form, MultipartFile photo) {
+    public StudentsDto createStudent(StudentsCreateForm form) {
         if (form.getUserId() != null) {
             Users user = usersRepository.findById(form.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
@@ -276,33 +282,52 @@ public class SchoolServiceImpl implements SchoolService{
                 throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
             }
         }
-        form.setPhoto(FileUtil.saveProfilePic(photo));
-        Students student = StudentsMapper.toEntity(new Students(), form);
+        Students student = StudentsMapper.toEntity(form, fileUtil.saveProfilePic(form.getPhoto()));
         return StudentsMapper.toBaseDto(studentsRepository.save(student));
     }
 
     @Override
     @CachePut(value = "student", key = "#id")
-    public StudentsDto updateStudent(Integer id, StudentsCreateForm form, MultipartFile photo) {
+    public StudentsDto updateStudent(Integer id, StudentsUpdateForm form) {
         Students student = studentsRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
+        Util.compareVersion(student.getVersion(), form.getVersion());
         if (form.getUserId() != null) {
             Users user = usersRepository.findById(form.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
-            if (user.getStudentData() != null) {
+            if (user.getStudentData() != null && !user.getStudentData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a student: " + form.getUserId());
             }
-            if (user.getTeacherData() != null) {
+            if (user.getTeacherData() != null && !user.getTeacherData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
             }
+            if (!user.getRole().equals(UserRole.STUDENT.name())){
+                throw new BadRequestException("User role must be student: " + form.getUserId());
+            }
         }
-        if (photo != null) {
-            form.setPhoto(FileUtil.saveProfilePic(photo));
-        } else {
-            form.setPhoto(student.getPhoto());
+
+        String oldPhotoPath = student.getPhoto();
+        String newPhotoPath = oldPhotoPath;
+        boolean isNewPhotoUploaded = false;
+
+        if (form.getPhoto() != null && !form.getPhoto().isEmpty()) {
+            newPhotoPath = fileUtil.saveProfilePic(form.getPhoto());
+            isNewPhotoUploaded = true;
         }
-        student = StudentsMapper.toEntity(student, form);
-        return StudentsMapper.toDto(studentsRepository.save(student));
+
+        try {
+            student = StudentsMapper.toEntity(student, form, newPhotoPath);
+            StudentsDto result = StudentsMapper.toDto(studentsRepository.saveAndFlush(student));
+            if (isNewPhotoUploaded) {
+                fileUtil.deleteProfilePic(oldPhotoPath);
+            }
+            return result;
+        } catch (Exception e) {
+            if (isNewPhotoUploaded) {
+                fileUtil.deleteProfilePic(newPhotoPath);
+            }
+            throw new BadRequestException("Failed to update student data: " + e.getMessage());
+        }
     }
 
     @Override
@@ -310,7 +335,6 @@ public class SchoolServiceImpl implements SchoolService{
     public StudentsDto deleteStudent(Integer id) {
         Students student = studentsRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
-        FileUtil.deleteProfilePic(student.getPhoto());
         studentsRepository.deleteById(id);
         return StudentsMapper.toBaseDto(student);
     }
@@ -320,9 +344,14 @@ public class SchoolServiceImpl implements SchoolService{
     public StudentsDto deleteStudentProfilePic(Integer id) {
         Students student = studentsRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
-        FileUtil.deleteProfilePic(student.getPhoto());
+        if (!StringUtils.hasLength(student.getPhoto())) {
+            throw new ResourceNotFoundException("Student has no profile picture");
+        }
+        String oldPhotoPath = student.getPhoto();
         student.setPhoto(null);
-        return StudentsMapper.toDto(studentsRepository.save(student));
+        StudentsDto result = StudentsMapper.toDto(studentsRepository.saveAndFlush(student));
+        fileUtil.deleteProfilePic(oldPhotoPath);
+        return result;
     }
 
     // === Teachers ===
@@ -375,7 +404,7 @@ public class SchoolServiceImpl implements SchoolService{
     }
 
     @Override
-    public TeachersDto createTeacher(TeachersCreateForm form, MultipartFile photo) {
+    public TeachersDto createTeacher(TeachersCreateForm form) {
         if (form.getUserId() != null) {
             Users user = usersRepository.findById(form.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
@@ -386,33 +415,52 @@ public class SchoolServiceImpl implements SchoolService{
                 throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
             }
         }
-        form.setPhoto(FileUtil.saveProfilePic(photo));
-        Teachers teacher = TeachersMapper.toEntity(new Teachers(), form);
+        Teachers teacher = TeachersMapper.toEntity(form, fileUtil.saveProfilePic(form.getPhoto()));
         return TeachersMapper.toBaseDto(teachersRepository.save(teacher));
     }
 
     @Override
     @CachePut(value = "teacher", key = "#id")
-    public TeachersDto updateTeacher(Integer id, TeachersCreateForm form, MultipartFile photo) {
+    public TeachersDto updateTeacher(Integer id, TeachersUpdateForm form) {
         Teachers teacher = teachersRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
+        Util.compareVersion(teacher.getVersion(), form.getVersion());
         if (form.getUserId() != null) {
             Users user = usersRepository.findById(form.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
-            if (user.getStudentData() != null) {
+            if (user.getTeacherData() != null && !user.getTeacherData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a student: " + form.getUserId());
             }
-            if (user.getTeacherData() != null) {
+            if (user.getTeacherData() != null && !user.getTeacherData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
             }
+            if (!user.getRole().equals(UserRole.TEACHER.name())){
+                throw new BadRequestException("User role must be teacher: " + form.getUserId());
+            }
         }
-        if (photo != null) {
-            form.setPhoto(FileUtil.saveProfilePic(photo));
-        } else {
-            form.setPhoto(teacher.getPhoto());
+
+        String oldPhotoPath = teacher.getPhoto();
+        String newPhotoPath = oldPhotoPath;
+        boolean isNewPhotoUploaded = false;
+
+        if (form.getPhoto() != null && !form.getPhoto().isEmpty()) {
+            newPhotoPath = fileUtil.saveProfilePic(form.getPhoto());
+            isNewPhotoUploaded = true;
         }
-        teacher = TeachersMapper.toEntity(teacher, form);
-        return TeachersMapper.toDto(teachersRepository.save(teacher));
+
+        try {
+            teacher = TeachersMapper.toEntity(teacher, form, newPhotoPath);
+            TeachersDto result = TeachersMapper.toDto(teachersRepository.saveAndFlush(teacher));
+            if (isNewPhotoUploaded) {
+                fileUtil.deleteProfilePic(oldPhotoPath);
+            }
+            return result;
+        } catch (Exception e) {
+            if (isNewPhotoUploaded) {
+                fileUtil.deleteProfilePic(newPhotoPath);
+            }
+            throw new BadRequestException("Failed to update teacher data: " + e.getMessage());
+        }
     }
 
     @Override
@@ -420,7 +468,6 @@ public class SchoolServiceImpl implements SchoolService{
     public TeachersDto deleteTeacher(Integer id) {
         Teachers teacher = teachersRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
-        FileUtil.deleteProfilePic(teacher.getPhoto());
         teachersRepository.deleteById(id);
         return TeachersMapper.toBaseDto(teacher);
     }
@@ -430,9 +477,14 @@ public class SchoolServiceImpl implements SchoolService{
     public TeachersDto deleteTeacherProfilePic(Integer id) {
         Teachers teacher = teachersRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
-        FileUtil.deleteProfilePic(teacher.getPhoto());
+        if (!StringUtils.hasLength(teacher.getPhoto())) {
+            throw new ResourceNotFoundException("Teacher has no profile picture");
+        }
+        String oldPhotoPath = teacher.getPhoto();
         teacher.setPhoto(null);
-        return TeachersMapper.toDto(teachersRepository.save(teacher));
+        TeachersDto result = TeachersMapper.toDto(teachersRepository.saveAndFlush(teacher));
+        fileUtil.deleteProfilePic(oldPhotoPath);
+        return result;
     }
 
     // === Homeroom Teachers ===
@@ -486,7 +538,11 @@ public class SchoolServiceImpl implements SchoolService{
 
     @Override
     public HomeroomTeachersDto createHomeroomTeacher(HomeroomTeachersCreateForm body) {
-        HomeroomTeachers homeroomTeachers = HomeroomTeachersMapper.toEntity(body);
+        HomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findByClassIdAndTeacherId(body.getClassId(), body.getTeacherId());
+        if (homeroomTeachers != null) {
+            throw new BadRequestException("The teacher already assigned to this class");
+        }
+        homeroomTeachers = HomeroomTeachersMapper.toEntity(body);
         return HomeroomTeachersMapper.toBaseDto(homeroomTeachersRepository.save(homeroomTeachers));
     }
 
@@ -555,24 +611,23 @@ public class SchoolServiceImpl implements SchoolService{
 
     @Override
     @SneakyThrows
-    public UsersDto createUser(UsersCreateForm form, MultipartFile image) {
+    public UsersDto createUser(UsersCreateForm form) {
         if(!form.getPassword().equals(form.getRePassword())){
             throw new BadRequestException("Retype password doesn't match. Please try again!");
         }
-        form.setPhoto(MediaUtil.ToBase64(image));
-        Users user = UsersMapper.toCreateUserEntity(form, new BCryptPasswordEncoder().encode(form.getPassword()));
+        Users user = UsersMapper.toEntity(form, MediaUtil.ToBase64(form.getPhoto()), new BCryptPasswordEncoder().encode(form.getPassword()));
         return UsersMapper.toBaseDto(usersRepository.save(user));
     }
 
     @Override
     @SneakyThrows
     @CachePut(value = "user", key = "#id")
-    public UsersDto updateUser(Integer id, UsersUpdateForm form, MultipartFile image) {
+    public UsersDto updateUser(Integer id, UsersUpdateForm form) {
         Users user = usersRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
-        form.setPhoto(MediaUtil.ToBase64(image));
-        user = UsersMapper.toUpdateUserEntity(user, form);
-        return UsersMapper.toDto(usersRepository.save(user));
+        Util.compareVersion(user.getVersion(), form.getVersion());
+        user = UsersMapper.toEntity(user, form, MediaUtil.ToBase64(form.getPhoto()));
+        return UsersMapper.toDto(usersRepository.saveAndFlush(user));
     }
 
     @Override

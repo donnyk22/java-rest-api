@@ -3,6 +3,7 @@ package com.github.donnyk22.models.mappers;
 import com.github.donnyk22.models.dtos.ClassesDto;
 import com.github.donnyk22.models.entities.Classes;
 import com.github.donnyk22.models.forms.classes.ClassesCreateForm;
+import com.github.donnyk22.models.forms.classes.ClassesUpdateForm;
 
 public class ClassesMapper {
     public static ClassesDto toBaseDto(Classes classes) {
@@ -11,6 +12,7 @@ public class ClassesMapper {
             .setClassName(classes.getClassName())
             .setGradeLevel(classes.getGradeLevel())
             .setAcademicYear(classes.getAcademicYear())
+            .setVersion(classes.getVersion())
             .setCreatedAt(classes.getCreatedAt())
             .setUpdatedAt(classes.getUpdatedAt());
         return baseDto;
@@ -34,7 +36,15 @@ public class ClassesMapper {
         return dto;
     }
 
-    public static Classes toEntity(Classes classes, ClassesCreateForm form) {
+    public static Classes toEntity(ClassesCreateForm form) {
+        Classes classes = new Classes()
+            .setClassName(form.getClassName())
+            .setGradeLevel(form.getGradeLevel())
+            .setAcademicYear(form.getAcademicYear());
+        return classes;
+    }
+
+    public static Classes toEntity(Classes classes, ClassesUpdateForm form) {
         classes.setClassName(form.getClassName())
             .setGradeLevel(form.getGradeLevel())
             .setAcademicYear(form.getAcademicYear());

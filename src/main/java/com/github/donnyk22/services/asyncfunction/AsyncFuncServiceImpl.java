@@ -16,7 +16,7 @@ import com.github.donnyk22.models.dtos.AsyncJobData;
 import com.github.donnyk22.models.dtos.AsyncJobResult;
 import com.github.donnyk22.models.enums.JobStatus;
 import com.github.donnyk22.utils.ConverterUtil;
-import com.github.donnyk22.utils.RedisTokenUtil;
+import com.github.donnyk22.utils.TokenUtil;
 
 import lombok.AllArgsConstructor;
 
@@ -26,7 +26,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
 
     private static final Logger logger = LoggerFactory.getLogger(AsyncFuncServiceImpl.class);
     
-    private final RedisTokenUtil redisTokenUtil;
+    private final TokenUtil redisTokenUtil;
     private final RabbitTemplate rabbitTemplate;
 
     @Override

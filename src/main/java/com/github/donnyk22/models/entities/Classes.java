@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
 @Entity
 @Table(name = "classes")
 //override delete behaviour by JPA to soft delete
-@SQLDelete(sql = "UPDATE classes SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE classes SET deleted = true WHERE id = ? AND version = ?")
 //automatically add "where deleted = false"
 @SQLRestriction("deleted = false")
 public class Classes extends BaseTimestampCreateUpdate {
@@ -36,10 +36,10 @@ public class Classes extends BaseTimestampCreateUpdate {
     @Column(name = "class_name")
     private String className;
     @Column(name = "grade_level")
-    private String gradeLevel;
+    private Integer gradeLevel;
     @Column(name = "academic_year")
     private String academicYear;
-    private Boolean deleted;
+    private Boolean deleted = false;
     // handle versioning
     @Version
     private Integer version;

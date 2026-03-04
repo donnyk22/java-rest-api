@@ -9,4 +9,6 @@ import com.github.donnyk22.models.entities.HomeroomTeachers;
 @Repository
 public interface HomeroomTeachersRepository extends JpaRepository<HomeroomTeachers, Integer>, JpaSpecificationExecutor<HomeroomTeachers>{
     
+    HomeroomTeachers findByClassIdAndTeacherId(Integer classId, Integer teacherId);
+
 }

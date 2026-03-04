@@ -13,8 +13,9 @@ import lombok.experimental.Accessors;
 public class ClassesDto {
     private Integer id;
     private String className;
-    private String gradeLevel;
+    private Integer gradeLevel;
     private String academicYear;
+    private Integer version;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private List<HomeroomTeachersDto> homeroomTeachers;

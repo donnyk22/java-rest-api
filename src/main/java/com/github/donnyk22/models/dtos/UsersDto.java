@@ -14,10 +14,12 @@ public class UsersDto {
     private Integer id;
     private String username;
     private String email;
+    private String photo;
     private String name;
     private String role;
     private StudentsDto student;    
     private TeachersDto teacher;
+    private Integer version;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private String token;

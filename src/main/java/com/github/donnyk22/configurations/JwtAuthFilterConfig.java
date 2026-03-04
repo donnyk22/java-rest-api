@@ -14,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.donnyk22.models.dtos.ApiResponse;
 import com.github.donnyk22.utils.JwtUtil;
-import com.github.donnyk22.utils.RedisTokenUtil;
+import com.github.donnyk22.utils.TokenUtil;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 public class JwtAuthFilterConfig extends OncePerRequestFilter{
 
     private final JwtUtil jwtUtil;
-    private final RedisTokenUtil redisTokenUtil;
+    private final TokenUtil redisTokenUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {

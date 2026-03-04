@@ -18,6 +18,7 @@ public class TeachersDto {
     private String phone;
     private String address;
     private String photo;
+    private Integer version;
     private List<HomeroomTeachersDto> homeroomTeachers;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;

@@ -1,5 +1,7 @@
 package com.github.donnyk22.models.forms.students;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.github.donnyk22.models.enums.UserGender;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +15,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 public class StudentsCreateForm {
+    @NotNull(message = "User ID is required")
     private Integer userId;
     @NotNull(message = "Class ID is required")
     private Integer classId;
@@ -23,5 +26,7 @@ public class StudentsCreateForm {
     private UserGender gender;
     @NotBlank(message = "Address is required")
     private String address;
-    private String photo;
+    @Schema(example = "081234567890")
+    private String phone;
+    private MultipartFile photo;
 }

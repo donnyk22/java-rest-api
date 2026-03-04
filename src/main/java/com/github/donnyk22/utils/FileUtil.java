@@ -10,33 +10,35 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.github.donnyk22.exceptions.BadRequestException;
 import com.github.donnyk22.exceptions.InternalServerErrorException;
 
+@Component //using spring bean instead of static, because it need to call value from properties
 public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-    private static String PATH;
-    private static String MAX_SIZE;
+    @Value("${upload.profile-pic.path}")
+    private String PATH;
 
-    //injection for static variables
     @Value("${upload.profile-pic.max-size}")
-    public void setMaxSize(String maxSize) {
-        FileUtil.MAX_SIZE = maxSize;
-    }
+    private String MAX_SIZE;
 
-    @Value("${upload.path.profile-pic}")
-    public void setPath(String path) {
-        FileUtil.PATH = path;
-    }
-
-    public static String saveProfilePic(MultipartFile photo) {
+    public String saveProfilePic(MultipartFile photo) {
         try{
-            if(photo == null) return null;
+            if (photo == null) return null;
+
+            MediaUtil.validateImage(photo);
+
+            String originalFilename = photo.getOriginalFilename();
+            if (originalFilename == null) {
+                throw new BadRequestException("File name is missing");
+            }
 
             long maxSizeBytes = DataSize.parse(MAX_SIZE).toBytes();
             if (photo.getSize() > maxSizeBytes) {
@@ -49,7 +51,7 @@ public class FileUtil {
                 Files.createDirectories(uploadPath);
             }
 
-            String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(photo.getOriginalFilename());
+            String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(originalFilename);
             Path path = uploadPath.resolve(fileName);
 
             Files.copy(photo.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
@@ -58,16 +60,11 @@ public class FileUtil {
         } catch (IOException e) {
             logger.error("Disk/File error: " + e.getMessage());
             throw new InternalServerErrorException("Failed to save profile picture: " + e.getMessage());
-        } catch (Exception e) {
-            logger.error("Unexpected error to save profile picture: " + e.getMessage());
-            throw new InternalServerErrorException("Unexpected error to save profile picture: " + e.getMessage());
         }
     }
 
-    public static void deleteProfilePic(String filePath) {
-        if (!StringUtils.hasLength(filePath)) {
-            return;
-        }
+    public void deleteProfilePic(String filePath) {
+        if (!StringUtils.hasLength(filePath)) return;
 
         try {
             Path path = Paths.get(filePath);
@@ -75,8 +72,6 @@ public class FileUtil {
             logger.info("Profile picture deleted successfully: " + filePath);
         } catch (IOException e) {
             logger.error("Disk/File error: " + e.getMessage());
-        } catch (Exception e) {
-            logger.error("Unexpected error deleting profile picture: " + e.getMessage());
         }
     }
 }

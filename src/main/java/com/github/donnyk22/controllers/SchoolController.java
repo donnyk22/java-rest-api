@@ -30,14 +30,18 @@ import com.github.donnyk22.models.forms.attendances.AttendancesCreateForm;
 import com.github.donnyk22.models.forms.attendances.AttendancesFindForm;
 import com.github.donnyk22.models.forms.classes.ClassesCreateForm;
 import com.github.donnyk22.models.forms.classes.ClassesFindForm;
+import com.github.donnyk22.models.forms.classes.ClassesUpdateForm;
 import com.github.donnyk22.models.forms.homeroomteachers.HomeroomTeachersCreateForm;
 import com.github.donnyk22.models.forms.homeroomteachers.HomeroomTeachersFindForm;
 import com.github.donnyk22.models.forms.students.StudentsCreateForm;
 import com.github.donnyk22.models.forms.students.StudentsFindForm;
+import com.github.donnyk22.models.forms.students.StudentsUpdateForm;
 import com.github.donnyk22.models.forms.teachers.TeachersCreateForm;
 import com.github.donnyk22.models.forms.teachers.TeachersFindForm;
+import com.github.donnyk22.models.forms.teachers.TeachersUpdateForm;
 import com.github.donnyk22.models.forms.users.UsersCreateForm;
 import com.github.donnyk22.models.forms.users.UsersFindForm;
+import com.github.donnyk22.models.forms.users.UsersUpdateForm;
 import com.github.donnyk22.models.forms.users.UsersUpdatePasswordForm;
 import com.github.donnyk22.services.school.SchoolService;
 
@@ -166,8 +170,8 @@ public class SchoolController {
         description = "Update class details by class ID"
     )
     @PreAuthorize("hasRole(UserRole.ADMIN)")
-    @PostMapping("/classes/{classesId}")
-    public ResponseEntity<ApiResponse<ClassesDto>> updateClass(@PathVariable @NotNull(message = "Class ID is required") Integer classesId, @RequestBody @Valid ClassesCreateForm body) {
+    @PutMapping("/classes/{classesId}")
+    public ResponseEntity<ApiResponse<ClassesDto>> updateClass(@PathVariable @NotNull(message = "Class ID is required") Integer classesId, @RequestBody @Valid ClassesUpdateForm body) {
         ClassesDto result = schoolService.updateClass(classesId, body);
         ApiResponse<ClassesDto> response = new ApiResponse<>(HttpStatus.OK.value(),
             "Class updated successfully",
@@ -227,11 +231,8 @@ public class SchoolController {
         value = "/students", 
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
     )
-    public ResponseEntity<ApiResponse<StudentsDto>> createStudent(
-        @ModelAttribute @Valid StudentsCreateForm form,
-        @RequestPart(value = "file", required = false) MultipartFile image
-    ) {
-        StudentsDto result = schoolService.createStudent(form, image);
+    public ResponseEntity<ApiResponse<StudentsDto>> createStudent(@ModelAttribute @Valid StudentsCreateForm form) {
+        StudentsDto result = schoolService.createStudent(form);
         return ResponseEntity.ok(new ApiResponse<>(
             HttpStatus.CREATED.value(),
             "Student created successfully",
@@ -249,10 +250,9 @@ public class SchoolController {
     )
     public ResponseEntity<ApiResponse<StudentsDto>> updateStudent(
         @PathVariable @NotNull(message = "Student ID is required") Integer studentId,
-        @ModelAttribute @Valid StudentsCreateForm form,
-        @RequestPart(value = "file", required = false) MultipartFile image
+        @ModelAttribute @Valid StudentsUpdateForm form
     ) {
-        StudentsDto result = schoolService.updateStudent(studentId, form, image);
+        StudentsDto result = schoolService.updateStudent(studentId, form);
         ApiResponse<StudentsDto> response = new ApiResponse<>(HttpStatus.OK.value(),
             "Student updated successfully",
             result);
@@ -325,11 +325,8 @@ public class SchoolController {
         value = "/teachers", 
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
     )
-    public ResponseEntity<ApiResponse<TeachersDto>> createTeacher(
-        @ModelAttribute @Valid TeachersCreateForm form,
-        @RequestPart(value = "file", required = false) MultipartFile image
-    ) {
-        TeachersDto result = schoolService.createTeacher(form, image);
+    public ResponseEntity<ApiResponse<TeachersDto>> createTeacher(@ModelAttribute @Valid TeachersCreateForm form) {
+        TeachersDto result = schoolService.createTeacher(form);
         return ResponseEntity.ok(new ApiResponse<>(
             HttpStatus.CREATED.value(),
             "Teacher created successfully",
@@ -348,10 +345,9 @@ public class SchoolController {
     )
     public ResponseEntity<ApiResponse<TeachersDto>> updateTeacher(
         @PathVariable @NotNull(message = "Teacher ID is required") Integer teacherId,
-        @ModelAttribute @Valid TeachersCreateForm form,
-        @RequestPart(value = "file", required = false) MultipartFile image
+        @ModelAttribute @Valid TeachersUpdateForm form
     ) {
-        TeachersDto result = schoolService.updateTeacher(teacherId, form, image);
+        TeachersDto result = schoolService.updateTeacher(teacherId, form);
         ApiResponse<TeachersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
             "Teacher updated successfully",
             result);
@@ -483,11 +479,8 @@ public class SchoolController {
         value = "/users", 
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
     )
-    public ResponseEntity<ApiResponse<UsersDto>> createUser(
-        @ModelAttribute @Valid UsersCreateForm form,
-        @RequestPart(value = "file", required = false) MultipartFile image
-    ) {
-        UsersDto result = schoolService.createUser(form, image);
+    public ResponseEntity<ApiResponse<UsersDto>> createUser(@ModelAttribute @Valid UsersCreateForm form) {
+        UsersDto result = schoolService.createUser(form);
         ApiResponse<UsersDto> response = new ApiResponse<>(HttpStatus.CREATED.value(),
             "User created successfully",
             result);
@@ -505,10 +498,9 @@ public class SchoolController {
     )
     public ResponseEntity<ApiResponse<UsersDto>> updateUser(
         @PathVariable @NotNull(message = "User ID is required") Integer userId,
-        @ModelAttribute @Valid UsersCreateForm form,
-        @RequestPart(value = "file", required = false) MultipartFile image
+        @ModelAttribute @Valid UsersUpdateForm form
     ) {
-        UsersDto result = schoolService.updateUser(userId, form, image);
+        UsersDto result = schoolService.updateUser(userId, form);
         ApiResponse<UsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
             "User updated successfully",
             result);

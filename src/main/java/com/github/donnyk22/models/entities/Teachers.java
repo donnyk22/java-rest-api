@@ -27,7 +27,7 @@ import lombok.experimental.Accessors;
 @Entity
 @Table(name = "teachers")
 //override delete behaviour by JPA to soft delete
-@SQLDelete(sql = "UPDATE teachers SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE teachers SET deleted = true WHERE id = ? AND version = ?")
 //automatically add "where deleted = false"
 @SQLRestriction("deleted = false")
 public class Teachers extends BaseTimestampCreateUpdate {
@@ -42,7 +42,7 @@ public class Teachers extends BaseTimestampCreateUpdate {
     private String phone;
     private String address;
     private String photo;
-    private Boolean deleted;
+    private Boolean deleted = false;
     // handle versioning
     @Version
     private Integer version;

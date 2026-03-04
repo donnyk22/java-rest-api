@@ -17,7 +17,9 @@ public class StudentsDto {
     private String fullName;
     private Character gender;
     private String address;
+    private String phone;
     private String photo;
+    private Integer version;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 }

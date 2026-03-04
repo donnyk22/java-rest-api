@@ -16,9 +16,9 @@ import com.github.donnyk22.models.forms.users.UserRegisterForm;
 import com.github.donnyk22.models.mappers.UsersMapper;
 import com.github.donnyk22.repositories.UsersRepository;
 import com.github.donnyk22.utils.AuthUtil;
-import com.github.donnyk22.utils.GeneralUtil;
+import com.github.donnyk22.utils.Util;
 import com.github.donnyk22.utils.JwtUtil;
-import com.github.donnyk22.utils.RedisTokenUtil;
+import com.github.donnyk22.utils.TokenUtil;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,12 +31,12 @@ public class AuthServiceImpl implements AuthService{
 
     private final UsersRepository usersRepository;
     private final JwtUtil jwtUtil;
-    private final RedisTokenUtil redisTokenUtil;
+    private final TokenUtil redisTokenUtil;
     private final AuthUtil authUtil;
 
     @Override
     public UsersDto register(UserRegisterForm form, HttpServletRequest httpRequest) {
-        String userIp = GeneralUtil.getClientIp(httpRequest);
+        String userIp = Util.getClientIp(httpRequest);
 
         if(usersRepository.findByEmail(form.getEmail()) != null){
             throw new ConflictException("Email already exist");
@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService{
         if(!form.getPassword().equals(form.getRePassword())){
             throw new BadRequestException("Retype password doesn't match. Please try again!");
         }
-        Users user = UsersMapper.toRegisterEntity(form, new BCryptPasswordEncoder().encode(form.getPassword()));
+        Users user = UsersMapper.toEntity(form, new BCryptPasswordEncoder().encode(form.getPassword()));
         if(user == null){
             throw new BadRequestException("Failed to register a new user. Please try again");
         }
@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public UsersDto login(UserLoginForm form, HttpServletRequest httpRequest) {
-        String userIp = GeneralUtil.getClientIp(httpRequest);
+        String userIp = Util.getClientIp(httpRequest);
 
         Users user = usersRepository.findByEmail(form.getUsername());
         if(user == null){

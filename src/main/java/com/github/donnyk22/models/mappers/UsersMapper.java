@@ -14,7 +14,9 @@ public class UsersMapper {
             .setId(users.getId())
             .setUsername(users.getUsername())
             .setEmail(users.getEmail())
+            .setPhoto(users.getPhoto())
             .setRole(users.getRole())
+            .setVersion(users.getVersion())
             .setCreatedAt(users.getCreatedAt())
             .setUpdatedAt(users.getUpdatedAt());
         return toBaseDto;
@@ -38,7 +40,7 @@ public class UsersMapper {
         return dto;
     }
 
-    public static Users toRegisterEntity(UserRegisterForm form, String encryptedPassword) {
+    public static Users toEntity(UserRegisterForm form, String encryptedPassword) {
         Users users = new Users()
             .setUsername(form.getUsername())
             .setEmail(form.getEmail())
@@ -47,21 +49,21 @@ public class UsersMapper {
         return users;
     }
 
-    public static Users toCreateUserEntity(UsersCreateForm form, String encryptedPassword) {
+    public static Users toEntity(UsersCreateForm form, String photo, String encryptedPassword) {
         Users users = new Users()
             .setUsername(form.getUsername())
             .setEmail(form.getEmail())
-            .setPhoto(form.getPhoto())
+            .setPhoto(photo)
             .setRole(form.getRole().name())
             .setIsActive(form.getIsActive())
             .setPassword(encryptedPassword);
         return users;
     }
 
-    public static Users toUpdateUserEntity(Users user, UsersUpdateForm form) {
+    public static Users toEntity(Users user, UsersUpdateForm form, String photo) {
         user.setUsername(form.getUsername())
             .setEmail(form.getEmail())
-            .setPhoto(form.getPhoto())
+            .setPhoto(photo)
             .setRole(form.getRole().name())
             .setIsActive(form.getIsActive());
         return user;

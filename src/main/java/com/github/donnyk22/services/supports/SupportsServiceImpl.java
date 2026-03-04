@@ -14,7 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.github.donnyk22.utils.AuthUtil;
 import com.github.donnyk22.utils.JwtUtil;
-import com.github.donnyk22.utils.RedisTokenUtil;
+import com.github.donnyk22.utils.TokenUtil;
 
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class SupportsServiceImpl implements SupportsService {
 
     private final StringRedisTemplate redisTemplate;
     private final AuthUtil authUtil;
-    private final RedisTokenUtil redisTokenUtil;
+    private final TokenUtil redisTokenUtil;
     private final JwtUtil jwtUtil;
     private final WebApplicationContext webApplicationContext;
 
