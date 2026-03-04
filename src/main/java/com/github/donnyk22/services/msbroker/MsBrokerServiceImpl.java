@@ -1,7 +1,5 @@
 package com.github.donnyk22.services.msbroker;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -12,10 +10,11 @@ import com.github.donnyk22.configurations.RabbitMQConfig;
 import com.github.donnyk22.models.forms.MsBrokerForm;
 import com.github.donnyk22.utils.ConverterUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j // This generates the 'log' variable automatically
 @Service
 public class MsBrokerServiceImpl implements MsBrokerService {
-
-    private static final Logger logger = LoggerFactory.getLogger(MsBrokerServiceImpl.class);
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -47,12 +46,12 @@ public class MsBrokerServiceImpl implements MsBrokerService {
 
     @RabbitListener(queues = RabbitMQConfig.MESSAGE_QUEUE_OBJECT)
     private void object(byte[] object) {
-        logger.info("Received message object topic: {}", ConverterUtil.bytesToString(object));
+        log.info("Received message object topic: {}", ConverterUtil.bytesToString(object));
     }
 
     @RabbitListener(queues = RabbitMQConfig.MESSAGE_QUEUE_TEXT)
     private void text(String text) {
-        logger.info("Received message text topic: {}", text);
+        log.info("Received message text topic: {}", text);
     }
 
     @RabbitListener(queues = RabbitMQConfig.MESSAGE_QUEUE_ALL)
@@ -63,12 +62,12 @@ public class MsBrokerServiceImpl implements MsBrokerService {
         String str = ConverterUtil.bytesToString(body);
 
         if ("application/octet-stream".equals(props.getContentType())) {
-            logger.info("Received message object via all topic listener: {}", str);
+            log.info("Received message object via all topic listener: {}", str);
             return;
         }
 
         if ("text/plain".equals(props.getContentType())) {
-            logger.info("Received message text via all topic listener: {}", str);
+            log.info("Received message text via all topic listener: {}", str);
         }
     }
 }

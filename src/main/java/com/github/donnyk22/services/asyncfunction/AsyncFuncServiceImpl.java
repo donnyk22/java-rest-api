@@ -3,8 +3,6 @@ package com.github.donnyk22.services.asyncfunction;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -19,13 +17,13 @@ import com.github.donnyk22.utils.ConverterUtil;
 import com.github.donnyk22.utils.TokenUtil;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j // This generates the 'log' variable automatically
 @Service
 @AllArgsConstructor
 public class AsyncFuncServiceImpl implements AsyncFuncService {
 
-    private static final Logger logger = LoggerFactory.getLogger(AsyncFuncServiceImpl.class);
-    
     private final TokenUtil redisTokenUtil;
     private final RabbitTemplate rabbitTemplate;
 
@@ -33,9 +31,9 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
     @Async
     public CompletableFuture<String> sendEmailDummy(String email) {
         try {
-            logger.info("Sending email to: " + email);
+            log.info("Sending email to: " + email);
             Thread.sleep(5000);
-            logger.info("Email sent to: " + email);
+            log.info("Email sent to: " + email);
             return CompletableFuture.completedFuture("Email sent successfully");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -52,9 +50,9 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
     public CompletableFuture<Void> sendEmailDummyWithJobId(String jobId, String email) {
         try {
             setJobStatus(jobId, JobStatus.RUNNING.name());
-            logger.info("Sending email to: " + email);
+            log.info("Sending email to: " + email);
             Thread.sleep(20000);
-            logger.info("Email sent to: " + email);
+            log.info("Email sent to: " + email);
             setJobStatus(jobId, JobStatus.SUCCESS.name());
             return CompletableFuture.completedFuture(null);
         } catch (InterruptedException e) {
@@ -106,9 +104,9 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
         AsyncJobData data = ConverterUtil.bytesToObject(object, AsyncJobData.class);
         try {
             setJobStatus(data.getJobId(), JobStatus.RUNNING.name());
-            logger.info("Worker " + Thread.currentThread().getName() + " processing job (sending email): " + data.getJobId());
+            log.info("Worker " + Thread.currentThread().getName() + " processing job (sending email): " + data.getJobId());
             Thread.sleep(20000);
-            logger.info("Email sent to: " + data.getEmail());
+            log.info("Email sent to: " + data.getEmail());
             setJobStatus(data.getJobId(), JobStatus.SUCCESS.name());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

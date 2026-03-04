@@ -3,8 +3,6 @@ package com.github.donnyk22.exceptions;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +14,11 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.github.donnyk22.models.dtos.ApiResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j // This generates the 'log' variable automatically
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResponse<Object>> badRequest(BadRequestException ex) {
@@ -103,7 +102,7 @@ public class GlobalExceptionHandler {
         String rootMsg = specificCause.getMessage();
         
         String message = "Data Integrity Error.";
-        logger.error("Data Integrity Error: {}", rootMsg);
+        log.error("Data Integrity Error: {}", rootMsg);
 
         if (rootMsg != null) {
             if (rootMsg.contains("Duplicate entry")) {

@@ -7,8 +7,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -18,10 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.github.donnyk22.exceptions.BadRequestException;
 import com.github.donnyk22.exceptions.InternalServerErrorException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j // This generates the 'log' variable automatically
 @Component //using spring bean instead of static, because it need to call value from properties
 public class FileUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     @Value("${upload.profile-pic.path}")
     private String PATH;
@@ -58,7 +57,7 @@ public class FileUtil {
 
             return path.toString();
         } catch (IOException e) {
-            logger.error("Disk/File error: " + e.getMessage());
+            log.error("Disk/File error: " + e.getMessage());
             throw new InternalServerErrorException("Failed to save profile picture: " + e.getMessage());
         }
     }
@@ -69,9 +68,9 @@ public class FileUtil {
         try {
             Path path = Paths.get(filePath);
             Files.deleteIfExists(path);
-            logger.info("Profile picture deleted successfully: " + filePath);
+            log.info("Profile picture deleted successfully: " + filePath);
         } catch (IOException e) {
-            logger.error("Disk/File error: " + e.getMessage());
+            log.error("Disk/File error: " + e.getMessage());
         }
     }
 }
