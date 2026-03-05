@@ -123,7 +123,6 @@ public class SchoolController {
         summary = "Get classes",
         description = "Retrieve and search classes"
     )
-    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @GetMapping("/classes")
     public ResponseEntity<ApiResponse<FindResponse<ClassesDto>>> findClasses(@ModelAttribute @Valid ClassesFindForm form) {
         FindResponse<ClassesDto> result = schoolService.findClasses(form);
@@ -452,7 +451,6 @@ public class SchoolController {
         summary = "Get user by ID",
         description = "Retrieve user details by user ID"
     )
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/{userId}")
     public ResponseEntity<ApiResponse<UsersDto>> readUser(@PathVariable @NotNull(message = "User ID is required") Integer userId) {
         UsersDto result = schoolService.readUser(userId);
@@ -483,7 +481,6 @@ public class SchoolController {
         summary = "Update user",
         description = "Update user details by user ID"
     )
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(
         value = "/users/{userId}",
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
@@ -503,7 +500,6 @@ public class SchoolController {
         summary = "Update user password",
         description = "Update user password by user ID"
     )
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/users/{userId}/password")
     public ResponseEntity<ApiResponse<UsersDto>> updateUserPassword(
         @PathVariable @NotNull(message = "User ID is required") Integer userId,
