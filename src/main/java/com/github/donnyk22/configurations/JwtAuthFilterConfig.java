@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class JwtAuthFilterConfig extends OncePerRequestFilter{
 
     private final JwtUtil jwtUtil;
@@ -52,7 +54,7 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter{
             String email = claims.get("email", String.class);
             String role = claims.get("role", String.class);
 
-            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())); // To handle @PreAuthorize("hasRole('ADMIN')") and @PreAuthorize("hasAnyRole('ROLE_ADMIN')") in controller, we need to prefix role with "ROLE_"
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())); // To handle @PreAuthorize("hasRole('ADMIN')") or @PreAuthorize("hasAnyRole('ADMIN')") in controller, we need to prefix role with "ROLE_"
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(id, null, authorities);
 

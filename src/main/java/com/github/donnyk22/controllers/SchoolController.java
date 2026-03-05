@@ -67,7 +67,6 @@ public class SchoolController {
         summary = "Get student attendances",
         description = "Retrieve and search attendance records"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
     @GetMapping("/attendances")
     public ResponseEntity<ApiResponse<FindResponse<AttendancesDto>>> findAttendances(@ModelAttribute @Valid AttendancesFindForm form) {
         FindResponse<AttendancesDto> result = schoolService.findAttendances(form);
@@ -81,7 +80,6 @@ public class SchoolController {
         summary = "Get student attendances",
         description = "Retrieve attendance records by attendance ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
     @GetMapping("/attendances/{attendanceId}")
     public ResponseEntity<ApiResponse<AttendancesDto>> readAttendance(@PathVariable @NotNull(message = "Attendance ID is required") Integer attendanceId) {
         AttendancesDto result = schoolService.readAttendance(attendanceId);
@@ -95,7 +93,7 @@ public class SchoolController {
         summary = "Create attendance record",
         description = "Create a new attendance record for a student"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PostMapping("/attendances")
     public ResponseEntity<ApiResponse<AttendancesDto>> createAttendance(@RequestBody @Valid AttendancesCreateForm body) {
         AttendancesDto result = schoolService.createAttendance(body);
@@ -109,7 +107,7 @@ public class SchoolController {
         summary = "Delete attendance record",
         description = "Delete an attendance record by attendance ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @DeleteMapping("/attendances/{attendanceId}")
     public ResponseEntity<ApiResponse<AttendancesDto>> deleteAttendance(@PathVariable @NotNull(message = "Attendance ID is required") Integer attendanceId) {
         AttendancesDto result = schoolService.deleteAttendance(attendanceId);
@@ -125,7 +123,7 @@ public class SchoolController {
         summary = "Get classes",
         description = "Retrieve and search classes"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @GetMapping("/classes")
     public ResponseEntity<ApiResponse<FindResponse<ClassesDto>>> findClasses(@ModelAttribute @Valid ClassesFindForm form) {
         FindResponse<ClassesDto> result = schoolService.findClasses(form);
@@ -139,7 +137,6 @@ public class SchoolController {
         summary = "Get class by ID",
         description = "Retrieve class details by class ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
     @GetMapping("/classes/{classesId}")
     public ResponseEntity<ApiResponse<ClassesDto>> readClass(@PathVariable @NotNull(message = "Class ID is required") Integer classesId) {
         ClassesDto result = schoolService.readClass(classesId);
@@ -153,7 +150,7 @@ public class SchoolController {
         summary = "Create class",
         description = "Create a new class"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/classes")
     public ResponseEntity<ApiResponse<ClassesDto>> createClass(@RequestBody @Valid ClassesCreateForm body) {
         ClassesDto result = schoolService.createClass(body);
@@ -167,7 +164,7 @@ public class SchoolController {
         summary = "Update class",
         description = "Update class details by class ID"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/classes/{classesId}")
     public ResponseEntity<ApiResponse<ClassesDto>> updateClass(@PathVariable @NotNull(message = "Class ID is required") Integer classesId, @RequestBody @Valid ClassesUpdateForm body) {
         ClassesDto result = schoolService.updateClass(classesId, body);
@@ -181,7 +178,7 @@ public class SchoolController {
         summary = "Delete class",
         description = "Delete a class by class ID"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/classes/{classesId}")
     public ResponseEntity<ApiResponse<ClassesDto>> deleteClass(@PathVariable @NotNull(message = "Class ID is required") Integer classesId) {
         ClassesDto result = schoolService.deleteClass(classesId);
@@ -197,7 +194,6 @@ public class SchoolController {
         summary = "Get students",
         description = "Retrieve and search students"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
     @GetMapping("/students")
     public ResponseEntity<ApiResponse<FindResponse<StudentsDto>>> findStudents(@ModelAttribute @Valid StudentsFindForm form) {
         FindResponse<StudentsDto> result = schoolService.findStudents(form);
@@ -224,7 +220,7 @@ public class SchoolController {
         summary = "Create student",
         description = "Create a new student with profile picture"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PostMapping(
         value = "/students", 
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
@@ -261,7 +257,7 @@ public class SchoolController {
         summary = "Delete student",
         description = "Delete a student by student ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @DeleteMapping("/students/{studentId}")
     public ResponseEntity<ApiResponse<StudentsDto>> deleteStudent(@PathVariable @NotNull(message = "Student ID is required") Integer studentId) {
         StudentsDto result = schoolService.deleteStudent(studentId);
@@ -290,7 +286,6 @@ public class SchoolController {
         summary = "Get teachers",
         description = "Retrieve and search teachers"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
     @GetMapping("/teachers")
     public ResponseEntity<ApiResponse<FindResponse<TeachersDto>>> findTeachers(@ModelAttribute @Valid TeachersFindForm form) {
         FindResponse<TeachersDto> result = schoolService.findTeachers(form);
@@ -304,7 +299,6 @@ public class SchoolController {
         summary = "Get teacher by ID",
         description = "Retrieve teacher details by teacher ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
     @GetMapping("/teachers/{teacherId}")
     public ResponseEntity<ApiResponse<TeachersDto>> readTeacher(@PathVariable @NotNull(message = "Teacher ID is required") Integer teacherId) {
         TeachersDto result = schoolService.readTeacher(teacherId);
@@ -318,7 +312,7 @@ public class SchoolController {
         summary = "Create teacher",
         description = "Create a new teacher with profile picture"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(
         value = "/teachers", 
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
@@ -336,7 +330,7 @@ public class SchoolController {
         summary = "Update teacher",
         description = "Update teacher details by teacher ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PutMapping(
         value = "/teachers/{teacherId}",
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
@@ -356,7 +350,7 @@ public class SchoolController {
         summary = "Delete teacher",
         description = "Delete a teacher by teacher ID"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/teachers/{teacherId}")
     public ResponseEntity<ApiResponse<TeachersDto>> deleteTeacher(@PathVariable @NotNull(message = "Teacher ID is required") Integer teacherId) {
         TeachersDto result = schoolService.deleteTeacher(teacherId);
@@ -370,7 +364,7 @@ public class SchoolController {
         summary = "Delete teacher profile picture",
         description = "Delete a teacher's profile picture by teacher ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @DeleteMapping("/teachers/{teacherId}/profile-pic")
     public ResponseEntity<ApiResponse<TeachersDto>> deleteTeacherProfilePic(@PathVariable @NotNull(message = "Teacher ID is required") Integer teacherId) {
         TeachersDto result = schoolService.deleteTeacherProfilePic(teacherId);
@@ -386,7 +380,7 @@ public class SchoolController {
         summary = "Get homeroom teachers",
         description = "Retrieve and search homeroom teachers"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @GetMapping("/homeroom-teachers")
     public ResponseEntity<ApiResponse<FindResponse<HomeroomTeachersDto>>> findHomeroomTeachers(@ModelAttribute @Valid HomeroomTeachersFindForm form) {
         FindResponse<HomeroomTeachersDto> result = schoolService.findHomeroomTeachers(form);
@@ -400,7 +394,7 @@ public class SchoolController {
         summary = "Get homeroom teacher by ID",
         description = "Retrieve homeroom teacher details by homeroom teacher ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @GetMapping("/homeroom-teachers/{homeroomTeacherId}")
     public ResponseEntity<ApiResponse<HomeroomTeachersDto>> readHomeroomTeacher(@PathVariable @NotNull(message = "Homeroom teacher ID is required") Integer homeroomTeacherId) {
         HomeroomTeachersDto result = schoolService.readHomeroomTeacher(homeroomTeacherId);
@@ -414,7 +408,7 @@ public class SchoolController {
         summary = "Create homeroom teacher",
         description = "Create a new homeroom teacher"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PostMapping("/homeroom-teachers")
     public ResponseEntity<ApiResponse<HomeroomTeachersDto>> createHomeroomTeacher(@RequestBody @Valid HomeroomTeachersCreateForm body) {
         HomeroomTeachersDto result = schoolService.createHomeroomTeacher(body);
@@ -428,7 +422,7 @@ public class SchoolController {
         summary = "Delete homeroom teacher",
         description = "Delete a homeroom teacher by homeroom teacher ID"
     )
-    @PreAuthorize("hasAnyRole(UserRole.ADMIN, UserRole.TEACHER)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @DeleteMapping("/homeroom-teachers/{homeroomTeacherId}")
     public ResponseEntity<ApiResponse<HomeroomTeachersDto>> deleteHomeroomTeacher(@PathVariable @NotNull(message = "Homeroom teacher ID is required") Integer homeroomTeacherId) {
         HomeroomTeachersDto result = schoolService.deleteHomeroomTeacher(homeroomTeacherId);
@@ -444,7 +438,7 @@ public class SchoolController {
         summary = "Get users",
         description = "Retrieve and search users"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<FindResponse<UsersDto>>> findUsers(@ModelAttribute @Valid UsersFindForm form) {
         FindResponse<UsersDto> result = schoolService.findUsers(form);
@@ -458,7 +452,7 @@ public class SchoolController {
         summary = "Get user by ID",
         description = "Retrieve user details by user ID"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/{userId}")
     public ResponseEntity<ApiResponse<UsersDto>> readUser(@PathVariable @NotNull(message = "User ID is required") Integer userId) {
         UsersDto result = schoolService.readUser(userId);
@@ -472,7 +466,7 @@ public class SchoolController {
         summary = "Create user",
         description = "Create a new user with profile picture"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(
         value = "/users", 
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
@@ -489,7 +483,7 @@ public class SchoolController {
         summary = "Update user",
         description = "Update user details by user ID"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(
         value = "/users/{userId}",
         consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
@@ -509,7 +503,7 @@ public class SchoolController {
         summary = "Update user password",
         description = "Update user password by user ID"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/users/{userId}/password")
     public ResponseEntity<ApiResponse<UsersDto>> updateUserPassword(
         @PathVariable @NotNull(message = "User ID is required") Integer userId,
@@ -526,7 +520,7 @@ public class SchoolController {
         summary = "Delete user",
         description = "Delete a user by user ID"
     )
-    @PreAuthorize("hasRole(UserRole.ADMIN)")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<ApiResponse<UsersDto>> deleteUser(@PathVariable @NotNull(message = "User ID is required") Integer userId) {
         UsersDto result = schoolService.deleteUser(userId);
