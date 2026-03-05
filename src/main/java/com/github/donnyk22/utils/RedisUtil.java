@@ -7,14 +7,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TokenUtil {
+public class RedisUtil {
 
     private final StringRedisTemplate redis;
 
     @Value("${app.jwt.ttl-minutes}")
     private long TTL_MINUTES;
 
-    public TokenUtil(StringRedisTemplate redis) {
+    public RedisUtil(StringRedisTemplate redis) {
         this.redis = redis;
     }
 

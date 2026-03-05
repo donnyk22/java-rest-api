@@ -75,11 +75,11 @@ public class AuthController {
     )
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Boolean>> logout(HttpServletRequest request) {
-            Boolean result = authService.logout(request);
-            ApiResponse<Boolean> response = new ApiResponse<>(HttpStatus.OK.value(),
-                "Logout successfully",
-                result);
-            return ResponseEntity.ok(response);
+        Boolean result = authService.logout(request);
+        ApiResponse<Boolean> response = new ApiResponse<>(HttpStatus.OK.value(),
+            "Logout successfully",
+            result);
+        return ResponseEntity.ok(response);
     }
 
 }

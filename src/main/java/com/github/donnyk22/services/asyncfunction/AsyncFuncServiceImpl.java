@@ -14,7 +14,7 @@ import com.github.donnyk22.models.dtos.AsyncJobData;
 import com.github.donnyk22.models.dtos.AsyncJobResult;
 import com.github.donnyk22.models.enums.JobStatus;
 import com.github.donnyk22.utils.ConverterUtil;
-import com.github.donnyk22.utils.TokenUtil;
+import com.github.donnyk22.utils.RedisUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class AsyncFuncServiceImpl implements AsyncFuncService {
 
-    private final TokenUtil redisTokenUtil;
+    private final RedisUtil redisUtil;
     private final RabbitTemplate rabbitTemplate;
 
     @Override
@@ -69,7 +69,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
 
     @Override
     public AsyncJobResult getJobStatus(String jobId) {
-        String status = redisTokenUtil.get("AsyncJobStatus", jobId);
+        String status = redisUtil.get("AsyncJobStatus", jobId);
         if(status == null) {
             throw new ResourceNotFoundException("Job not found: " + jobId);
         }
@@ -80,7 +80,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
 
     @Override
     public void setJobStatus(String jobId, String status) {
-        redisTokenUtil.store("AsyncJobStatus", jobId, status, 60, TimeUnit.MINUTES);
+        redisUtil.store("AsyncJobStatus", jobId, status, 60, TimeUnit.MINUTES);
     }
 
     @Override

@@ -14,7 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.github.donnyk22.utils.AuthUtil;
 import com.github.donnyk22.utils.JwtUtil;
-import com.github.donnyk22.utils.TokenUtil;
+import com.github.donnyk22.utils.RedisUtil;
 
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class SupportsServiceImpl implements SupportsService {
 
     private final StringRedisTemplate redisTemplate;
     private final AuthUtil authUtil;
-    private final TokenUtil redisTokenUtil;
+    private final RedisUtil redisUtil;
     private final JwtUtil jwtUtil;
     private final WebApplicationContext webApplicationContext;
 
@@ -46,7 +46,7 @@ public class SupportsServiceImpl implements SupportsService {
 
     @Override
     public Map<String, Object> checkUserLoginCredential() {
-        String token = redisTokenUtil.getTokenByEmail(authUtil.getUserEmail());
+        String token = redisUtil.getTokenByEmail(authUtil.getUserEmail());
         Claims claims = jwtUtil.extractClaims(token);
 
         Map<String, Object> result = new HashMap<>();
@@ -54,7 +54,7 @@ public class SupportsServiceImpl implements SupportsService {
         result.put("username", authUtil.getUserName());
         result.put("email", authUtil.getUserEmail());
         result.put("role", authUtil.getUserRole());
-        result.put("token", redisTokenUtil.getTokenByEmail(authUtil.getUserEmail()));
+        result.put("token", redisUtil.getTokenByEmail(authUtil.getUserEmail()));
         result.put("issuedAt", claims.getIssuedAt().toInstant());
         result.put("expiresAt", claims.getExpiration().toInstant());
         return result;

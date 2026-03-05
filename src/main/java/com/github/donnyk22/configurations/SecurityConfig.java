@@ -27,7 +27,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-            // If in the front end you are using cookies for authentication, you should enable CSRF protection
+            // If in the front-end you are using cookies for authentication, you should enable CSRF protection
             // Disable CRSF if using local storage or session storage for authentication tokens (e.g., JWT in Authorization header)
             // .csrf(csrf -> csrf
             //     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) 

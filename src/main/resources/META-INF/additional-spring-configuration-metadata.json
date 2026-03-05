@@ -17,22 +17,22 @@
     },
     {
       "name": "app.ratelimit.max-req",
-      "type": "java.lang.String",
-      "description": "Max request per minutes"
+      "type": "java.lang.Integer",
+      "description": "Max API hit request"
     },
     {
       "name": "app.ratelimit.max-req-minutes",
-      "type": "java.lang.String",
-      "description": "Reset rate limit per minutes"
+      "type": "java.lang.Integer",
+      "description": "Reset rate limit in minutes"
     },
     {
       "name": "app.async.max-worker",
-      "type": "java.lang.String",
+      "type": "java.lang.Integer",
       "description": "Maximum number of threads the pool is allowed to create."
     },
     {
       "name": "app.async.max-queue",
-      "type": "java.lang.String",
+      "type": "java.lang.Integer",
       "description": "Maximum number of tasks that can be queued. More than this will be rejected (TaskRejectedException/RejectedExecutionException)"
     },
     {
@@ -44,6 +44,26 @@
       "name": "upload.profile-pic.max-size",
       "type": "java.lang.String",
       "description": "Maximum file size for profile pictures"
+    },
+    {
+      "name": "app.login.max-req",
+      "type": "java.lang.Integer",
+      "description": "Maximum login attempts"
+    },
+    {
+      "name": "app.login.max-req-minutes",
+      "type": "java.lang.Integer",
+      "description": "Login attempt cooldown in minutes"
+    },
+    {
+      "name": "app.register.max-req",
+      "type": "java.lang.Integer",
+      "description": "Maximum registration attempts"
+    },
+    {
+      "name": "app.register.max-req-hours",
+      "type": "java.lang.Integer",
+      "description": "Registration attempt cooldown in hours"
     }
   ]
 }
