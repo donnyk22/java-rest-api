@@ -20,13 +20,13 @@ import com.github.donnyk22.services.websocket.WebSocketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Tag(
     name = "WebSocket APIs",
     description = "WebSocket implementation APIs for testing purpose"
 )
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/ws")
 public class WebSocketController {

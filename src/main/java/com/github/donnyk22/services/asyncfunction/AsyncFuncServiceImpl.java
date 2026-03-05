@@ -16,12 +16,12 @@ import com.github.donnyk22.models.enums.JobStatus;
 import com.github.donnyk22.utils.ConverterUtil;
 import com.github.donnyk22.utils.RedisUtil;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j // This generates the 'log' variable automatically
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AsyncFuncServiceImpl implements AsyncFuncService {
 
     private final RedisUtil redisUtil;

@@ -21,13 +21,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Tag(
     name = "Async Function APIs",
     description = "Asynchronous function implementation APIs for testing purpose"
 )
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/async")
 @Validated

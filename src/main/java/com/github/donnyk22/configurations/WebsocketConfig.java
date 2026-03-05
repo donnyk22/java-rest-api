@@ -7,15 +7,14 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final WebSocketAuthInterceptorConfig authInterceptor;
-
-    public WebsocketConfig(WebSocketAuthInterceptorConfig authInterceptor) {
-        this.authInterceptor = authInterceptor;
-    }
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {

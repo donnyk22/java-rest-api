@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
     name = "Supports",
     description = "System and maintenance support APIs"
 )
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/supports")
 public class SupportsController {

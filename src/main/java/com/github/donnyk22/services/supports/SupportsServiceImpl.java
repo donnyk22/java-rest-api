@@ -17,10 +17,10 @@ import com.github.donnyk22.utils.JwtUtil;
 import com.github.donnyk22.utils.RedisUtil;
 
 import io.jsonwebtoken.Claims;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SupportsServiceImpl implements SupportsService {
 
     private final StringRedisTemplate redisTemplate;

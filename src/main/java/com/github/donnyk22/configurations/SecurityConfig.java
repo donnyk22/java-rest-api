@@ -15,11 +15,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import jakarta.servlet.DispatcherType;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthFilterConfig jwtAuthFilter;

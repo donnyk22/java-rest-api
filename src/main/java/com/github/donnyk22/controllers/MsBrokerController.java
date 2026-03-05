@@ -15,13 +15,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Tag(
     name = "Message Broker APIs",
     description = "Message Broker implementation APIs for testing purpose"
 )
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/ms-broker")
 public class MsBrokerController {

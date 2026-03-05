@@ -47,13 +47,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Tag(
     name = "School APIs",
     description = "School management APIs"
 )
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/school")
 @Validated //for validating @RequestParam, @PathVariable, @RequestHeader

@@ -6,17 +6,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class RedisUtil {
 
     private final StringRedisTemplate redis;
 
     @Value("${app.jwt.ttl-minutes}")
     private long TTL_MINUTES;
-
-    public RedisUtil(StringRedisTemplate redis) {
-        this.redis = redis;
-    }
 
     //uses same token will update the data
     public void store(String bucket, String token, String value, Integer ttl, TimeUnit unit) {

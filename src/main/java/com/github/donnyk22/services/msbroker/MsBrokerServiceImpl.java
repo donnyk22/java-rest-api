@@ -10,17 +10,15 @@ import com.github.donnyk22.configurations.RabbitMQConfig;
 import com.github.donnyk22.models.forms.MsBrokerForm;
 import com.github.donnyk22.utils.ConverterUtil;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j // This generates the 'log' variable automatically
 @Service
+@RequiredArgsConstructor
 public class MsBrokerServiceImpl implements MsBrokerService {
 
     private final RabbitTemplate rabbitTemplate;
-
-    public MsBrokerServiceImpl(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-    }
 
     @Override
     public MsBrokerForm sendToTopicObject(MsBrokerForm object) {

@@ -23,11 +23,11 @@ import com.github.donnyk22.utils.RedisUtil;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService{
 
     private final UsersRepository usersRepository;

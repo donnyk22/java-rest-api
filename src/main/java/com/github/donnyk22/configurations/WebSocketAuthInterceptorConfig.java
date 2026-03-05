@@ -11,15 +11,13 @@ import org.springframework.stereotype.Component;
 import com.github.donnyk22.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class WebSocketAuthInterceptorConfig implements ChannelInterceptor {
 
     private final JwtUtil jwtUtil;
-
-    public WebSocketAuthInterceptorConfig(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
