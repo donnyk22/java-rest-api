@@ -11,7 +11,7 @@ import com.github.donnyk22.exceptions.InternalServerErrorException;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j // This generates the 'log' variable automatically
+@Slf4j
 public class MediaUtil {
 
     public static String ToBase64(MultipartFile photo) throws Exception{

@@ -37,7 +37,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
         String ip = request.getRemoteAddr();
         Bucket bucket = buckets.computeIfAbsent(ip, this::createBucket);
 
-        if (bucket.tryConsume(1)) {
+        if (bucket.tryConsume(1)) { //consume 1 means one request count as 1. use 5 or 10 if the request is heavy (need to apply to specific endpoint with heavy request)
             filterChain.doFilter(request, response);
         } else {
             sendTooManyReqResponse(response, "Too Many Requests");

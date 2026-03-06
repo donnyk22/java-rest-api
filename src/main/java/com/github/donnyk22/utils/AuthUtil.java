@@ -20,6 +20,7 @@ public class AuthUtil {
         return auth;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> getDetails() {
         Object details = getAuth().getDetails();
         if (details instanceof Map) {

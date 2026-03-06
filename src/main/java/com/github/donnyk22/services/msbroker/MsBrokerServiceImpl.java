@@ -13,7 +13,7 @@ import com.github.donnyk22.utils.ConverterUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j // This generates the 'log' variable automatically
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MsBrokerServiceImpl implements MsBrokerService {

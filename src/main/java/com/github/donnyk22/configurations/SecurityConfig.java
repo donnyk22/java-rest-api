@@ -83,7 +83,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         // Allow specific origins only (e.g., your frontend app domains)
         config.setAllowedOrigins(List.of(
-            "https://donnyk22.com",
+            "https://donnyk22.carrd.co", // Replace with your frontend app domain
             "http://localhost:8080"
         ));
         // Allow specific HTTP methods

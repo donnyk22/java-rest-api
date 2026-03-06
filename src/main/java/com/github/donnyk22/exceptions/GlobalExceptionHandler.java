@@ -16,7 +16,7 @@ import com.github.donnyk22.models.dtos.ApiResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j // This generates the 'log' variable automatically
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
