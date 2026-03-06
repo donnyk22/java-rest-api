@@ -1,5 +1,6 @@
 package com.github.donnyk22.utils;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,50 +18,54 @@ public class RedisUtil {
     @Value("${app.jwt.ttl-minutes}")
     private long TTL_MINUTES;
 
+    @Value("${app.session.max}")
+    private long MAX_SESSION_NUMBER;
+
     //uses same token will update the data
-    public void store(String bucket, String token, String value, Integer ttl, TimeUnit unit) {
-        redis.opsForValue().set(bucket + ":" + token, value, ttl, unit);
+    public void store(String bucket, String identifier, String value, Integer ttl, TimeUnit unit) {
+        redis.opsForValue().set(bucket + ":" + identifier, value, ttl, unit);
     }
 
-    public String get(String bucket, String token) {
-        return redis.opsForValue().get(bucket + ":" + token);
+    public String get(String bucket, String identifier) {
+        return redis.opsForValue().get(bucket + ":" + identifier);
     }
 
-    public void updateKeepTTL(String bucket, String token, String newValue) {
-        Long ttl = redis.getExpire(bucket + ":" + token, TimeUnit.SECONDS);
+    public void delete(String bucket, String identifier) {
+        redis.delete(bucket + ":" + identifier);
+    }
+
+    public void updateKeepTTL(String bucket, String identifier, String newValue) {
+        Long ttl = redis.getExpire(bucket + ":" + identifier, TimeUnit.SECONDS);
 
         if (ttl != null && ttl > 0) {
-            redis.opsForValue().set(bucket + ":" + token, newValue, ttl, TimeUnit.SECONDS);
+            redis.opsForValue().set(bucket + ":" + identifier, newValue, ttl, TimeUnit.SECONDS);
         }
     }
 
-    public void delete(String bucket, String token) {
-        redis.delete(bucket + ":" + token);
-    }
-
-    public void storeToken(String token, String email) {
-        redis.opsForValue().set("token:" + token, email, TTL_MINUTES, TimeUnit.MINUTES);
-        redis.opsForValue().set("user:" + email, token, TTL_MINUTES, TimeUnit.MINUTES);
-    }
-
-    public Boolean isTokenValid(String token) {
-        return redis.opsForValue().get("token:" + token) != null;
-    }
-
-    public String getTokenByEmail(String email) {
-        return redis.opsForValue().get("user:" + email);
-    }
-
-    public void deleteToken(String token, String email) {
-        redis.delete("token:" + token);
-        redis.delete("user:" + email);
-    }
-
-    public void deleteTokenByEmail(String email) {
-        String token = getTokenByEmail(email);
-        if (token != null) {
-            deleteToken(token, email);
+    public void storeToken(String token, String email, String sessionId) {
+        String pattern = "session:" + email + ":*";
+        Set<String> keys = redis.keys(pattern);
+        
+        if (keys != null && keys.size() >= MAX_SESSION_NUMBER) {
+            // Delete the oldest session
+            String oldestKey = keys.iterator().next();
+            redis.delete(oldestKey);
         }
+
+        String sessionKey = "session:" + email + ":" + sessionId;
+        redis.opsForValue().set(sessionKey, token, TTL_MINUTES, TimeUnit.MINUTES);
+    }
+
+    public String getToken(String email, String sessionId) {
+        return redis.opsForValue().get("session:" + email + ":" + sessionId);
+    }
+
+    public void deleteToken(String email, String sessionId) {
+        redis.delete("session:" + email + ":" + sessionId);
+    }
+
+    public Boolean isTokenValid(String email, String sessionId) {
+        return getToken(email, sessionId) != null;
     }
     
 }

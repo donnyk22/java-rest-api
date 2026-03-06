@@ -20,12 +20,13 @@ public class JwtUtil {
     @Value("${app.jwt.ttl-minutes}")
     private Integer EXPIRATION;
 
-    public String generateToken(Integer id, String username, String email, String role) {
+    public String generateToken(Integer id, String username, String email, String role, String sessionId) {
         return Jwts.builder()
             .setSubject(id.toString())
             .claim("username", username)
             .claim("email", email)
             .claim("role", role)
+            .claim("sessionId", sessionId)
             .setIssuedAt(new Date())
             .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(EXPIRATION))))
             .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))

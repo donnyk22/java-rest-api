@@ -43,16 +43,17 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter{
                 token = header;
             }
 
-            if(!redisUtil.isTokenValid(token)){
-                sendUnauthorizedResponse(res, "Token expired or invalid");
-                return;
-            }
-
             Claims claims = jwtUtil.extractClaims(token);
             Integer id = Integer.valueOf(claims.getSubject());
             String name = claims.get("username", String.class);
             String email = claims.get("email", String.class);
             String role = claims.get("role", String.class);
+            String sessionId = claims.get("sessionId", String.class);
+
+            if(!redisUtil.isTokenValid(email, sessionId)){
+                sendUnauthorizedResponse(res, "Token expired or invalid");
+                return;
+            }
 
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())); // To handle @PreAuthorize("hasRole('ADMIN')") or @PreAuthorize("hasAnyRole('ADMIN')") in controller, we need to prefix role with "ROLE_"
 
@@ -61,7 +62,8 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter{
             auth.setDetails(Map.of(
                 "username", name,
                 "email", email,
-                "role", role
+                "role", role,
+                "sessionId", sessionId
             ));
 
             SecurityContextHolder.getContext().setAuthentication(auth);

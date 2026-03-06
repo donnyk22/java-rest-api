@@ -1,5 +1,6 @@
 package com.github.donnyk22.services.auth;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -114,26 +115,15 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public Boolean logout(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
-        if(header != null) {
-            String token;
-            if(header.startsWith("Bearer ")){
-                token = header.substring(7);
-            }else{
-                token = header;
-            }
-            if(redisUtil.isTokenValid(token)){
-                redisUtil.deleteToken(token, authUtil.getUserEmail());
-            }
-        }
+        redisUtil.deleteToken(authUtil.getUserEmail(), authUtil.getSessionId());
         return true;
     }
 
     private UsersDto refreshToken(Users user) {
-        redisUtil.deleteTokenByEmail(user.getEmail());
-
-        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getEmail(), user.getRole());
-        redisUtil.storeToken(token, user.getEmail());
+        logout(null);
+        String sessionId = UUID.randomUUID().toString();
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), sessionId);
+        redisUtil.storeToken(token, user.getEmail(), sessionId);
         
         Claims claims = jwtUtil.extractClaims(token);
         return UsersMapper.toBaseDto(user).setToken(token)

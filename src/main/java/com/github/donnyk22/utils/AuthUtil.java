@@ -1,5 +1,6 @@
 package com.github.donnyk22.utils;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
@@ -19,9 +20,12 @@ public class AuthUtil {
         return auth;
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> getDetails(){
-        return (Map<String, Object>) getAuth().getDetails();
+    private Map<String, Object> getDetails() {
+        Object details = getAuth().getDetails();
+        if (details instanceof Map) {
+            return (Map<String, Object>) details;
+        }
+        return Collections.emptyMap();
     }
 
     public Integer getUserId(){
@@ -38,6 +42,10 @@ public class AuthUtil {
 
     public String getUserRole(){
         return (String) getDetails().get("role");
+    }
+
+    public String getSessionId(){
+        return (String) getDetails().get("sessionId");
     }
 
 }

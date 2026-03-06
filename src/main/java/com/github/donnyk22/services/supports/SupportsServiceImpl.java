@@ -46,7 +46,7 @@ public class SupportsServiceImpl implements SupportsService {
 
     @Override
     public Map<String, Object> checkUserLoginCredential() {
-        String token = redisUtil.getTokenByEmail(authUtil.getUserEmail());
+        String token = redisUtil.getToken(authUtil.getUserEmail(), authUtil.getSessionId());
         Claims claims = jwtUtil.extractClaims(token);
 
         Map<String, Object> result = new HashMap<>();
@@ -54,7 +54,7 @@ public class SupportsServiceImpl implements SupportsService {
         result.put("username", authUtil.getUserName());
         result.put("email", authUtil.getUserEmail());
         result.put("role", authUtil.getUserRole());
-        result.put("token", redisUtil.getTokenByEmail(authUtil.getUserEmail()));
+        result.put("token", token);
         result.put("issuedAt", claims.getIssuedAt().toInstant());
         result.put("expiresAt", claims.getExpiration().toInstant());
         return result;
