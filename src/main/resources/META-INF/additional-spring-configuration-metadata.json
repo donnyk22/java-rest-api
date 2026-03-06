@@ -64,6 +64,16 @@
       "name": "app.register.max-req-hours",
       "type": "java.lang.Integer",
       "description": "Registration attempt cooldown in hours"
+    },
+    {
+      "name": "app.session.max",
+      "type": "java.lang.Integer",
+      "description": "Max number of active sessions allowed per user"
+    },
+    {
+      "name": "app.email.sender",
+      "type": "java.lang.String",
+      "description": "Email sender address to add in the email details"
     }
   ]
 }

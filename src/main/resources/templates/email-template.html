@@ -1,0 +1,45 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      .container {
+        font-family: sans-serif;
+        padding: 20px;
+        border: 1px solid #eee;
+      }
+      .logo-image {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        border-radius: 8px;
+      }
+      .user-status {
+        font-size: 12px;
+        color: #888;
+      }
+      .footer {
+        font-size: 12px;
+        color: #888;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img th:src="|cid:logoImage|" alt="Welcome Logo" class="logo-image" />
+      <p class="user-status" th:if="${isRegisteredUser}">
+        You're a registered user! This is a example of "if" usage on Thymeleaf
+      </p>
+      <h1 th:text="'Hello, ' + ${userName} + '!'">Hello!</h1>
+      <p th:utext="${messageBody}">This is the message body</p>
+      <p>Here the example of loop on Thymeleaf:</p>
+
+      <ul>
+        <li th:each="item : ${items}" th:text="${item}">Item</li>
+      </ul>
+
+      <div class="footer">Sent via Spring Boot & Mailtrap</div>
+    </div>
+  </body>
+</html>
