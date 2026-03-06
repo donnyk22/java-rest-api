@@ -6,15 +6,15 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 
 - JWT
 - File Upload
-- Multiple login session
+- Multiple login sessions
 - ACL
 - Swagger API Documentation
-- Brute force login and sign up protection
+- Brute force login and sign-up protection
 - Email service
 - API Caching
 - Rate Limiting
 - Message Broker (RabbitMQ)
-- Async (simple async function, RabbitMQ implementation, max worker, max queue)
+- Async (simple async function, RabbitMQ implementation, max worker and max queue config)
 - Web Socket
 - CORS Configuration
 - XSS (Cross-Site Scripting) Protection
@@ -26,8 +26,8 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 
 - Unit Test
 - Audit Trail
-- Custom Annotation
-- 3rd Party service (Telegram bot, Payment gateway, Mapbox, etc)
+- Custom annotation implementation
+- 3rd Party service (Telegram bot, Payment gateway, AI Chatbot, Mapbox, etc)
 - Excel & Word export
 - ZIP export
 - etc
