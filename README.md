@@ -2,7 +2,7 @@
 
 Minimal and best practice of Rest API Java Spring with implementing some industry standard of back-end utility
 
-Features:
+<b>Features:</b>
 
 - JWT
 - File Upload
@@ -22,7 +22,7 @@ Features:
 - MIME-Sniffing Protection
 - Referrer Policy
 
-Coming Soon:
+<b>Coming Soon:</b>
 
 - Unit Test
 - Audit Trail
@@ -32,9 +32,9 @@ Coming Soon:
 - ZIP export
 - etc
 
-===============
+=============================================
 
-Prerequisites:
+<b>Prerequisites:</b>
 
 - JDK 25
 - Maven
@@ -42,7 +42,7 @@ Prerequisites:
 - Redis
 - RabbitMQ
 
-Setup:
+<b>Setup:</b>
 
 - Clone repo
 - Import DB from this folder project (school.sql)
@@ -51,14 +51,14 @@ Setup:
 - run "mvn spring-boot:run"
 - Open http://localhost:8080/swagger-ui/index.html to access Swagger
 - Register/Login on Authentication end-point
-- Available credentials:
-  [Admin] admin / admin123456
-  [Teacher] budi.teacher / budi123456
-  [Student] user@gmail.com / user123456
+- Available credentials:<br/>
+  <b>[Admin]</b> admin / admin123456<br/>
+  <b>[Teacher]</b> budi.teacher / budi123456<br/>
+  <b>[Student]</b> arya@student.com / arya123456
 - Input token in the Swagger's Authorize section
 - Start to use the app
 
-instructions:
+<b>Instructions:</b>
 
 - To use websocket, open the HTML page in the "web" folder (can be open directly to the browser)
 - All configurations are available in th application-dev.properties
