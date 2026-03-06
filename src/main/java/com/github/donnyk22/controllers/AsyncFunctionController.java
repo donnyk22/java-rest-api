@@ -39,7 +39,7 @@ public class AsyncFunctionController {
         summary = "Send dummy email",
         description = "Send dummy email and simulate the async process in the background."
     )
-    @PostMapping("/send-email")
+    @PostMapping("/send-dummy-email")
     public CompletableFuture<ResponseEntity<ApiResponse<String>>> sendDummyEmail(
             @RequestParam 
             @NotBlank(message = "Email is required") 
@@ -67,7 +67,7 @@ public class AsyncFunctionController {
         summary = "Send dummy email with job ID",
         description = "Send dummy email and simulate the async process in the background with job ID and status"
     )
-    @PostMapping("/send-email-job-id")
+    @PostMapping("/send-dummy-email-job-id")
     public ResponseEntity<ApiResponse<String>> sendDummyEmailWithJobId(
             @RequestParam 
             @NotBlank(message = "Email is required") 
@@ -86,7 +86,7 @@ public class AsyncFunctionController {
         summary = "Send dummy email with job ID and Message Broker",
         description = "Send dummy email and simulate the async process in the background with job ID and handled by Message Broker"
     )
-    @PostMapping("/send-email-job-id-rabbitmq")
+    @PostMapping("/send-dummy-email-job-id-rabbitmq")
     public ResponseEntity<ApiResponse<String>> sendEmailDummyWithJobIdAndMsBroker(
             @RequestParam 
             @NotBlank(message = "Email is required") 
@@ -105,7 +105,7 @@ public class AsyncFunctionController {
         summary = "Get email status by job ID",
         description = "Get email queue status by job ID"
     )
-    @GetMapping("/status-email-job-id")
+    @GetMapping("/status-dummy-email-job-id")
     public ResponseEntity<ApiResponse<AsyncJobResult>> getJobStatus(
             @RequestParam 
             @NotBlank(message = "Job ID is required") String jobId) {

@@ -32,7 +32,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
     public CompletableFuture<String> sendEmailDummy(String email) {
         try {
             log.info("Sending email to: " + email);
-            Thread.sleep(5000);
+            Thread.sleep(5000); //simulate the background process
             log.info("Email sent to: " + email);
             return CompletableFuture.completedFuture("Email sent successfully");
         } catch (InterruptedException e) {
@@ -51,7 +51,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
         try {
             setJobStatus(jobId, JobStatus.RUNNING.name());
             log.info("Sending email to: " + email);
-            Thread.sleep(20000);
+            Thread.sleep(20000); //simulate the background process
             log.info("Email sent to: " + email);
             setJobStatus(jobId, JobStatus.SUCCESS.name());
             return CompletableFuture.completedFuture(null);
@@ -105,7 +105,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
         try {
             setJobStatus(data.getJobId(), JobStatus.RUNNING.name());
             log.info("Worker " + Thread.currentThread().getName() + " processing job (sending email): " + data.getJobId());
-            Thread.sleep(20000);
+            Thread.sleep(20000); //simulate the background process
             log.info("Email sent to: " + data.getEmail());
             setJobStatus(data.getJobId(), JobStatus.SUCCESS.name());
         } catch (InterruptedException e) {
