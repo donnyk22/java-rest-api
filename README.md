@@ -11,6 +11,8 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 - Swagger API Documentation
 - Brute force login and sign-up protection
 - Email service
+- Audit Trail
+- Request Tracing
 - API Caching
 - Rate Limiting
 - Message Broker (RabbitMQ)
@@ -25,7 +27,6 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 <b>Coming Soon:</b>
 
 - Unit Test
-- Audit Trail
 - Custom annotation implementation
 - 3rd Party service (Telegram bot, Payment gateway, AI Chatbot, Mapbox, etc)
 - Excel & Word export
@@ -46,11 +47,11 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 
 - Clone repo
 - Import DB from this folder project (school.sql)
-- Change MySQL and Redis credentials in the (src > main > resources > application-dev.properties) if needed
+- Change credentials if needed (src > main > resources > application-dev.properties)
 - run "mvn clean install"
 - run "mvn spring-boot:run"
 - Open http://localhost:8080/swagger-ui/index.html to access Swagger
-- Register/Login on Authentication end-point
+- Register/Login on the Authentication endpoint
 - Available credentials:<br/>
   <b>[Admin]</b> admin / admin123456<br/>
   <b>[Teacher]</b> budi.teacher / budi123456<br/>
@@ -60,5 +61,8 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 
 <b>Instructions:</b>
 
-- To use websocket, open the HTML page in the "web" folder (can be open directly to the browser)
-- All configurations are available in th application-dev.properties
+- To use WebSockets, open the HTML page in the "web" folder (can be opened directly in the browser)
+- The audit trail in this project has two features. JPA automatically handles the first one with the @Audited endpoint, and the other one is manual by inserting into the database table.
+  The @Audited is creating history from the entity's transaction into a new table. Pros: automatic and minimal configuration, cons: difficult to customize and database bloat.
+  The other one is a highly customizable audit trail log with manual insert on every needed service. The cons is hard to maintain.
+- All configurations are available in the application-dev.properties
