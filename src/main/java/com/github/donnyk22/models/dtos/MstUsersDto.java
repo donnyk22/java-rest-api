@@ -1,5 +1,6 @@
 package com.github.donnyk22.models.dtos;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 import lombok.Getter;
@@ -9,17 +10,19 @@ import lombok.experimental.Accessors;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class StudentsDto {
+public class MstUsersDto {
     private Integer id;
-    private Integer userId;
-    private Integer classId;
-    private ClassesDto classroom;
-    private String fullName;
-    private Character gender;
-    private String address;
-    private String phone;
+    private String username;
+    private String email;
     private String photo;
+    private String name;
+    private String role;
+    private MstStudentsDto student;    
+    private MstTeachersDto teacher;
     private Integer version;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private String token;
+    private Instant issuedAt;
+    private Instant expiresAt;
 }

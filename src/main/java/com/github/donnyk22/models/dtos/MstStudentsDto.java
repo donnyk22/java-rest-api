@@ -1,7 +1,6 @@
 package com.github.donnyk22.models.dtos;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,14 +9,17 @@ import lombok.experimental.Accessors;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class ClassesDto {
+public class MstStudentsDto {
     private Integer id;
-    private String className;
-    private Integer gradeLevel;
-    private String academicYear;
+    private Integer userId;
+    private Integer classId;
+    private MstClassesDto classroom;
+    private String fullName;
+    private Character gender;
+    private String address;
+    private String phone;
+    private String photo;
     private Integer version;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
-    private List<HomeroomTeachersDto> homeroomTeachers;
-    private List<StudentsDto> students;
 }

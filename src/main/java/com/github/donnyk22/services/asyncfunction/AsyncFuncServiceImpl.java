@@ -26,6 +26,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
 
     private final RedisUtil redisUtil;
     private final RabbitTemplate rabbitTemplate;
+    private final ConverterUtil converterUtil;
 
     @Override
     @Async
@@ -92,7 +93,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
         rabbitTemplate.convertAndSend(
             RabbitMQConfig.JOB_EXCHANGE,
             RabbitMQConfig.JOB_ROUTING_KEY,
-            ConverterUtil.objectToBytes(object)
+            converterUtil.objectToBytes(object)
         );
     }
 
@@ -101,7 +102,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
     @Override
     @RabbitListener(queues = RabbitMQConfig.JOB_QUEUE, concurrency = "${app.async.max-worker}")
     public void processEmailDummyWithJobIdAndMsBroker(byte[] object) {
-        AsyncJobData data = ConverterUtil.bytesToObject(object, AsyncJobData.class);
+        AsyncJobData data = converterUtil.bytesToObject(object, AsyncJobData.class);
         try {
             setJobStatus(data.getJobId(), JobStatus.RUNNING.name());
             log.info("Worker " + Thread.currentThread().getName() + " processing job (sending email): " + data.getJobId());

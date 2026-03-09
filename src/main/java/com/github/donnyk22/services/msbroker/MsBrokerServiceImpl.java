@@ -19,13 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 public class MsBrokerServiceImpl implements MsBrokerService {
 
     private final RabbitTemplate rabbitTemplate;
+    private final ConverterUtil converterUtil;
 
     @Override
     public MsBrokerForm sendToTopicObject(MsBrokerForm object) {
         rabbitTemplate.convertAndSend(
             RabbitMQConfig.MESSAGE_EXCHANGE,
             RabbitMQConfig.MESSAGE_ROUTING_KEY_OBJECT,
-            ConverterUtil.objectToBytes(object)
+            converterUtil.objectToBytes(object)
         );
         return object;
     }
@@ -44,7 +45,7 @@ public class MsBrokerServiceImpl implements MsBrokerService {
 
     @RabbitListener(queues = RabbitMQConfig.MESSAGE_QUEUE_OBJECT)
     private void object(byte[] object) {
-        log.info("Received message object topic: {}", ConverterUtil.bytesToString(object));
+        log.info("Received message object topic: {}", converterUtil.bytesToString(object));
     }
 
     @RabbitListener(queues = RabbitMQConfig.MESSAGE_QUEUE_TEXT)
@@ -57,7 +58,7 @@ public class MsBrokerServiceImpl implements MsBrokerService {
         byte[] body = message.getBody();
         MessageProperties props = message.getMessageProperties();
 
-        String str = ConverterUtil.bytesToString(body);
+        String str = converterUtil.bytesToString(body);
 
         if ("application/octet-stream".equals(props.getContentType())) {
             log.info("Received message object via all topic listener: {}", str);

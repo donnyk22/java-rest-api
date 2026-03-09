@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.github.donnyk22.models.entities.Users;
+import com.github.donnyk22.models.entities.MstUsers;
 import com.github.donnyk22.models.forms.EmailForm;
-import com.github.donnyk22.repositories.UsersRepository;
+import com.github.donnyk22.repositories.MstUsersRepository;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
-    private final UsersRepository usersRepository;
+    private final MstUsersRepository usersRepository;
 
     @Value("${app.email.sender}")
     private String SENDER;
@@ -63,7 +63,7 @@ public class EmailServiceImpl implements EmailService {
 
                 String userName = to;
                 Boolean isRegisteredUser = false;
-                Users user = usersRepository.findByEmail(to);
+                MstUsers user = usersRepository.findByEmail(to);
                 if (user != null) {
                     if (user.getStudentData() != null) {
                         userName = user.getStudentData().getFullName();

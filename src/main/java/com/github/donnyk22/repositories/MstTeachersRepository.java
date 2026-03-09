@@ -4,9 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import com.github.donnyk22.models.entities.Classes;
+import com.github.donnyk22.models.entities.MstTeachers;
 
 @Repository
-public interface ClassesRepository extends JpaRepository<Classes, Integer>, JpaSpecificationExecutor<Classes>{
+public interface MstTeachersRepository extends JpaRepository<MstTeachers, Integer>, JpaSpecificationExecutor<MstTeachers> {
     
 }

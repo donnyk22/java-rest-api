@@ -2,14 +2,22 @@ package com.github.donnyk22.utils;
 
 import java.nio.charset.StandardCharsets;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
 public class ConverterUtil {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
-    public static <T> byte[] objectToBytes(T object) {
+    public <T> byte[] objectToBytes(T object) {
         try {
             return objectMapper.writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
@@ -17,7 +25,7 @@ public class ConverterUtil {
         }
     }
 
-    public static <T> T bytesToObject(byte[] bytes, Class<T> clazz) {
+    public <T> T bytesToObject(byte[] bytes, Class<T> clazz) {
         try {
             return objectMapper.readValue(bytes, clazz);
         } catch (Exception e) {
@@ -25,7 +33,17 @@ public class ConverterUtil {
         }
     }
 
-    public static String bytesToString(byte[] bytes) {
+    public String bytesToString(byte[] bytes) {
         return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    public <T> String genericToJson(T properties) {
+        try {
+            if (properties == null) return "{}";
+            return objectMapper.writeValueAsString(properties);
+        } catch (Exception e) {
+            log.warn("Failed to convert object to JSON: " + e.getMessage());
+            return "{}";
+        }
     }
 }

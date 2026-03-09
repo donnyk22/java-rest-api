@@ -11,12 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.donnyk22.exceptions.BadRequestException;
 import com.github.donnyk22.exceptions.ConflictException;
 import com.github.donnyk22.exceptions.ResourceNotFoundException;
-import com.github.donnyk22.models.dtos.UsersDto;
-import com.github.donnyk22.models.entities.Users;
+import com.github.donnyk22.models.dtos.MstUsersDto;
+import com.github.donnyk22.models.entities.MstUsers;
 import com.github.donnyk22.models.forms.users.UserLoginForm;
 import com.github.donnyk22.models.forms.users.UserRegisterForm;
-import com.github.donnyk22.models.mappers.UsersMapper;
-import com.github.donnyk22.repositories.UsersRepository;
+import com.github.donnyk22.models.mappers.MstUsersMapper;
+import com.github.donnyk22.repositories.MstUsersRepository;
+import com.github.donnyk22.services.audittrails.AuditTrailsService;
 import com.github.donnyk22.utils.AuthUtil;
 import com.github.donnyk22.utils.Util;
 import com.github.donnyk22.utils.JwtUtil;
@@ -31,7 +32,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService{
 
-    private final UsersRepository usersRepository;
+    private final MstUsersRepository usersRepository;
+    private final AuditTrailsService auditTrailsService;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final AuthUtil authUtil;
@@ -49,7 +51,7 @@ public class AuthServiceImpl implements AuthService{
     private Integer REGISTER_MAX_REQ_DURATION;
 
     @Override
-    public UsersDto register(UserRegisterForm form, HttpServletRequest httpRequest) {
+    public MstUsersDto register(UserRegisterForm form, HttpServletRequest httpRequest) {
         String userIp = Util.getClientIp(httpRequest);
 
         if(usersRepository.findByEmail(form.getEmail()) != null){
@@ -62,25 +64,27 @@ public class AuthServiceImpl implements AuthService{
         if(!form.getPassword().equals(form.getRePassword())){
             throw new BadRequestException("Retype password doesn't match. Please try again!");
         }
-        Users user = UsersMapper.toEntity(form, new BCryptPasswordEncoder().encode(form.getPassword()));
+        MstUsers user = MstUsersMapper.toEntity(form, new BCryptPasswordEncoder().encode(form.getPassword()));
         if(user == null){
             throw new BadRequestException("Failed to register a new user. Please try again");
         }
 
         bruteForceProtection("register", userIp);
 
-        usersRepository.save(user);
-        return UsersMapper.toBaseDto(user);
+        user = usersRepository.saveAndFlush(user);
+        
+        auditTrailsService.create(user.getId(), "User registered");
+        return MstUsersMapper.toBaseDto(user);
     }
 
     @Override
-    public UsersDto login(UserLoginForm form, HttpServletRequest httpRequest) {
+    public MstUsersDto login(UserLoginForm form, HttpServletRequest httpRequest) {
         String userIp = Util.getClientIp(httpRequest);
 
         checkAttempts("login", userIp);
         checkAttempts("login", form.getUsername());
 
-        Users user = usersRepository.findByEmail(form.getUsername());
+        MstUsers user = usersRepository.findByEmail(form.getUsername());
         if(user == null){
             user = usersRepository.findByUsername(form.getUsername());
             if(user == null){
@@ -92,20 +96,22 @@ public class AuthServiceImpl implements AuthService{
         if(!passwordMatch){
             bruteForceProtection("login", userIp);
             bruteForceProtection("login", form.getUsername());
+            auditTrailsService.create(user.getId(), "Login failed");
             throw new BadRequestException("Invalid email or password");
         }
 
         resetAttempts("login", userIp);
         resetAttempts("login", form.getUsername());
         
+        auditTrailsService.create(user.getId(), "Login successfully");
         return refreshToken(user);
     }
 
     @Override
-    public UsersDto refresh() {
+    public MstUsersDto refresh() {
         String email = authUtil.getUserEmail();
 
-        Users user = usersRepository.findByEmail(email);
+        MstUsers user = usersRepository.findByEmail(email);
         if(user == null){
             throw new ResourceNotFoundException("User not found");
         }
@@ -115,18 +121,24 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public Boolean logout(HttpServletRequest request) {
+        Integer userId = authUtil.getUserId();
+        if (userId == null) {
+            return false; //Already logged out or session invalid
+        }
+        
+        auditTrailsService.create(userId, "Logout successfully");
         redisUtil.deleteToken(authUtil.getUserEmail(), authUtil.getSessionId());
         return true;
     }
 
-    private UsersDto refreshToken(Users user) {
-        logout(null);
+    private MstUsersDto refreshToken(MstUsers user) {
+        redisUtil.deleteToken(authUtil.getUserEmail(), authUtil.getSessionId());
         String sessionId = UUID.randomUUID().toString();
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), sessionId);
         redisUtil.storeToken(token, user.getEmail(), sessionId);
         
         Claims claims = jwtUtil.extractClaims(token);
-        return UsersMapper.toBaseDto(user).setToken(token)
+        return MstUsersMapper.toBaseDto(user).setToken(token)
             .setIssuedAt(claims.getIssuedAt().toInstant())
             .setExpiresAt(claims.getExpiration().toInstant());
     }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.envers.Audited;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,12 +25,14 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 @Entity
-@Table(name = "classes")
+//creating a new table in DB for audit, also inserting the transaction automatically
+@Audited 
+@Table(name = "mst_classes")
 //override delete behaviour by JPA to soft delete
-@SQLDelete(sql = "UPDATE classes SET deleted = true WHERE id = ? AND version = ?")
+@SQLDelete(sql = "UPDATE mst_classes SET deleted = true WHERE id = ? AND version = ?")
 //automatically add "where deleted = false"
 @SQLRestriction("deleted = false")
-public class Classes extends BaseTimestampCreateUpdate {
+public class MstClasses extends BaseTimestampCreateUpdate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -47,9 +50,9 @@ public class Classes extends BaseTimestampCreateUpdate {
     // ==== Relation ====
 
     @OneToMany(mappedBy = "classData", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HomeroomTeachers> homeroomTeachers;
+    private List<MstHomeroomTeachers> homeroomTeachers;
 
     @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     @OrderBy("id ASC")
-    private List<Students> students;
+    private List<MstStudents> students;
 }

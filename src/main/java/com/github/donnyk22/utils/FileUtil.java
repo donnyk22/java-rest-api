@@ -19,7 +19,7 @@ import com.github.donnyk22.exceptions.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component //using spring bean instead of static, because it need to call value from properties
+@Component
 public class FileUtil {
 
     @Value("${upload.profile-pic.path}")

@@ -1,13 +1,13 @@
 package com.github.donnyk22.models.mappers;
 
-import com.github.donnyk22.models.dtos.ClassesDto;
-import com.github.donnyk22.models.entities.Classes;
+import com.github.donnyk22.models.dtos.MstClassesDto;
+import com.github.donnyk22.models.entities.MstClasses;
 import com.github.donnyk22.models.forms.classes.ClassesCreateForm;
 import com.github.donnyk22.models.forms.classes.ClassesUpdateForm;
 
-public class ClassesMapper {
-    public static ClassesDto toBaseDto(Classes classes) {
-        ClassesDto baseDto = new ClassesDto()
+public class MstClassesMapper {
+    public static MstClassesDto toBaseDto(MstClasses classes) {
+        MstClassesDto baseDto = new MstClassesDto()
             .setId(classes.getId())
             .setClassName(classes.getClassName())
             .setGradeLevel(classes.getGradeLevel())
@@ -18,33 +18,33 @@ public class ClassesMapper {
         return baseDto;
     }
 
-    public static ClassesDto toBaseDtoWithHomeroomTeachers(Classes classes) {
-        ClassesDto toBaseDtoWithHomeroomTeacher = toBaseDto(classes)
+    public static MstClassesDto toBaseDtoWithHomeroomTeachers(MstClasses classes) {
+        MstClassesDto toBaseDtoWithHomeroomTeacher = toBaseDto(classes)
             .setHomeroomTeachers(classes.getHomeroomTeachers()
                 .stream()
-                .map(HomeroomTeachersMapper::toBaseDtoWithTeacher)
+                .map(MstHomeroomTeachersMapper::toBaseDtoWithTeacher)
                 .toList());
         return toBaseDtoWithHomeroomTeacher;
     }
 
-    public static ClassesDto toDto(Classes classes) {
-        ClassesDto dto = toBaseDtoWithHomeroomTeachers(classes)
+    public static MstClassesDto toDto(MstClasses classes) {
+        MstClassesDto dto = toBaseDtoWithHomeroomTeachers(classes)
             .setStudents(classes.getStudents()
                 .stream()
-                .map(StudentsMapper::toBaseDto)
+                .map(MstStudentsMapper::toBaseDto)
                 .toList());
         return dto;
     }
 
-    public static Classes toEntity(ClassesCreateForm form) {
-        Classes classes = new Classes()
+    public static MstClasses toEntity(ClassesCreateForm form) {
+        MstClasses classes = new MstClasses()
             .setClassName(form.getClassName())
             .setGradeLevel(form.getGradeLevel())
             .setAcademicYear(form.getAcademicYear());
         return classes;
     }
 
-    public static Classes toEntity(Classes classes, ClassesUpdateForm form) {
+    public static MstClasses toEntity(MstClasses classes, ClassesUpdateForm form) {
         classes.setClassName(form.getClassName())
             .setGradeLevel(form.getGradeLevel())
             .setAcademicYear(form.getAcademicYear());

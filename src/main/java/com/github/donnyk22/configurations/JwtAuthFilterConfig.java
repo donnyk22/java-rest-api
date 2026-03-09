@@ -44,6 +44,10 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter{
             }
 
             Claims claims = jwtUtil.extractClaims(token);
+            if (claims == null) {
+                sendUnauthorizedResponse(res, "Token expired or invalid");
+                return;
+            }
             Integer id = Integer.valueOf(claims.getSubject());
             String name = claims.get("username", String.class);
             String email = claims.get("email", String.class);

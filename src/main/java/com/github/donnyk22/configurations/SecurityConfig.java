@@ -14,6 +14,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.github.donnyk22.models.enums.Method;
+
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 
@@ -88,7 +90,7 @@ public class SecurityConfig {
         ));
         // Allow specific HTTP methods
         config.setAllowedMethods(List.of(
-            "GET", "POST", "PUT", "PATCH", "DELETE"
+            Method.GET.name(), Method.POST.name(), Method.PUT.name(), Method.PATCH.name(), Method.DELETE.name()
         ));
         // Allow specific headers (e.g., Authorization for JWT tokens)
         config.setAllowedHeaders(List.of(

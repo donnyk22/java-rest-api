@@ -10,16 +10,14 @@ import lombok.experimental.Accessors;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class TeachersDto {
+public class MstClassesDto {
     private Integer id;
-    private Integer userId;
-    private String fullName;
-    private Character gender;
-    private String phone;
-    private String address;
-    private String photo;
+    private String className;
+    private Integer gradeLevel;
+    private String academicYear;
     private Integer version;
-    private List<HomeroomTeachersDto> homeroomTeachers;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private List<MstHomeroomTeachersDto> homeroomTeachers;
+    private List<MstStudentsDto> students;
 }

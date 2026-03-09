@@ -1,12 +1,12 @@
 package com.github.donnyk22.services.school;
 
-import com.github.donnyk22.models.dtos.AttendancesDto;
-import com.github.donnyk22.models.dtos.ClassesDto;
+import com.github.donnyk22.models.dtos.MstAttendancesDto;
+import com.github.donnyk22.models.dtos.MstClassesDto;
 import com.github.donnyk22.models.dtos.FindResponse;
-import com.github.donnyk22.models.dtos.HomeroomTeachersDto;
-import com.github.donnyk22.models.dtos.StudentsDto;
-import com.github.donnyk22.models.dtos.TeachersDto;
-import com.github.donnyk22.models.dtos.UsersDto;
+import com.github.donnyk22.models.dtos.MstHomeroomTeachersDto;
+import com.github.donnyk22.models.dtos.MstStudentsDto;
+import com.github.donnyk22.models.dtos.MstTeachersDto;
+import com.github.donnyk22.models.dtos.MstUsersDto;
 import com.github.donnyk22.models.forms.attendances.AttendancesCreateForm;
 import com.github.donnyk22.models.forms.attendances.AttendancesFindForm;
 import com.github.donnyk22.models.forms.classes.ClassesCreateForm;
@@ -27,45 +27,45 @@ import com.github.donnyk22.models.forms.users.UsersUpdatePasswordForm;
 
 public interface SchoolService {
     // === Attendances ===
-    FindResponse<AttendancesDto> findAttendances(AttendancesFindForm form);
-    AttendancesDto readAttendance(Integer attendanceId);
-    AttendancesDto createAttendance(AttendancesCreateForm body);
-    AttendancesDto deleteAttendance(Integer attendanceId);
+    FindResponse<MstAttendancesDto> findAttendances(AttendancesFindForm form);
+    MstAttendancesDto readAttendance(Integer attendanceId);
+    MstAttendancesDto createAttendance(AttendancesCreateForm body);
+    MstAttendancesDto deleteAttendance(Integer attendanceId);
 
     // === Classes ===
-    FindResponse<ClassesDto> findClasses(ClassesFindForm form);
-    ClassesDto readClass(Integer id);
-    ClassesDto createClass(ClassesCreateForm body);
-    ClassesDto updateClass(Integer id, ClassesUpdateForm body);
-    ClassesDto deleteClass(Integer id);
+    FindResponse<MstClassesDto> findClasses(ClassesFindForm form);
+    MstClassesDto readClass(Integer id);
+    MstClassesDto createClass(ClassesCreateForm body);
+    MstClassesDto updateClass(Integer id, ClassesUpdateForm body);
+    MstClassesDto deleteClass(Integer id);
 
     // === Students ===
-    FindResponse<StudentsDto> findStudents(StudentsFindForm form);
-    StudentsDto readStudent(Integer id);
-    StudentsDto createStudent(StudentsCreateForm form);
-    StudentsDto updateStudent(Integer id, StudentsUpdateForm form);
-    StudentsDto deleteStudent(Integer id);
-    StudentsDto deleteStudentProfilePic(Integer id);
+    FindResponse<MstStudentsDto> findStudents(StudentsFindForm form);
+    MstStudentsDto readStudent(Integer id);
+    MstStudentsDto createStudent(StudentsCreateForm form);
+    MstStudentsDto updateStudent(Integer id, StudentsUpdateForm form);
+    MstStudentsDto deleteStudent(Integer id);
+    MstStudentsDto deleteStudentProfilePic(Integer id);
 
     // === Teachers ===
-    FindResponse<TeachersDto> findTeachers(TeachersFindForm form);
-    TeachersDto readTeacher(Integer id);
-    TeachersDto createTeacher(TeachersCreateForm form);
-    TeachersDto updateTeacher(Integer id, TeachersUpdateForm form);
-    TeachersDto deleteTeacher(Integer id);
-    TeachersDto deleteTeacherProfilePic(Integer id);
+    FindResponse<MstTeachersDto> findTeachers(TeachersFindForm form);
+    MstTeachersDto readTeacher(Integer id);
+    MstTeachersDto createTeacher(TeachersCreateForm form);
+    MstTeachersDto updateTeacher(Integer id, TeachersUpdateForm form);
+    MstTeachersDto deleteTeacher(Integer id);
+    MstTeachersDto deleteTeacherProfilePic(Integer id);
 
     // === Homeroom Teachers ===
-    FindResponse<HomeroomTeachersDto> findHomeroomTeachers(HomeroomTeachersFindForm form);
-    HomeroomTeachersDto readHomeroomTeacher(Integer id);
-    HomeroomTeachersDto createHomeroomTeacher(HomeroomTeachersCreateForm body);
-    HomeroomTeachersDto deleteHomeroomTeacher(Integer id);
+    FindResponse<MstHomeroomTeachersDto> findHomeroomTeachers(HomeroomTeachersFindForm form);
+    MstHomeroomTeachersDto readHomeroomTeacher(Integer id);
+    MstHomeroomTeachersDto createHomeroomTeacher(HomeroomTeachersCreateForm body);
+    MstHomeroomTeachersDto deleteHomeroomTeacher(Integer id);
 
     // === Users ===
-    FindResponse<UsersDto> findUsers(UsersFindForm form);
-    UsersDto readUser(Integer id);
-    UsersDto createUser(UsersCreateForm form);
-    UsersDto updateUser(Integer id, UsersUpdateForm form);
-    UsersDto updateUserPassword(Integer id, UsersUpdatePasswordForm form);
-    UsersDto deleteUser(Integer id);
+    FindResponse<MstUsersDto> findUsers(UsersFindForm form);
+    MstUsersDto readUser(Integer id);
+    MstUsersDto createUser(UsersCreateForm form);
+    MstUsersDto updateUser(Integer id, UsersUpdateForm form);
+    MstUsersDto updateUserPassword(Integer id, UsersUpdatePasswordForm form);
+    MstUsersDto deleteUser(Integer id);
 }

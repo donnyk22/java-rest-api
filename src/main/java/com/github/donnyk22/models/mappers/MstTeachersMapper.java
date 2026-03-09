@@ -1,13 +1,13 @@
 package com.github.donnyk22.models.mappers;
 
-import com.github.donnyk22.models.dtos.TeachersDto;
-import com.github.donnyk22.models.entities.Teachers;
+import com.github.donnyk22.models.dtos.MstTeachersDto;
+import com.github.donnyk22.models.entities.MstTeachers;
 import com.github.donnyk22.models.forms.teachers.TeachersCreateForm;
 import com.github.donnyk22.models.forms.teachers.TeachersUpdateForm;
 
-public class TeachersMapper {
-    public static TeachersDto toBaseDto(Teachers teachers) {
-        TeachersDto baseDto = new TeachersDto()
+public class MstTeachersMapper {
+    public static MstTeachersDto toBaseDto(MstTeachers teachers) {
+        MstTeachersDto baseDto = new MstTeachersDto()
             .setId(teachers.getId())
             .setUserId(teachers.getUserId())
             .setFullName(teachers.getFullName())
@@ -21,17 +21,17 @@ public class TeachersMapper {
         return baseDto;
     }
 
-    public static TeachersDto toDto(Teachers teachers) {
-        TeachersDto dto = toBaseDto(teachers)
+    public static MstTeachersDto toDto(MstTeachers teachers) {
+        MstTeachersDto dto = toBaseDto(teachers)
             .setHomeroomTeachers(teachers.getHomeroomTeachers()
                 .stream()
-                .map(HomeroomTeachersMapper::toBaseDtoWithClassroom)
+                .map(MstHomeroomTeachersMapper::toBaseDtoWithClassroom)
                 .toList());
         return dto;
     }
 
-    public static Teachers toEntity(TeachersCreateForm form, String photo) {
-        Teachers teachers = new Teachers()
+    public static MstTeachers toEntity(TeachersCreateForm form, String photo) {
+        MstTeachers teachers = new MstTeachers()
             .setUserId(form.getUserId())
             .setFullName(form.getFullName())
             .setGender(form.getGender().name().charAt(0))
@@ -41,7 +41,7 @@ public class TeachersMapper {
         return teachers;
     }
 
-    public static Teachers toEntity(Teachers teachers, TeachersUpdateForm form, String photo) {
+    public static MstTeachers toEntity(MstTeachers teachers, TeachersUpdateForm form, String photo) {
         teachers.setUserId(form.getUserId())
             .setFullName(form.getFullName())
             .setGender(form.getGender().name().charAt(0))

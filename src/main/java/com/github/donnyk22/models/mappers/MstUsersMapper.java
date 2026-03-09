@@ -1,16 +1,16 @@
 package com.github.donnyk22.models.mappers;
 
-import com.github.donnyk22.models.dtos.StudentsDto;
-import com.github.donnyk22.models.dtos.TeachersDto;
-import com.github.donnyk22.models.dtos.UsersDto;
-import com.github.donnyk22.models.entities.Users;
+import com.github.donnyk22.models.dtos.MstStudentsDto;
+import com.github.donnyk22.models.dtos.MstTeachersDto;
+import com.github.donnyk22.models.dtos.MstUsersDto;
+import com.github.donnyk22.models.entities.MstUsers;
 import com.github.donnyk22.models.forms.users.UserRegisterForm;
 import com.github.donnyk22.models.forms.users.UsersCreateForm;
 import com.github.donnyk22.models.forms.users.UsersUpdateForm;
 
-public class UsersMapper {
-    public static UsersDto toBaseDto(Users users) {
-        UsersDto toBaseDto = new UsersDto()
+public class MstUsersMapper {
+    public static MstUsersDto toBaseDto(MstUsers users) {
+        MstUsersDto toBaseDto = new MstUsersDto()
             .setId(users.getId())
             .setUsername(users.getUsername())
             .setEmail(users.getEmail())
@@ -22,26 +22,26 @@ public class UsersMapper {
         return toBaseDto;
     }
 
-    public static UsersDto toDto(Users users) {
+    public static MstUsersDto toDto(MstUsers users) {
         String fullname = null;
-        StudentsDto studentDto = null;
-        TeachersDto teacherDto = null;
+        MstStudentsDto studentDto = null;
+        MstTeachersDto teacherDto = null;
         if (users.getStudentData() != null) {
             fullname = users.getStudentData().getFullName();
-            studentDto = StudentsMapper.toBaseDto(users.getStudentData());
+            studentDto = MstStudentsMapper.toBaseDto(users.getStudentData());
         } else if (users.getTeacherData() != null) {
             fullname = users.getTeacherData().getFullName();
-            teacherDto = TeachersMapper.toBaseDto(users.getTeacherData());
+            teacherDto = MstTeachersMapper.toBaseDto(users.getTeacherData());
         }
-        UsersDto dto = toBaseDto(users)
+        MstUsersDto dto = toBaseDto(users)
             .setName(fullname)
             .setStudent(studentDto)
             .setTeacher(teacherDto);
         return dto;
     }
 
-    public static Users toEntity(UserRegisterForm form, String encryptedPassword) {
-        Users users = new Users()
+    public static MstUsers toEntity(UserRegisterForm form, String encryptedPassword) {
+        MstUsers users = new MstUsers()
             .setUsername(form.getUsername())
             .setEmail(form.getEmail())
             .setRole(form.getRole().name())
@@ -49,8 +49,8 @@ public class UsersMapper {
         return users;
     }
 
-    public static Users toEntity(UsersCreateForm form, String photo, String encryptedPassword) {
-        Users users = new Users()
+    public static MstUsers toEntity(UsersCreateForm form, String photo, String encryptedPassword) {
+        MstUsers users = new MstUsers()
             .setUsername(form.getUsername())
             .setEmail(form.getEmail())
             .setPhoto(photo)
@@ -60,7 +60,7 @@ public class UsersMapper {
         return users;
     }
 
-    public static Users toEntity(Users user, UsersUpdateForm form, String photo) {
+    public static MstUsers toEntity(MstUsers user, UsersUpdateForm form, String photo) {
         user.setUsername(form.getUsername())
             .setEmail(form.getEmail())
             .setPhoto(photo)

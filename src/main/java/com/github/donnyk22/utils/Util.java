@@ -1,7 +1,5 @@
 package com.github.donnyk22.utils;
 
-import com.github.donnyk22.exceptions.ConflictException;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 public class Util {
@@ -12,12 +10,6 @@ public class Util {
             return xff.split(",")[0].trim();
         }
         return request.getRemoteAddr();
-    }
-
-    public static void compareVersion(Integer currentVersion, Integer providedVersion) {
-        if (!currentVersion.equals(providedVersion)) {
-            throw new ConflictException("Data is already updated by another user. Please refresh and try again.");
-        }
     }
     
 }

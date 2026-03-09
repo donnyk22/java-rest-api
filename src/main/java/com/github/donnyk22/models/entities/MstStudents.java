@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.envers.Audited;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -25,22 +26,26 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 @Entity
-@Table(name = "teachers")
+//creating a new table in DB for audit, also inserting the transaction automatically
+@Audited
+@Table(name = "mst_students")
 //override delete behaviour by JPA to soft delete
-@SQLDelete(sql = "UPDATE teachers SET deleted = true WHERE id = ? AND version = ?")
+@SQLDelete(sql = "UPDATE mst_students SET deleted = true WHERE id = ? AND version = ?")
 //automatically add "where deleted = false"
 @SQLRestriction("deleted = false")
-public class Teachers extends BaseTimestampCreateUpdate {
+public class MstStudents extends BaseTimestampCreateUpdate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "user_id")
     private Integer userId;
+    @Column(name = "class_id")
+    private Integer classId;
     @Column(name = "full_name")
     private String fullName;
     private Character gender;
-    private String phone;
     private String address;
+    private String phone;
     private String photo;
     private Boolean deleted = false;
     // handle versioning
@@ -49,10 +54,14 @@ public class Teachers extends BaseTimestampCreateUpdate {
 
     // ==== Relation ====
 
-    @OneToMany(mappedBy = "teacherData", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HomeroomTeachers> homeroomTeachers;
-    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "class_id", insertable = false, updatable = false)
+    private MstClasses classroom;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Users user;
+    private MstUsers user;
+
+    @OneToMany(mappedBy = "studentData", fetch = FetchType.LAZY)
+    private List<MstAttendances> attendances;
 }

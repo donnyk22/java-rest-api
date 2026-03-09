@@ -1,6 +1,6 @@
 package com.github.donnyk22.models.entities;
 
-import java.time.LocalDate;
+import org.hibernate.envers.Audited;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,20 +19,25 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 @Entity
-@Table(name = "attendances")
-public class Attendances extends BaseTimestampCreate {
+//creating a new table in DB for audit, also inserting the transaction automatically
+@Audited 
+@Table(name = "mst_homeroom_teachers")
+public class MstHomeroomTeachers extends BaseTimestampCreate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "student_id")
-    private Integer studentId;
-    private LocalDate date;
-    private String status;
-    private String note;
+    @Column(name = "class_id")
+    private Integer classId;
+    @Column(name = "teacher_id")
+    private Integer teacherId;
 
     // ==== Relation ====
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private Students studentData;
+    @JoinColumn(name = "class_id", insertable = false, updatable = false)
+    private MstClasses classData;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
+    private MstTeachers teacherData;
 }

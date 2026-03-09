@@ -1,12 +1,12 @@
 package com.github.donnyk22.models.mappers;
 
-import com.github.donnyk22.models.dtos.AttendancesDto;
-import com.github.donnyk22.models.entities.Attendances;
+import com.github.donnyk22.models.dtos.MstAttendancesDto;
+import com.github.donnyk22.models.entities.MstAttendances;
 import com.github.donnyk22.models.forms.attendances.AttendancesCreateForm;
 
-public class AttendancesMapper {
-    public static AttendancesDto toBaseDto(Attendances attendances) {
-        AttendancesDto baseDto = new AttendancesDto()
+public class MstAttendancesMapper {
+    public static MstAttendancesDto toBaseDto(MstAttendances attendances) {
+        MstAttendancesDto baseDto = new MstAttendancesDto()
             .setId(attendances.getId())
             .setStudentId(attendances.getStudentId())
             .setDate(attendances.getDate())
@@ -16,13 +16,13 @@ public class AttendancesMapper {
         return baseDto;
     }
 
-    public static AttendancesDto toDto(Attendances attendances) {
-        AttendancesDto dto = toBaseDto(attendances)
-            .setStudent(StudentsMapper.toBaseDto(attendances.getStudentData()));
+    public static MstAttendancesDto toDto(MstAttendances attendances) {
+        MstAttendancesDto dto = toBaseDto(attendances)
+            .setStudent(MstStudentsMapper.toBaseDto(attendances.getStudentData()));
         return dto;
     }
 
-    public static Attendances toEntity(Attendances attendances, AttendancesCreateForm form) {
+    public static MstAttendances toEntity(MstAttendances attendances, AttendancesCreateForm form) {
         attendances.setStudentId(form.getStudentId())
             .setDate(form.getDate())
             .setStatus(form.getStatus().name())

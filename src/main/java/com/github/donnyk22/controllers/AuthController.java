@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.github.donnyk22.models.dtos.ApiResponse;
-import com.github.donnyk22.models.dtos.UsersDto;
+import com.github.donnyk22.models.dtos.MstUsersDto;
 import com.github.donnyk22.models.forms.users.UserLoginForm;
 import com.github.donnyk22.models.forms.users.UserRegisterForm;
 import com.github.donnyk22.services.auth.AuthService;
@@ -35,9 +35,9 @@ public class AuthController {
         description = "Create a new user account."
     )
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UsersDto>> register(@RequestBody @Valid UserRegisterForm form, HttpServletRequest httpRequest) {
-        UsersDto result = authService.register(form, httpRequest);
-        ApiResponse<UsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
+    public ResponseEntity<ApiResponse<MstUsersDto>> register(@RequestBody @Valid UserRegisterForm form, HttpServletRequest httpRequest) {
+        MstUsersDto result = authService.register(form, httpRequest);
+        ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
             "Register successfully. Please login with your credential",
             result);
         return ResponseEntity.ok(response);
@@ -48,9 +48,9 @@ public class AuthController {
         description = "Authenticate user and return credentials."
     )
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UsersDto>> login(@RequestBody @Valid UserLoginForm form, HttpServletRequest httpRequest) {
-        UsersDto result = authService.login(form, httpRequest);
-        ApiResponse<UsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
+    public ResponseEntity<ApiResponse<MstUsersDto>> login(@RequestBody @Valid UserLoginForm form, HttpServletRequest httpRequest) {
+        MstUsersDto result = authService.login(form, httpRequest);
+        ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
             "Login successfully",
             result);
         return ResponseEntity.ok(response);
@@ -61,9 +61,9 @@ public class AuthController {
         description = "Refresh authentication credentials."
     )
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<UsersDto>> refresh() {
-        UsersDto result = authService.refresh();
-        ApiResponse<UsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
+    public ResponseEntity<ApiResponse<MstUsersDto>> refresh() {
+        MstUsersDto result = authService.refresh();
+        ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
             "Credential refreshed successfully",
             result);
         return ResponseEntity.ok(response);
@@ -77,7 +77,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Boolean>> logout(HttpServletRequest request) {
         Boolean result = authService.logout(request);
         ApiResponse<Boolean> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Logout successfully",
+            result ? "Logout successfully" : "Already logged out or session invalid",
             result);
         return ResponseEntity.ok(response);
     }

@@ -9,11 +9,13 @@ import lombok.experimental.Accessors;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class HomeroomTeachersDto {
+public class LogAuditTrailsDto {
     private Integer id;
-    private Integer classId;
-    private ClassesDto classroom;
-    private Integer teacherId;
-    private TeachersDto teacher;
+    private MstUsersDto user;
+    private String action;
+    private String table;
+    private String details;
+    private Integer dataId;
+    private String properties;
     private OffsetDateTime createdAt;
 }

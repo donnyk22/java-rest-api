@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -34,10 +37,15 @@ public class JwtUtil {
     }
 
     public Claims extractClaims(String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(SECRET.getBytes())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+        try{
+            return Jwts.parserBuilder()
+                .setSigningKey(SECRET.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        } catch(ExpiredJwtException e){
+            log.warn("Token expired: " + e.getMessage());
+            return null;
+        }
     }
 }

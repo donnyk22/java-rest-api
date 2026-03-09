@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import com.github.donnyk22.exceptions.InternalServerErrorException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class AuthUtil {
 
@@ -29,8 +32,16 @@ public class AuthUtil {
         return Collections.emptyMap();
     }
 
-    public Integer getUserId(){
-        return (Integer) getAuth().getPrincipal();
+    public Integer getUserId() {
+        Authentication auth = getAuth();
+        Object principal = auth.getPrincipal();
+
+        if (principal instanceof String && principal.equals("anonymousUser")) {
+            log.warn("User not found in security context");
+            return null;
+        }
+        
+        return (Integer) principal;
     }
 
     public String getUserName(){

@@ -1,5 +1,9 @@
 package com.github.donnyk22.models.entities;
 
+import java.time.LocalDate;
+
+import org.hibernate.envers.Audited;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,23 +21,22 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 @Entity
-@Table(name = "homeroom_teachers")
-public class HomeroomTeachers extends BaseTimestampCreate {
+//creating a new table in DB for audit, also inserting the transaction automatically
+@Audited 
+@Table(name = "mst_attendances")
+public class MstAttendances extends BaseTimestampCreate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "class_id")
-    private Integer classId;
-    @Column(name = "teacher_id")
-    private Integer teacherId;
+    @Column(name = "student_id")
+    private Integer studentId;
+    private LocalDate date;
+    private String status;
+    private String note;
 
     // ==== Relation ====
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_id", insertable = false, updatable = false)
-    private Classes classData;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
-    private Teachers teacherData;
+    @JoinColumn(name = "student_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private MstStudents studentData;
 }
