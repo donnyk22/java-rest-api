@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -57,6 +58,7 @@ public class MstUsers extends BaseTimestampCreateUpdate {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private MstTeachers teacherData;
 
+    @NotAudited //disable auditing
     @OneToMany(mappedBy = "userData", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LogAuditTrails> auditTrailsData;
 }
