@@ -58,7 +58,7 @@ app.async.max-queue=100
 #file upload configuration
 upload.profile-pic.path=uploads/profilepic
 upload.profile-pic.max-size=5MB
-#OAuth2 credentials
+#OAuth2 credentials (google scope is for information we will get from google)
 spring.security.oauth2.client.registration.google.client-id=YOUR_CLIENT_ID_HERE
 spring.security.oauth2.client.registration.google.client-secret=YOUR_CLIENT_SECRET_HERE
 spring.security.oauth2.client.registration.google.scope=email,profile

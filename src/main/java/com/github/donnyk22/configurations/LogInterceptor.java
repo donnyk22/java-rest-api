@@ -21,10 +21,21 @@ public class LogInterceptor implements HandlerInterceptor {
         
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        log.info("User: {} | Method: {} | URI: {} | Status: {}",
-            authUtil.getUserId() == null ? "Anonymous" : authUtil.getUserName(),
-            request.getMethod(),
-            request.getRequestURI(),
-            response.getStatus());
+        int status = response.getStatus();
+        String userId = authUtil.getUserId() == null ? "Anonymous" : authUtil.getUserName();
+        
+        String logMessage = String.format("User: %s | Method: %s | URI: %s | Status: %d",
+            userId, request.getMethod(), request.getRequestURI(), status);
+
+        if (status >= 500) {
+            log.error(logMessage);
+            if (ex != null) {
+                log.error("Exception Detail: ", ex);
+            }
+        } else if (status >= 400) {
+            log.warn(logMessage);
+        } else {
+            log.info(logMessage);
+        }
     }
 }
