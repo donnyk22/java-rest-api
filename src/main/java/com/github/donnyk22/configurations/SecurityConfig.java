@@ -50,6 +50,10 @@ public class SecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
             )
+            // OAuth2 configuration
+            .oauth2Login(oauth2 -> oauth2
+                .defaultSuccessUrl("/api/v1/oauth2", true)
+            )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         
         // Other filter chains configurations

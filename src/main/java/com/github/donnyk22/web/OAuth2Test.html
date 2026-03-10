@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spring Boot OAuth2 Test</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f9;
+      }
+      .card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .btn-google {
+        background-color: #4285f4;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+      .btn-google:hover {
+        background-color: #357ae8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Welcome!</h2>
+      <p>Please log in using your Google account to test OAuth2 feature</p>
+
+      <a
+        href="http://localhost:8080/oauth2/authorization/google"
+        class="btn-google"
+      >
+        Login with Google
+      </a>
+    </div>
+  </body>
+</html>

@@ -36,12 +36,12 @@ public class AuthUtil {
         Authentication auth = getAuth();
         Object principal = auth.getPrincipal();
 
-        if (principal instanceof String && principal.equals("anonymousUser")) {
+        try {
+            return Integer.parseInt(principal.toString());
+        } catch (NumberFormatException e) {
             log.warn("User not found in security context");
             return null;
         }
-        
-        return (Integer) principal;
     }
 
     public String getUserName(){
