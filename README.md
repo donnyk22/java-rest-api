@@ -1,6 +1,6 @@
 # java-rest-api
 
-Minimal and best practice of Rest API Java Spring with implementing some industry standard of back-end utility
+Minimal and best practice of Rest API Java Spring with implementing some industry standards of back-end utility
 
 <b>Features:</b>
 
@@ -64,8 +64,10 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 <b>Instructions:</b>
 
 - To use WebSockets, open the HTML page "WebSocket***.html" in the web folder (can be opened directly in the browser)
+- Email service is using my MailTrap (https://mailtrap.io/) credentials. The email will not be sent to the real recipient, but will go into my MailTrap inbox. Better change into your own credentials.
 - The audit trail in this project has two features. JPA automatically handles the first one with the @Audited endpoint, and the other one is manual by inserting into the database table.
   The @Audited is creating history from the entity's transaction into a new table. Pros: automatic and minimal configuration, cons: difficult to customize and database bloat.
   The other one is a highly customizable audit trail log with manual insert on every needed service. The cons is hard to maintain.
-- For testing OAuth2/SSO login with Google, you can open "OAuth2Test.html" in the web folder (can be opened directly in the browser). The configuration is in "SecurityConfig.java"
+- For testing OAuth2/SSO login with Google, you can open "OAuth2Test.html" in the web folder (can be opened directly in the browser). The configuration is in "SecurityConfig.java".
+  For Credentials, you must use your own private key (too risky to share my private key lol) by creating/using your existing project in the Google console (https://console.cloud.google.com/)
 - All configurations are available in the application-dev.properties
