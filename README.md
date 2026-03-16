@@ -6,6 +6,7 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 
 - JWT
 - Google OAuth2/SSO
+- MFA/TFA/2FA
 - File Upload
 - Multiple login sessions
 - ACL
@@ -70,4 +71,8 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
   The other one is a highly customizable audit trail log with manual insert on every needed service. The cons is hard to maintain.
 - For testing OAuth2/SSO login with Google, you can open "OAuth2Test.html" in the web folder (can be opened directly in the browser). The configuration is in "SecurityConfig.java".
   For Credentials, you must use your own private key (too risky to share my private key lol) by creating/using your existing project in the Google console (https://console.cloud.google.com/)
+- For testing MFA, you must log in first in /api/v1/auth/login > then go to /api/v1/mfa/qr-code to generate a QR code and scan it with your authenticator app >
+  Then you can log out and log in via /api/v1/mfa/login > you get the temporary token, set the token in the Swagger authorize button >
+  then verify the MFA with your authenticator app in the /api/v1/mfa/verify > finally, you successfully log in and get the real token. Replace the temporary token with this new token,
+  because the temporary token can only access this /api/v1/mfa/verify endpoint. If you try to access the other endpoint, you will get a 403 forbidden error.
 - All configurations are available in the application-dev.properties
