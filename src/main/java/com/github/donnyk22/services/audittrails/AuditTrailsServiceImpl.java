@@ -90,8 +90,10 @@ public class AuditTrailsServiceImpl implements AuditTrailsService {
         try {
             java.lang.reflect.Method setPasswordMethod = data.getClass().getMethod("setPassword", String.class);
             setPasswordMethod.invoke(data, (Object) null);
+            java.lang.reflect.Method setMfaSecretMethod = data.getClass().getMethod("setMfaSecret", String.class);
+            setMfaSecretMethod.invoke(data, (Object) null);
         } catch (Exception e) {
-            // ignore if dont have password property
+            // ignore if dont have password or mfa secret property
         }
 
         LogAuditTrails auditTrails = new LogAuditTrails()

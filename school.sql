@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 09, 2026 at 06:18 PM
+-- Generation Time: Mar 16, 2026 at 04:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -37,14 +37,6 @@ CREATE TABLE `log_audit_trails` (
   `properties` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `log_audit_trails`
---
-
-INSERT INTO `log_audit_trails` (`id`, `user_id`, `method`, `table`, `details`, `data_id`, `properties`, `created_at`) VALUES
-(21, 1, NULL, NULL, 'Login successfully', NULL, NULL, '2026-03-09 09:09:31'),
-(22, 1, NULL, NULL, 'Logout successfully', NULL, NULL, '2026-03-09 09:16:53');
 
 -- --------------------------------------------------------
 
@@ -386,6 +378,8 @@ CREATE TABLE `mst_users` (
   `password` varchar(255) DEFAULT NULL,
   `photo` text DEFAULT NULL COMMENT 'base64 image',
   `role` varchar(255) DEFAULT NULL,
+  `mfa_enabled` tinyint(1) NOT NULL DEFAULT 0,
+  `mfa_secret` varchar(255) DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
   `version` int(10) NOT NULL DEFAULT 0,
@@ -397,80 +391,81 @@ CREATE TABLE `mst_users` (
 -- Dumping data for table `mst_users`
 --
 
-INSERT INTO `mst_users` (`id`, `username`, `email`, `password`, `photo`, `role`, `is_active`, `deleted`, `version`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@school.com', '$2a$10$7hQL36le0cv1gbhYhEP.8uxAu72GHqc01GsIFHCvfb6GAeqPxONWy', NULL, 'ADMIN', 1, 0, 0, '2026-02-19 04:17:12', '2026-02-19 04:17:12'),
-(2, 'budi.teacher', 'budi.teacher@school.com', '$2a$10$CKI8fqzBgGlzfLPO8jc4IeDgPNHJSQb4nILlt5yxgFq9S2V8GPNBK', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(3, 'rina.teacher', 'rina.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(4, 'agus.teacher', 'agus.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(5, 'dian.teacher', 'dian.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(6, 'eko.teacher', 'eko.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(7, 'sari.teacher', 'sari.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(8, 'yoga.teacher', 'yoga.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(9, 'tanti.teacher', 'tanti.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(10, 'fajar.teacher', 'fajar.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(11, 'lia.teacher', 'lia.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(12, 'hendro.teacher', 'hendro.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(13, 'mira.teacher', 'mira.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
-(100, 'arya.student', 'arya@student.com', '$2a$10$kz9vmaxCnjwpaC5/UMfXPudJZ1JHJA9ejbvrXnPLun5p4b9MufuRW', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(101, 'naya.student', 'naya@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(102, 'dimas.student', 'dimas@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(103, 'karen.student', 'karen@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(104, 'raka.student', 'raka@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(105, 'zara.student', 'zara@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(106, 'alvin.student', 'alvin@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(107, 'citra.student', 'citra@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(108, 'kevin.student', 'kevin@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(109, 'melia.student', 'melia@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(110, 'reno.student', 'reno@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(111, 'salsa.student', 'salsa@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(112, 'jovan.student', 'jovan@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(113, 'nayla.student', 'nayla@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(114, 'fauzan.student', 'fauzan@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(115, 'tania.student', 'tania@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(116, 'ilham.student', 'ilham@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(117, 'dinda.student', 'dinda@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(118, 'rehan.student', 'rehan@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(119, 'selin.student', 'selin@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(120, 'naufal.student', 'naufal@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(121, 'kayla.student', 'kayla@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(122, 'rizky.student', 'rizky@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(123, 'putri.student', 'putri@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(124, 'galih.student', 'galih@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(125, 'siska.student', 'siska@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(126, 'rama.student', 'rama@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(127, 'viona.student', 'viona@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(128, 'bintang.student', 'bintang@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(129, 'aurel.student', 'aurel@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(130, 'haikal.student', 'haikal@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(131, 'michelle.student', 'michelle@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(132, 'andre.student', 'andre@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(133, 'farhan.student', 'farhan@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(134, 'alika.student', 'alika@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(135, 'hansen.student', 'hansen@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(136, 'tiara.student', 'tiara@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(137, 'fikri.student', 'fikri@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(138, 'gisella.student', 'gisella@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(139, 'rian.student', 'rian@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(140, 'amel.student', 'amel@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(141, 'joel.student', 'joel@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(142, 'nabila.student', 'nabila@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(143, 'rafli.student', 'rafli@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(144, 'marsha.student', 'marsha@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(145, 'darren.student', 'darren@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(146, 'shafa.student', 'shafa@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(147, 'aditya.student', 'aditya@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(148, 'vania.student', 'vania@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(149, 'azka.student', 'azka@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(150, 'nadine.student', 'nadine@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(151, 'rio.student', 'rio@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(152, 'cindy.student', 'cindy@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(153, 'hendra.student', 'hendra@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(154, 'wulan.student', 'wulan@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(155, 'yusuf.student', 'yusuf@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(156, 'angel.student', 'angel@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(157, 'iqbal.student', 'iqbal@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(158, 'salma.student', 'salma@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
-(159, 'reza.student', 'reza@student.com', 'hashed_pw', NULL, 'STUDENT', 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43');
+INSERT INTO `mst_users` (`id`, `username`, `email`, `password`, `photo`, `role`, `mfa_enabled`, `mfa_secret`, `is_active`, `deleted`, `version`, `created_at`, `updated_at`) VALUES
+(1, 'admin', 'admin@school.com', '$2a$10$7hQL36le0cv1gbhYhEP.8uxAu72GHqc01GsIFHCvfb6GAeqPxONWy', NULL, 'ADMIN', 1, '4BJSITCR53A6GRREI55FUTRQFJOUVLNP', 1, 0, 1, '2026-02-19 04:17:12', '2026-03-15 09:36:46'),
+(2, 'budi.teacher', 'budi.teacher@school.com', '$2a$10$CKI8fqzBgGlzfLPO8jc4IeDgPNHJSQb4nILlt5yxgFq9S2V8GPNBK', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(3, 'rina.teacher', 'rina.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(4, 'agus.teacher', 'agus.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(5, 'dian.teacher', 'dian.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(6, 'eko.teacher', 'eko.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(7, 'sari.teacher', 'sari.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(8, 'yoga.teacher', 'yoga.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(9, 'tanti.teacher', 'tanti.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(10, 'fajar.teacher', 'fajar.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(11, 'lia.teacher', 'lia.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(12, 'hendro.teacher', 'hendro.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(13, 'mira.teacher', 'mira.teacher@school.com', 'hashed_pw', NULL, 'TEACHER', 0, NULL, 1, 0, 0, '2026-02-19 04:18:21', '2026-02-19 04:18:21'),
+(100, 'arya.student', 'arya@student.com', '$2a$10$kz9vmaxCnjwpaC5/UMfXPudJZ1JHJA9ejbvrXnPLun5p4b9MufuRW', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(101, 'naya.student', 'naya@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(102, 'dimas.student', 'dimas@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(103, 'karen.student', 'karen@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(104, 'raka.student', 'raka@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(105, 'zara.student', 'zara@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(106, 'alvin.student', 'alvin@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(107, 'citra.student', 'citra@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(108, 'kevin.student', 'kevin@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(109, 'melia.student', 'melia@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(110, 'reno.student', 'reno@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(111, 'salsa.student', 'salsa@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(112, 'jovan.student', 'jovan@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(113, 'nayla.student', 'nayla@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(114, 'fauzan.student', 'fauzan@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(115, 'tania.student', 'tania@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(116, 'ilham.student', 'ilham@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(117, 'dinda.student', 'dinda@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(118, 'rehan.student', 'rehan@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(119, 'selin.student', 'selin@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(120, 'naufal.student', 'naufal@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(121, 'kayla.student', 'kayla@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(122, 'rizky.student', 'rizky@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(123, 'putri.student', 'putri@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(124, 'galih.student', 'galih@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(125, 'siska.student', 'siska@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(126, 'rama.student', 'rama@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(127, 'viona.student', 'viona@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(128, 'bintang.student', 'bintang@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(129, 'aurel.student', 'aurel@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(130, 'haikal.student', 'haikal@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(131, 'michelle.student', 'michelle@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(132, 'andre.student', 'andre@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(133, 'farhan.student', 'farhan@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(134, 'alika.student', 'alika@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(135, 'hansen.student', 'hansen@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(136, 'tiara.student', 'tiara@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(137, 'fikri.student', 'fikri@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(138, 'gisella.student', 'gisella@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(139, 'rian.student', 'rian@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(140, 'amel.student', 'amel@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(141, 'joel.student', 'joel@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(142, 'nabila.student', 'nabila@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(143, 'rafli.student', 'rafli@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(144, 'marsha.student', 'marsha@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(145, 'darren.student', 'darren@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(146, 'shafa.student', 'shafa@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(147, 'aditya.student', 'aditya@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(148, 'vania.student', 'vania@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(149, 'azka.student', 'azka@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(150, 'nadine.student', 'nadine@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(151, 'rio.student', 'rio@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(152, 'cindy.student', 'cindy@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(153, 'hendra.student', 'hendra@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(154, 'wulan.student', 'wulan@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(155, 'yusuf.student', 'yusuf@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(156, 'angel.student', 'angel@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(157, 'iqbal.student', 'iqbal@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(158, 'salma.student', 'salma@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(159, 'reza.student', 'reza@student.com', 'hashed_pw', NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-02-19 04:25:43', '2026-02-19 04:25:43'),
+(165, '110054526871038299434', '4dnnyk@gmail.com', NULL, NULL, 'STUDENT', 0, NULL, 1, 0, 0, '2026-03-09 21:55:21', '2026-03-09 21:55:21');
 
 --
 -- Indexes for dumped tables
@@ -533,7 +528,7 @@ ALTER TABLE `mst_users`
 -- AUTO_INCREMENT for table `log_audit_trails`
 --
 ALTER TABLE `log_audit_trails`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `mst_attendances`
@@ -569,7 +564,7 @@ ALTER TABLE `mst_teachers`
 -- AUTO_INCREMENT for table `mst_users`
 --
 ALTER TABLE `mst_users`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=166;
 
 --
 -- Constraints for dumped tables

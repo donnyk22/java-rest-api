@@ -39,6 +39,7 @@ app.email.sender=noreply@donnyk22.carrd.co
 logging.level.root=INFO
 #jwt configuration
 app.jwt.ttl-minutes=30
+app.jwt.mfa.ttl-minutes=5
 app.jwt.secret=f8fcfc38ab9c10581f67b1622cd4486c
 #max active session
 app.session.max=5

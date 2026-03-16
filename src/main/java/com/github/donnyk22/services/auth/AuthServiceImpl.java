@@ -134,7 +134,7 @@ public class AuthServiceImpl implements AuthService{
     public MstUsersDto refreshToken(MstUsers user) {
         redisUtil.deleteToken(authUtil.getUserEmail(), authUtil.getSessionId());
         String sessionId = UUID.randomUUID().toString();
-        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), sessionId);
+        String token = jwtUtil.generateToken(user, sessionId);
         redisUtil.storeToken(token, user.getEmail(), sessionId);
         
         Claims claims = jwtUtil.extractClaims(token);

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,10 +46,22 @@ public class SecurityConfig {
                     "/api/v1/auth/register",
                     "/api/v1/auth/login",
                     "/api/v1/auth/logout",
+                    "/api/v1/mfa/login",
                     "/ws/**",
                     "/actuator/**"
                 ).permitAll()
-                .anyRequest().authenticated()
+                // This is to handle temporary token with temporary role
+                // This endpoint only accessibe by role MFA_CHECK
+                .requestMatchers("/api/v1/mfa/verify").hasAuthority("ROLE_MFA_CHECK")
+                // All other endpoints are accessible by any authenticated user, except for role MFA_CHECK
+                .anyRequest().access((authentication, context) -> 
+                    new AuthorizationDecision(
+                        authentication.get().getAuthorities().stream()
+                            .noneMatch(a -> a.getAuthority().equals("ROLE_MFA_CHECK"))
+                    )
+                )
+                // If you don't use MFA feature, use this instead
+                // .anyRequest().authenticated()
             )
             // OAuth2 configuration
             .oauth2Login(oauth2 -> oauth2

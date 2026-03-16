@@ -43,6 +43,10 @@ public class MstUsers extends BaseTimestampCreateUpdate {
     @Column(columnDefinition = "TEXT")
     private String photo;
     private String role;
+    @Column(name = "mfa_enabled")
+    private Boolean mfaEnabled;
+    @Column(name = "mfa_secret")
+    private String mfaSecret;
     @Column(name = "is_active")
     private Boolean isActive = true;
     private Boolean deleted = false;

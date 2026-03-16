@@ -16,6 +16,7 @@ public class MstUsersMapper {
             .setEmail(users.getEmail())
             .setPhoto(users.getPhoto())
             .setRole(users.getRole())
+            .setMfaEnabled(users.getMfaEnabled())
             .setVersion(users.getVersion())
             .setCreatedAt(users.getCreatedAt())
             .setUpdatedAt(users.getUpdatedAt());
