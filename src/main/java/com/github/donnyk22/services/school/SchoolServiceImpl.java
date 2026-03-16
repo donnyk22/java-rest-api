@@ -499,7 +499,7 @@ public class SchoolServiceImpl implements SchoolService{
     public MstTeachersDto deleteTeacherProfilePic(Integer id) {
         MstTeachers teacher = teachersRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
-        if (!StringUtils.hasLength(teacher.getPhoto())) {
+        if (!StringUtils.hasText(teacher.getPhoto())) {
             throw new ResourceNotFoundException("Teacher has no profile picture");
         }
         String oldPhotoPath = teacher.getPhoto();

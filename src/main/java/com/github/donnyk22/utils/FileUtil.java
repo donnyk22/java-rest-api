@@ -63,7 +63,7 @@ public class FileUtil {
     }
 
     public void deleteProfilePic(String filePath) {
-        if (!StringUtils.hasLength(filePath)) return;
+        if (!StringUtils.hasText(filePath)) return;
 
         try {
             Path path = Paths.get(filePath);
