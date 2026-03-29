@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Base64;
 
 import org.apache.tika.Tika;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.donnyk22.exceptions.BadRequestException;
@@ -12,9 +13,10 @@ import com.github.donnyk22.exceptions.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 public class MediaUtil {
 
-    public static String ToBase64(MultipartFile photo) throws Exception{
+    public String ToBase64(MultipartFile photo) throws Exception{
         try {
             if (photo == null) return null;
             validateImage(photo);
@@ -26,7 +28,7 @@ public class MediaUtil {
         }
     }
 
-    public static void validateImage(MultipartFile photo) {
+    public void validateImage(MultipartFile photo) {
         try {
             Tika tika = new Tika();
             String detectedType = tika.detect(photo.getInputStream());

@@ -16,11 +16,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.github.donnyk22.exceptions.BadRequestException;
 import com.github.donnyk22.exceptions.InternalServerErrorException;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class FileUtil {
+
+    private final MediaUtil mediaUtil;
 
     @Value("${upload.profile-pic.path}")
     private String PATH;
@@ -32,7 +36,7 @@ public class FileUtil {
         try{
             if (photo == null) return null;
 
-            MediaUtil.validateImage(photo);
+            mediaUtil.validateImage(photo);
 
             String originalFilename = photo.getOriginalFilename();
             if (originalFilename == null) {

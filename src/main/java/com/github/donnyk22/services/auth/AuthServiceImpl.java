@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService{
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final AuthUtil authUtil;
+    private final Util util;
 
     @Value("${app.login.max-req}")
     private Integer LOGIN_MAX_REQ;
@@ -52,7 +53,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public MstUsersDto register(UserRegisterForm form, HttpServletRequest httpRequest) {
-        String userIp = Util.getClientIp(httpRequest);
+        String userIp = util.getClientIp(httpRequest);
 
         if(usersRepository.findByEmail(form.getEmail()) != null){
             throw new ConflictException("Email already exist");
@@ -79,7 +80,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public MstUsersDto login(UserLoginForm form, HttpServletRequest httpRequest) {
-        String userIp = Util.getClientIp(httpRequest);
+        String userIp = util.getClientIp(httpRequest);
 
         checkAttempts("login", userIp);
         checkAttempts("login", form.getUsername());

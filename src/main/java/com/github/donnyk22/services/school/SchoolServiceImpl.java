@@ -87,6 +87,7 @@ public class SchoolServiceImpl implements SchoolService{
     private final MstUsersRepository usersRepository;
     private final AuditTrailsService auditTrailsService;
     private final FileUtil fileUtil;
+    private final MediaUtil mediaUtil;
 
     // === Attendances ===
 
@@ -648,7 +649,7 @@ public class SchoolServiceImpl implements SchoolService{
         if(usersRepository.findByUsername(form.getUsername()) != null){
             throw new ConflictException("Username already exist");
         }
-        MstUsers user = MstUsersMapper.toEntity(form, MediaUtil.ToBase64(form.getPhoto()), new BCryptPasswordEncoder().encode(form.getPassword()));
+        MstUsers user = MstUsersMapper.toEntity(form, mediaUtil.ToBase64(form.getPhoto()), new BCryptPasswordEncoder().encode(form.getPassword()));
         user = usersRepository.save(user);
         auditTrailsService.create(Method.POST, user, "Create user record");
         return MstUsersMapper.toBaseDto(user);
@@ -669,7 +670,7 @@ public class SchoolServiceImpl implements SchoolService{
         if(checkExistingUsername != null && !checkExistingUsername.getId().equals(user.getId())){
             throw new ConflictException("Username already exist");
         }
-        user = MstUsersMapper.toEntity(user, form, MediaUtil.ToBase64(form.getPhoto()));
+        user = MstUsersMapper.toEntity(user, form, mediaUtil.ToBase64(form.getPhoto()));
         user = usersRepository.saveAndFlush(user);
         auditTrailsService.create(Method.PUT, user, "Update user record");
         return MstUsersMapper.toDto(user);
