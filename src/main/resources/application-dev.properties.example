@@ -1,5 +1,7 @@
 spring.application.name=java-project
 server.port=8080
+#Spring virtual thread
+spring.threads.virtual.enabled=true
 #swagger configuration
 #sort by path (URL)
 springdoc.swagger-ui.operationsSorter: alpha 
