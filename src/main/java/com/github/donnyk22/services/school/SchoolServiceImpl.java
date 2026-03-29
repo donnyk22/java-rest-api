@@ -75,7 +75,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class SchoolServiceImpl implements SchoolService {
 
@@ -86,12 +85,14 @@ public class SchoolServiceImpl implements SchoolService {
     private final MstHomeroomTeachersRepository homeroomTeachersRepository;
     private final MstUsersRepository usersRepository;
     private final AuditTrailsService auditTrailsService;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final FileUtil fileUtil;
     private final MediaUtil mediaUtil;
 
     // === Attendances ===
 
     @Override
+    @Transactional(readOnly = true)
     public FindResponse<MstAttendancesDto> findAttendances(AttendancesFindForm form) {
         Pageable pageable = PageRequest.of(form.getPage(), form.getSize());
         Specification<MstAttendances> spec = (root, query, cb) -> {
@@ -136,6 +137,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Cacheable(value = "attendance", key = "#id")
+    @Transactional(readOnly = true)
     public MstAttendancesDto readAttendance(Integer id) {
         MstAttendances attendance = attendancesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Attendance not found: " + id));
@@ -143,6 +145,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
+    @Transactional
     public MstAttendancesDto createAttendance(AttendancesCreateForm body) {
         MstAttendances attendance = MstAttendancesMapper.toEntity(new MstAttendances(), body);
         attendance = attendancesRepository.save(attendance);
@@ -152,6 +155,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CacheEvict(value = "attendance", key = "#id")
+    @Transactional
     public MstAttendancesDto deleteAttendance(Integer id) {
         MstAttendances attendance = attendancesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Attendance not found: " + id));
@@ -163,6 +167,7 @@ public class SchoolServiceImpl implements SchoolService {
     // === Classes ===
 
     @Override
+    @Transactional(readOnly = true)
     public FindResponse<MstClassesDto> findClasses(ClassesFindForm form) {
         Pageable pageable = PageRequest.of(form.getPage(), form.getSize());
         Specification<MstClasses> spec = (root, query, cb) -> {
@@ -197,6 +202,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Cacheable(value = "classes", key = "#id")
+    @Transactional(readOnly = true)
     public MstClassesDto readClass(Integer id) {
         MstClasses classes = classesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
@@ -204,6 +210,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
+    @Transactional
     public MstClassesDto createClass(ClassesCreateForm body) {
         MstClasses classes = MstClassesMapper.toEntity(body);
         classes = classesRepository.save(classes);
@@ -213,6 +220,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CachePut(value = "classes", key = "#id")
+    @Transactional
     public MstClassesDto updateClass(Integer id, ClassesUpdateForm body) {
         MstClasses classes = classesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
@@ -225,6 +233,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CacheEvict(value = "classes", key = "#id")
+    @Transactional
     public MstClassesDto deleteClass(Integer id) {
         MstClasses classes = classesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
@@ -236,6 +245,7 @@ public class SchoolServiceImpl implements SchoolService {
     // === Students ===
 
     @Override
+    @Transactional(readOnly = true)
     public FindResponse<MstStudentsDto> findStudents(StudentsFindForm form) {
         Pageable pageable = PageRequest.of(form.getPage(), form.getSize());
         Specification<MstStudents> spec = (root, query, cb) -> {
@@ -273,6 +283,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Cacheable(value = "student", key = "#id")
+    @Transactional(readOnly = true)
     public MstStudentsDto readStudent(Integer id) {
         MstStudents student = studentsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
@@ -280,6 +291,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
+    @Transactional
     public MstStudentsDto createStudent(StudentsCreateForm form) {
         if (form.getUserId() != null) {
             MstUsers user = usersRepository.findById(form.getUserId())
@@ -299,6 +311,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CachePut(value = "student", key = "#id")
+    @Transactional
     public MstStudentsDto updateStudent(Integer id, StudentsUpdateForm form) {
         MstStudents student = studentsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
@@ -344,6 +357,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CacheEvict(value = "student", key = "#id")
+    @Transactional
     public MstStudentsDto deleteStudent(Integer id) {
         MstStudents student = studentsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
@@ -354,6 +368,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CachePut(value = "student", key = "#id")
+    @Transactional
     public MstStudentsDto deleteStudentProfilePic(Integer id) {
         MstStudents student = studentsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
@@ -372,6 +387,7 @@ public class SchoolServiceImpl implements SchoolService {
     // === Teachers ===
 
     @Override
+    @Transactional(readOnly = true)
     public FindResponse<MstTeachersDto> findTeachers(TeachersFindForm form) {
         Pageable pageable = PageRequest.of(form.getPage(), form.getSize());
         Specification<MstTeachers> spec = (root, query, cb) -> {
@@ -411,6 +427,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Cacheable(value = "teacher", key = "#id")
+    @Transactional(readOnly = true)
     public MstTeachersDto readTeacher(Integer id) {
         MstTeachers teacher = teachersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
@@ -418,6 +435,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
+    @Transactional
     public MstTeachersDto createTeacher(TeachersCreateForm form) {
         if (form.getUserId() != null) {
             MstUsers user = usersRepository.findById(form.getUserId())
@@ -437,6 +455,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CachePut(value = "teacher", key = "#id")
+    @Transactional
     public MstTeachersDto updateTeacher(Integer id, TeachersUpdateForm form) {
         MstTeachers teacher = teachersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
@@ -444,7 +463,7 @@ public class SchoolServiceImpl implements SchoolService {
         if (form.getUserId() != null) {
             MstUsers user = usersRepository.findById(form.getUserId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
-            if (user.getTeacherData() != null && !user.getTeacherData().getId().equals(id)) {
+            if (user.getStudentData() != null && !user.getStudentData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a student: " + form.getUserId());
             }
             if (user.getTeacherData() != null && !user.getTeacherData().getId().equals(id)) {
@@ -483,6 +502,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CacheEvict(value = "teacher", key = "#id")
+    @Transactional
     public MstTeachersDto deleteTeacher(Integer id) {
         MstTeachers teacher = teachersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
@@ -493,6 +513,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CachePut(value = "teacher", key = "#id")
+    @Transactional
     public MstTeachersDto deleteTeacherProfilePic(Integer id) {
         MstTeachers teacher = teachersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
@@ -511,6 +532,7 @@ public class SchoolServiceImpl implements SchoolService {
     // === Homeroom Teachers ===
 
     @Override
+    @Transactional(readOnly = true)
     public FindResponse<MstHomeroomTeachersDto> findHomeroomTeachers(HomeroomTeachersFindForm form) {
         Pageable pageable = PageRequest.of(form.getPage(), form.getSize());
         Specification<MstHomeroomTeachers> spec = (root, query, cb) -> {
@@ -550,6 +572,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Cacheable(value = "homeroomTeacher", key = "#id")
+    @Transactional(readOnly = true)
     public MstHomeroomTeachersDto readHomeroomTeacher(Integer id) {
         MstHomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Homeroom teacher not found: " + id));
@@ -557,6 +580,7 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
+    @Transactional
     public MstHomeroomTeachersDto createHomeroomTeacher(HomeroomTeachersCreateForm body) {
         MstHomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findByClassIdAndTeacherId(body.getClassId(),
                 body.getTeacherId());
@@ -570,7 +594,8 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    @CachePut(value = "homeroomTeacher", key = "#id")
+    @CacheEvict(value = "homeroomTeacher", key = "#id")
+    @Transactional
     public MstHomeroomTeachersDto deleteHomeroomTeacher(Integer id) {
         MstHomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Homeroom teacher not found: " + id));
@@ -582,6 +607,7 @@ public class SchoolServiceImpl implements SchoolService {
     // === Users ===
 
     @Override
+    @Transactional(readOnly = true)
     public FindResponse<MstUsersDto> findUsers(UsersFindForm form) {
         Pageable pageable = PageRequest.of(form.getPage(), form.getSize());
         Specification<MstUsers> spec = (root, query, cb) -> {
@@ -626,6 +652,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @Cacheable(value = "user", key = "#id")
+    @Transactional(readOnly = true)
     public MstUsersDto readUser(Integer id) {
         MstUsers user = usersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
@@ -634,6 +661,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @SneakyThrows
+    @Transactional
     public MstUsersDto createUser(UsersCreateForm form) {
         if (!form.getPassword().equals(form.getRePassword())) {
             throw new BadRequestException("Retype password doesn't match. Please try again!");
@@ -645,7 +673,7 @@ public class SchoolServiceImpl implements SchoolService {
             throw new ConflictException("Username already exist");
         }
         MstUsers user = MstUsersMapper.toEntity(form, mediaUtil.ToBase64(form.getPhoto()),
-                new BCryptPasswordEncoder().encode(form.getPassword()));
+                passwordEncoder.encode(form.getPassword()));
         user = usersRepository.save(user);
         auditTrailsService.create(Method.POST, user, "Create user record");
         return MstUsersMapper.toBaseDto(user);
@@ -654,6 +682,7 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     @SneakyThrows
     @CachePut(value = "user", key = "#id")
+    @Transactional
     public MstUsersDto updateUser(Integer id, UsersUpdateForm form) {
         MstUsers user = usersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
@@ -673,13 +702,14 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
+    @Transactional
     public MstUsersDto updateUserPassword(Integer id, UsersUpdatePasswordForm form) {
         if (!form.getPassword().equals(form.getRePassword())) {
             throw new BadRequestException("Retype password doesn't match. Please try again!");
         }
         MstUsers user = usersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
-        user.setPassword(new BCryptPasswordEncoder().encode(form.getPassword()));
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
         user = usersRepository.save(user);
         auditTrailsService.create(Method.PATCH, user, "Update user password");
         return MstUsersMapper.toBaseDto(user);
@@ -687,6 +717,7 @@ public class SchoolServiceImpl implements SchoolService {
 
     @Override
     @CacheEvict(value = "user", key = "#id")
+    @Transactional
     public MstUsersDto deleteUser(Integer id) {
         MstUsers user = usersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));

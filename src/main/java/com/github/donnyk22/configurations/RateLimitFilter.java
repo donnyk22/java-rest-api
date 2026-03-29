@@ -21,10 +21,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@RequiredArgsConstructor
 public class RateLimitFilter extends OncePerRequestFilter {
 
-    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper;
+
+    private Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
     @Value("${app.ratelimit.max-req}")
     private Integer MAX_REQUESTS;
@@ -64,8 +69,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 HttpStatus.TOO_MANY_REQUESTS.value(),
                 errorMessage,
                 null);
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(response);
+        String json = objectMapper.writeValueAsString(response);
         res.getWriter().write(json);
     }
 

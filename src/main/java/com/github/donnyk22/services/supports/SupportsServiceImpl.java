@@ -28,11 +28,12 @@ public class SupportsServiceImpl implements SupportsService {
     private final RedisUtil redisUtil;
     private final JwtUtil jwtUtil;
     private final WebApplicationContext webApplicationContext;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public String redisCheckConnection() {
         try {
-            String key = "redis_test_key_" + UUID.randomUUID().toString();
+            String key = "redis_test_key_" + UUID.randomUUID();
             redisTemplate.opsForValue().set(key, "ok", 5, TimeUnit.SECONDS);
             String value = redisTemplate.opsForValue().get(key);
             if ("ok".equals(value)) {
@@ -62,7 +63,7 @@ public class SupportsServiceImpl implements SupportsService {
 
     @Override
     public String encodedPasswordGenerator(String password) {
-        return new BCryptPasswordEncoder().encode(password);
+        return passwordEncoder.encode(password);
     }
 
     @Override

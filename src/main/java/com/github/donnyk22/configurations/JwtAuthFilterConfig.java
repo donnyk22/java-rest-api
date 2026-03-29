@@ -31,6 +31,7 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
@@ -60,20 +61,10 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter {
                 return;
             }
 
-            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())); // To
-                                                                                                                    // handle
-                                                                                                                    // @PreAuthorize("hasRole('ADMIN')")
-                                                                                                                    // or
-                                                                                                                    // @PreAuthorize("hasAnyRole('ADMIN')")
-                                                                                                                    // in
-                                                                                                                    // controller,
-                                                                                                                    // we
-                                                                                                                    // need
-                                                                                                                    // to
-                                                                                                                    // prefix
-                                                                                                                    // role
-                                                                                                                    // with
-                                                                                                                    // "ROLE_"
+            // To handle @PreAuthorize("hasRole('ADMIN')") or
+            // @PreAuthorize("hasAnyRole('ADMIN')") in controller, we need to prefix role
+            // with "ROLE_"
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(id, null, authorities);
 
@@ -95,8 +86,7 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter {
                 HttpServletResponse.SC_UNAUTHORIZED,
                 errorMessage,
                 null);
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(response);
+        String json = objectMapper.writeValueAsString(response);
         res.getWriter().write(json);
     }
 }

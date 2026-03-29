@@ -44,6 +44,7 @@ public class MfaServiceImpl implements MfaService {
 
     private final MstUsersRepository usersRepository;
     private final AuditTrailsService auditTrailsService;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final AuthUtil authUtil;
@@ -60,7 +61,7 @@ public class MfaServiceImpl implements MfaService {
                 throw new ResourceNotFoundException("User not found");
             }
         }
-        Boolean passwordMatch = new BCryptPasswordEncoder().matches(form.getPassword(), user.getPassword());
+        Boolean passwordMatch = passwordEncoder.matches(form.getPassword(), user.getPassword());
         if (!passwordMatch) {
             auditTrailsService.create(user.getId(), "Login failed");
             throw new BadRequestException("Invalid email or password");

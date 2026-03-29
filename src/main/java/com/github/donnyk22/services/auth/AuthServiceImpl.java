@@ -34,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final MstUsersRepository usersRepository;
     private final AuditTrailsService auditTrailsService;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final AuthUtil authUtil;
@@ -65,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         if (!form.getPassword().equals(form.getRePassword())) {
             throw new BadRequestException("Retype password doesn't match. Please try again!");
         }
-        MstUsers user = MstUsersMapper.toEntity(form, new BCryptPasswordEncoder().encode(form.getPassword()));
+        MstUsers user = MstUsersMapper.toEntity(form, passwordEncoder.encode(form.getPassword()));
         if (user == null) {
             throw new BadRequestException("Failed to register a new user. Please try again");
         }
@@ -93,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new ResourceNotFoundException("User not found");
             }
         }
-        Boolean passwordMatch = new BCryptPasswordEncoder().matches(form.getPassword(), user.getPassword());
+        Boolean passwordMatch = passwordEncoder.matches(form.getPassword(), user.getPassword());
         if (!passwordMatch) {
             bruteForceProtection("login", userIp);
             bruteForceProtection("login", form.getUsername());
