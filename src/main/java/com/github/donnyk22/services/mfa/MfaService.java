@@ -5,6 +5,8 @@ import com.github.donnyk22.models.forms.users.UserLoginForm;
 
 public interface MfaService {
     MstUsersDto loginMfa(UserLoginForm form);
+
     MstUsersDto verifyMfa(String code);
+
     byte[] mfaQrCodeGenerate();
 }

@@ -21,9 +21,10 @@ public class AsyncConfig {
     @Bean
     public Executor workerExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(MAX_WORKER); //minimum number of threads the pool tries to keep alive
-        executor.setMaxPoolSize(MAX_WORKER); //maximum number of threads the pool is allowed to create
-        executor.setQueueCapacity(MAX_QUEUE); //maximum number of tasks that can be queued. more than this will be rejected (TaskRejectedException/RejectedExecutionException)
+        executor.setCorePoolSize(MAX_WORKER); // minimum number of threads the pool tries to keep alive
+        executor.setMaxPoolSize(MAX_WORKER); // maximum number of threads the pool is allowed to create
+        executor.setQueueCapacity(MAX_QUEUE); // maximum number of tasks that can be queued. more than this will be
+                                              // rejected (TaskRejectedException/RejectedExecutionException)
         executor.setThreadNamePrefix("Worker-");
         executor.initialize();
         return executor;

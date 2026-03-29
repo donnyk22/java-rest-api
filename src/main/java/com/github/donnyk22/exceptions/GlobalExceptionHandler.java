@@ -23,84 +23,83 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResponse<Object>> badRequest(BadRequestException ex) {
         return ResponseEntity.badRequest()
-            .body(new ApiResponse<>(400, ex.getMessage(), null));
+                .body(new ApiResponse<>(400, ex.getMessage(), null));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<Object>> unauthorized(UnauthorizedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(new ApiResponse<>(401, ex.getMessage(), null));
+                .body(new ApiResponse<>(401, ex.getMessage(), null));
     }
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ApiResponse<Object>> forbidden(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body(new ApiResponse<>(403, ex.getMessage(), null));
+                .body(new ApiResponse<>(403, ex.getMessage(), null));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> notFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ApiResponse<>(404, ex.getMessage(), null));
+                .body(new ApiResponse<>(404, ex.getMessage(), null));
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ApiResponse<Object>> conflict(ConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(new ApiResponse<>(409, ex.getMessage(), null));
+                .body(new ApiResponse<>(409, ex.getMessage(), null));
     }
 
     @ExceptionHandler(InternalServerErrorException.class)
     public ResponseEntity<ApiResponse<Object>> internalCustom(InternalServerErrorException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new ApiResponse<>(500, ex.getMessage(), null));
+                .body(new ApiResponse<>(500, ex.getMessage(), null));
     }
 
     // fallback
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> internal(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new ApiResponse<>(500, ex.getMessage(), null));
+                .body(new ApiResponse<>(500, ex.getMessage(), null));
     }
 
     // === Handle Other Errors ===
 
-    //Handle @Valid/jakarta.validation.constraints form
+    // Handle @Valid/jakarta.validation.constraints form
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidationException(MethodArgumentNotValidException ex) {
         // Ubah dari joining(", ") menjadi toList()
         List<String> errors = ex.getBindingResult()
-            .getFieldErrors()
-            .stream()
-            .map(error -> error.getField() + ": " + error.getDefaultMessage())
-            .collect(Collectors.toList());
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.toList());
 
         ApiResponse<Object> response = new ApiResponse<>(
-            HttpStatus.BAD_REQUEST.value(),
-            "Validation failed",
-            errors
-        );
-        
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed",
+                errors);
+
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    //Handle max file upload error
+    // Handle max file upload error
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ApiResponse<Object>> handleMaxSizeException() {
         ApiResponse<Object> response = new ApiResponse<>(
-            HttpStatus.BAD_REQUEST.value(),
-            "File too large",
-            null
-        );
+                HttpStatus.BAD_REQUEST.value(),
+                "File too large",
+                null);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    //Handle database integrity violation (e.g. duplicate entry, foreign key constraint)
+    // Handle database integrity violation (e.g. duplicate entry, foreign key
+    // constraint)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         Throwable specificCause = ex.getMostSpecificCause();
         String rootMsg = specificCause.getMessage();
-        
+
         String message = "Data Integrity Error.";
         log.error("Data Integrity Error: {}", rootMsg);
 
@@ -115,19 +114,19 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> response = new ApiResponse<>(
                 HttpStatus.CONFLICT.value(),
                 message,
-                null
-        );
-        
+                null);
+
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
-    //Handle optimistic locking failure (concurrent update)
+    // Handle optimistic locking failure (concurrent update)
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-    public ResponseEntity<ApiResponse<Object>> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleOptimisticLockingFailure(
+            ObjectOptimisticLockingFailureException ex) {
         ApiResponse<Object> response = new ApiResponse<>(
-            HttpStatus.CONFLICT.value(),
-            "Data is updated by another user. Please refresh and try again.",
-            null);
+                HttpStatus.CONFLICT.value(),
+                "Data is updated by another user. Please refresh and try again.",
+                null);
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 

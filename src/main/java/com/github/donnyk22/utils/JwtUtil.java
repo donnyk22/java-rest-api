@@ -30,38 +30,38 @@ public class JwtUtil {
 
     public String generateToken(MstUsers users, String sessionId) {
         return Jwts.builder()
-            .setSubject(users.getId().toString())
-            .claim("username", users.getUsername())
-            .claim("email", users.getEmail())
-            .claim("role", users.getRole())
-            .claim("sessionId", sessionId)
-            .setIssuedAt(new Date())
-            .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(EXPIRATION))))
-            .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
-            .compact();
+                .setSubject(users.getId().toString())
+                .claim("username", users.getUsername())
+                .claim("email", users.getEmail())
+                .claim("role", users.getRole())
+                .claim("sessionId", sessionId)
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(EXPIRATION))))
+                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
+                .compact();
     }
 
     public String generateMfaToken(MstUsers users, String sessionId) {
         return Jwts.builder()
-            .setSubject(users.getId().toString())
-            .claim("username", users.getUsername())
-            .claim("email", users.getEmail())
-            .claim("role", "MFA_CHECK")
-            .claim("sessionId", sessionId)
-            .setIssuedAt(new Date())
-            .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(MFA_EXPIRATION))))
-            .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
-            .compact();
+                .setSubject(users.getId().toString())
+                .claim("username", users.getUsername())
+                .claim("email", users.getEmail())
+                .claim("role", "MFA_CHECK")
+                .claim("sessionId", sessionId)
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(MFA_EXPIRATION))))
+                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
+                .compact();
     }
 
     public Claims extractClaims(String token) {
-        try{
+        try {
             return Jwts.parserBuilder()
-                .setSigningKey(SECRET.getBytes())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        } catch(ExpiredJwtException e){
+                    .setSigningKey(SECRET.getBytes())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
             log.warn("Token expired: " + e.getMessage());
             return null;
         }

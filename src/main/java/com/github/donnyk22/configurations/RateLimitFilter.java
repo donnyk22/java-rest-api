@@ -33,11 +33,13 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private Integer MAX_REQ_DURATION;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String ip = request.getRemoteAddr();
         Bucket bucket = buckets.computeIfAbsent(ip, this::createBucket);
 
-        if (bucket.tryConsume(1)) { //consume 1 means one request count as 1. use 5 or 10 if the request is heavy (need to apply to specific endpoint with heavy request)
+        if (bucket.tryConsume(1)) { // consume 1 means one request count as 1. use 5 or 10 if the request is heavy
+                                    // (need to apply to specific endpoint with heavy request)
             filterChain.doFilter(request, response);
         } else {
             sendTooManyReqResponse(response, "Too Many Requests");
@@ -45,33 +47,33 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     private Bucket createBucket(String key) {
-    Bandwidth limit = Bandwidth.builder()
-        .capacity(MAX_REQUESTS)
-        .refillIntervally(MAX_REQUESTS, Duration.ofMinutes(MAX_REQ_DURATION))
-        .build();
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(MAX_REQUESTS)
+                .refillIntervally(MAX_REQUESTS, Duration.ofMinutes(MAX_REQ_DURATION))
+                .build();
 
         return Bucket.builder()
-            .addLimit(limit)
-            .build();
+                .addLimit(limit)
+                .build();
     }
 
     private void sendTooManyReqResponse(HttpServletResponse res, String errorMessage) throws IOException {
         res.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
         res.setContentType("application/json");
         ApiResponse<Object> response = new ApiResponse<>(
-            HttpStatus.TOO_MANY_REQUESTS.value(),
-            errorMessage,
-            null
-        );
+                HttpStatus.TOO_MANY_REQUESTS.value(),
+                errorMessage,
+                null);
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(response);
         res.getWriter().write(json);
     }
 
-    // Uncomment the following method to apply rate limiting only to specific URL patterns
+    // Uncomment the following method to apply rate limiting only to specific URL
+    // patterns
     // @Override
     // protected boolean shouldNotFilter(HttpServletRequest request) {
-    //     return !request.getRequestURI().startsWith("/api");
+    // return !request.getRequestURI().startsWith("/api");
     // }
 
 }

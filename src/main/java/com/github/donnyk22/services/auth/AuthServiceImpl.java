@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
 
     private final MstUsersRepository usersRepository;
     private final AuditTrailsService auditTrailsService;
@@ -55,25 +55,25 @@ public class AuthServiceImpl implements AuthService{
     public MstUsersDto register(UserRegisterForm form, HttpServletRequest httpRequest) {
         String userIp = util.getClientIp(httpRequest);
 
-        if(usersRepository.findByEmail(form.getEmail()) != null){
+        if (usersRepository.findByEmail(form.getEmail()) != null) {
             throw new ConflictException("Email already exist");
         }
-        if(usersRepository.findByUsername(form.getUsername()) != null){
+        if (usersRepository.findByUsername(form.getUsername()) != null) {
             throw new ConflictException("Username already exist");
         }
-        
-        if(!form.getPassword().equals(form.getRePassword())){
+
+        if (!form.getPassword().equals(form.getRePassword())) {
             throw new BadRequestException("Retype password doesn't match. Please try again!");
         }
         MstUsers user = MstUsersMapper.toEntity(form, new BCryptPasswordEncoder().encode(form.getPassword()));
-        if(user == null){
+        if (user == null) {
             throw new BadRequestException("Failed to register a new user. Please try again");
         }
 
         bruteForceProtection("register", userIp);
 
         user = usersRepository.saveAndFlush(user);
-        
+
         auditTrailsService.create(user.getId(), "User registered");
         return MstUsersMapper.toBaseDto(user);
     }
@@ -86,15 +86,15 @@ public class AuthServiceImpl implements AuthService{
         checkAttempts("login", form.getUsername());
 
         MstUsers user = usersRepository.findByEmail(form.getUsername());
-        if(user == null){
+        if (user == null) {
             user = usersRepository.findByUsername(form.getUsername());
-            if(user == null){
+            if (user == null) {
                 bruteForceProtection("login", userIp);
                 throw new ResourceNotFoundException("User not found");
             }
         }
         Boolean passwordMatch = new BCryptPasswordEncoder().matches(form.getPassword(), user.getPassword());
-        if(!passwordMatch){
+        if (!passwordMatch) {
             bruteForceProtection("login", userIp);
             bruteForceProtection("login", form.getUsername());
             auditTrailsService.create(user.getId(), "Login failed");
@@ -103,7 +103,7 @@ public class AuthServiceImpl implements AuthService{
 
         resetAttempts("login", userIp);
         resetAttempts("login", form.getUsername());
-        
+
         auditTrailsService.create(user.getId(), "Login successfully");
         return refreshToken(user);
     }
@@ -113,7 +113,7 @@ public class AuthServiceImpl implements AuthService{
         String email = authUtil.getUserEmail();
 
         MstUsers user = usersRepository.findByEmail(email);
-        if(user == null){
+        if (user == null) {
             throw new ResourceNotFoundException("User not found");
         }
 
@@ -124,9 +124,9 @@ public class AuthServiceImpl implements AuthService{
     public Boolean logout(HttpServletRequest request) {
         Integer userId = authUtil.getUserId();
         if (userId == null) {
-            return false; //Already logged out or session invalid
+            return false; // Already logged out or session invalid
         }
-        
+
         auditTrailsService.create(userId, "Logout successfully");
         redisUtil.deleteToken(authUtil.getUserEmail(), authUtil.getSessionId());
         return true;
@@ -137,19 +137,19 @@ public class AuthServiceImpl implements AuthService{
         String sessionId = UUID.randomUUID().toString();
         String token = jwtUtil.generateToken(user, sessionId);
         redisUtil.storeToken(token, user.getEmail(), sessionId);
-        
+
         Claims claims = jwtUtil.extractClaims(token);
         return MstUsersMapper.toBaseDto(user).setToken(token)
-            .setIssuedAt(claims.getIssuedAt().toInstant())
-            .setExpiresAt(claims.getExpiration().toInstant());
+                .setIssuedAt(claims.getIssuedAt().toInstant())
+                .setExpiresAt(claims.getExpiration().toInstant());
     }
-    
+
     private void bruteForceProtection(String type, String identifier) {
         TimeUnit timeUnit = TimeUnit.MINUTES;
         Integer ttl = LOGIN_MAX_REQ_DURATION;
         Integer maxReq = LOGIN_MAX_REQ;
 
-        if (type.equals("register")){
+        if (type.equals("register")) {
             timeUnit = TimeUnit.DAYS;
             ttl = REGISTER_MAX_REQ_DURATION;
             maxReq = REGISTER_MAX_REQ;
@@ -157,12 +157,12 @@ public class AuthServiceImpl implements AuthService{
 
         String value = redisUtil.get(type, identifier);
 
-        if(value == null){
+        if (value == null) {
             redisUtil.store(type, identifier, "1", ttl, timeUnit);
             return;
         }
 
-        if (Integer.parseInt(value) >= maxReq){
+        if (Integer.parseInt(value) >= maxReq) {
             throw new BadRequestException(getErrorMsg(type));
         }
 
@@ -173,14 +173,14 @@ public class AuthServiceImpl implements AuthService{
     private void checkAttempts(String type, String identifier) {
         Integer maxReq = LOGIN_MAX_REQ;
 
-        if (type.equals("register")){
+        if (type.equals("register")) {
             maxReq = REGISTER_MAX_REQ;
         }
 
         String value = redisUtil.get(type, identifier);
         Integer attempts = value == null ? 0 : Integer.parseInt(value);
 
-        if (attempts >= maxReq){
+        if (attempts >= maxReq) {
             throw new BadRequestException(getErrorMsg(type));
         }
     }
@@ -192,9 +192,9 @@ public class AuthServiceImpl implements AuthService{
     private String getErrorMsg(String type) {
         String errorMsg = "Please try again later";
 
-        if (type.equals("login")){
+        if (type.equals("login")) {
             errorMsg = "Too many failed login attempts. " + errorMsg;
-        } else if (type.equals("register")){
+        } else if (type.equals("register")) {
             errorMsg = "Too many registration attempts. " + errorMsg;
         }
 

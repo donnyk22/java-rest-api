@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 public class UsersFindForm extends SearchForm {
-    @Schema(implementation = UserRole.class, allowableValues = {"ADMIN", "STUDENT", "TEACHER"})
+    @Schema(implementation = UserRole.class, allowableValues = { "ADMIN", "STUDENT", "TEACHER" })
     private String role;
     private Boolean isActive;
 }

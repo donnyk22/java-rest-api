@@ -18,10 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(
-    name = "Audit Trail APIs",
-    description = "Find and retrieve audit trail (manual) data"
-)
+@Tag(name = "Audit Trail APIs", description = "Find and retrieve audit trail (manual) data")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/audit-trail")
@@ -29,16 +26,14 @@ public class AuditTrailsController {
 
     private final AuditTrailsService auditTrailsService;
 
-    @Operation(
-        summary = "Find audit trail records",
-        description = "Retrieve and search audit trail records"
-    )
+    @Operation(summary = "Find audit trail records", description = "Retrieve and search audit trail records")
     @GetMapping()
-    public ResponseEntity<ApiResponse<FindResponse<LogAuditTrailsDto>>> findAuditTrails(@ModelAttribute @Valid AuditTrailsFindForm form) {
+    public ResponseEntity<ApiResponse<FindResponse<LogAuditTrailsDto>>> findAuditTrails(
+            @ModelAttribute @Valid AuditTrailsFindForm form) {
         FindResponse<LogAuditTrailsDto> result = auditTrailsService.findAuditTrails(form);
         ApiResponse<FindResponse<LogAuditTrailsDto>> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Audit trail records retrieved successfully",
-            result);
+                "Audit trail records retrieved successfully",
+                result);
         return ResponseEntity.ok(response);
     }
 }

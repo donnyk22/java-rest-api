@@ -50,10 +50,9 @@ public class AuditTrailsServiceImpl implements AuditTrailsService {
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("details")), likePattern),
-                    cb.like(cb.lower(userJoin.get("username")), likePattern),
-                    cb.like(cb.lower(userJoin.get("email")), likePattern)
-                );
+                        cb.like(cb.lower(root.get("details")), likePattern),
+                        cb.like(cb.lower(userJoin.get("username")), likePattern),
+                        cb.like(cb.lower(userJoin.get("email")), likePattern));
                 predicates.add(predicate);
             }
 
@@ -78,11 +77,11 @@ public class AuditTrailsServiceImpl implements AuditTrailsService {
 
         Page<LogAuditTrails> result = auditTrailsRepository.findAll(spec, pageable);
         return new FindResponse<LogAuditTrailsDto>()
-            .setRecords(result.getContent().stream().map(LogAuditTrailsMapper::toDto).toList())
-            .setTotalPage(result.getTotalPages())
-            .setTotalItem((int) result.getTotalElements())
-            .setHasNext(result.hasNext())
-            .setHasPrev(result.hasPrevious());
+                .setRecords(result.getContent().stream().map(LogAuditTrailsMapper::toDto).toList())
+                .setTotalPage(result.getTotalPages())
+                .setTotalItem((int) result.getTotalElements())
+                .setHasNext(result.hasNext())
+                .setHasPrev(result.hasPrevious());
     }
 
     @Override
@@ -97,21 +96,21 @@ public class AuditTrailsServiceImpl implements AuditTrailsService {
         }
 
         LogAuditTrails auditTrails = new LogAuditTrails()
-            .setUserId(authUtil.getUserId())
-            .setMethod(method == null ? null : method.name())
-            .setTable(EntityUtil.getTableName(data))
-            .setDetails(details)
-            .setDataId(EntityUtil.getIdByReflection(data))
-            .setProperties(converterUtil.genericToJson(data));
+                .setUserId(authUtil.getUserId())
+                .setMethod(method == null ? null : method.name())
+                .setTable(EntityUtil.getTableName(data))
+                .setDetails(details)
+                .setDataId(EntityUtil.getIdByReflection(data))
+                .setProperties(converterUtil.genericToJson(data));
         auditTrailsRepository.save(auditTrails);
     }
 
     @Override
     public void create(Integer userId, String details) {
         LogAuditTrails auditTrails = new LogAuditTrails()
-            .setUserId(userId)
-            .setDetails(details);
+                .setUserId(userId)
+                .setDetails(details);
         auditTrailsRepository.save(auditTrails);
     }
-    
+
 }

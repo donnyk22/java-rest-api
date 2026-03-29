@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.github.donnyk22.models.entities.LogAuditTrails;
 
 @Repository
-public interface LogAuditTrailsRepository extends JpaRepository<LogAuditTrails, Integer>, JpaSpecificationExecutor<LogAuditTrails> {
-    
+public interface LogAuditTrailsRepository
+        extends JpaRepository<LogAuditTrails, Integer>, JpaSpecificationExecutor<LogAuditTrails> {
+
 }

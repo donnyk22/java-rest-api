@@ -20,7 +20,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(authInterceptor);
     }
-    
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
@@ -31,8 +31,9 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
-        registry.setUserDestinationPrefix("/user"); //used to send messages to specific users (subscribe in the FE with /user/queue/...)
-        registry.enableSimpleBroker("/topic", "/queue"); //topics for broadcast, queues for specific users
+        registry.setUserDestinationPrefix("/user"); // used to send messages to specific users (subscribe in the FE with
+                                                    // /user/queue/...)
+        registry.enableSimpleBroker("/topic", "/queue"); // topics for broadcast, queues for specific users
     }
 
 }

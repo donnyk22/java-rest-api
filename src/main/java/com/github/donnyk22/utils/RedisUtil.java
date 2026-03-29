@@ -21,7 +21,7 @@ public class RedisUtil {
     @Value("${app.session.max}")
     private long MAX_SESSION_NUMBER;
 
-    //uses same token will update the data
+    // uses same token will update the data
     public void store(String bucket, String identifier, String value, Integer ttl, TimeUnit unit) {
         redis.opsForValue().set(bucket + ":" + identifier, value, ttl, unit);
     }
@@ -45,7 +45,7 @@ public class RedisUtil {
     public void storeToken(String token, String email, String sessionId) {
         String pattern = "session:" + email + ":*";
         Set<String> keys = redis.keys(pattern);
-        
+
         if (keys != null && keys.size() >= MAX_SESSION_NUMBER) {
             // Delete the oldest session
             String oldestKey = keys.iterator().next();
@@ -67,5 +67,5 @@ public class RedisUtil {
     public Boolean isTokenValid(String email, String sessionId) {
         return getToken(email, sessionId) != null;
     }
-    
+
 }

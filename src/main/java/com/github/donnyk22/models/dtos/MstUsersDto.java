@@ -18,7 +18,7 @@ public class MstUsersDto {
     private String name;
     private String role;
     private Boolean mfaEnabled;
-    private MstStudentsDto student;    
+    private MstStudentsDto student;
     private MstTeachersDto teacher;
     private Integer version;
     private OffsetDateTime createdAt;

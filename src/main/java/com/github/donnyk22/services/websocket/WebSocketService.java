@@ -6,6 +6,8 @@ import com.github.donnyk22.models.forms.WebSocketUsersForm;
 
 public interface WebSocketService {
     WebSocketForm sendMessages(WebSocketForm message);
+
     WebSocketForm sendMessagesToUsers(WebSocketUsersForm message);
+
     WebSocketUserSessionDto getActiveUsers();
 }

@@ -68,9 +68,8 @@ public class SupportsServiceImpl implements SupportsService {
     @Override
     public List<String> getBeanList() {
         return Arrays.stream(
-            webApplicationContext.getBeanNamesForType(Object.class)
-        )
-        .sorted()
-        .toList();
+                webApplicationContext.getBeanNamesForType(Object.class))
+                .sorted()
+                .toList();
     }
 }

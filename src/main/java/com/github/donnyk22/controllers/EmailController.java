@@ -19,10 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(
-    name = "Email service APIs",
-    description = "Send email using Mailtrap SMTP server"
-)
+@Tag(name = "Email service APIs", description = "Send email using Mailtrap SMTP server")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/email")
@@ -30,53 +27,44 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @Operation(
-        summary = "Send simple email",
-        description = "The email is not sent to any real recipient. It is sent to the Mailtrap inbox."
-    )
+    @Operation(summary = "Send simple email", description = "The email is not sent to any real recipient. It is sent to the Mailtrap inbox.")
     @PostMapping("/send-simple")
-    public CompletableFuture<ResponseEntity<ApiResponse<List<String>>>> sendEmailSimple(@RequestBody @Valid EmailForm body) {
+    public CompletableFuture<ResponseEntity<ApiResponse<List<String>>>> sendEmailSimple(
+            @RequestBody @Valid EmailForm body) {
         return emailService.sendEmailSimple(body)
-        .thenApply(result -> {
-            ApiResponse<List<String>> response = new ApiResponse<>(
-                HttpStatus.OK.value(),
-                "Email sent successfully",
-                result
-            );
-            return ResponseEntity.ok(response);
-        })
-        .exceptionally(ex -> {
-            ApiResponse<List<String>> response = new ApiResponse<>(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ex.getMessage(),
-                null
-            );
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        });
+                .thenApply(result -> {
+                    ApiResponse<List<String>> response = new ApiResponse<>(
+                            HttpStatus.OK.value(),
+                            "Email sent successfully",
+                            result);
+                    return ResponseEntity.ok(response);
+                })
+                .exceptionally(ex -> {
+                    ApiResponse<List<String>> response = new ApiResponse<>(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ex.getMessage(),
+                            null);
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                });
     }
 
-    @Operation(
-        summary = "Send email with template and image attachment",
-        description = "The email is not sent to any real recipient. It is sent to the Mailtrap inbox."
-    )
+    @Operation(summary = "Send email with template and image attachment", description = "The email is not sent to any real recipient. It is sent to the Mailtrap inbox.")
     @PostMapping("/send")
     public CompletableFuture<ResponseEntity<ApiResponse<List<String>>>> sendEmail(@RequestBody @Valid EmailForm body) {
         return emailService.sendEmail(body)
-        .thenApply(result -> {
-            ApiResponse<List<String>> response = new ApiResponse<>(
-                HttpStatus.OK.value(),
-                "Email sent successfully",
-                result
-            );
-            return ResponseEntity.ok(response);
-        })
-        .exceptionally(ex -> {
-            ApiResponse<List<String>> response = new ApiResponse<>(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ex.getMessage(),
-                null
-            );
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        });
+                .thenApply(result -> {
+                    ApiResponse<List<String>> response = new ApiResponse<>(
+                            HttpStatus.OK.value(),
+                            "Email sent successfully",
+                            result);
+                    return ResponseEntity.ok(response);
+                })
+                .exceptionally(ex -> {
+                    ApiResponse<List<String>> response = new ApiResponse<>(
+                            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            ex.getMessage(),
+                            null);
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                });
     }
 }

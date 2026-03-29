@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.github.donnyk22.models.entities.MstTeachers;
 
 @Repository
-public interface MstTeachersRepository extends JpaRepository<MstTeachers, Integer>, JpaSpecificationExecutor<MstTeachers> {
-    
+public interface MstTeachersRepository
+        extends JpaRepository<MstTeachers, Integer>, JpaSpecificationExecutor<MstTeachers> {
+
 }

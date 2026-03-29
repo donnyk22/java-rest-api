@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.github.donnyk22.models.entities.MstAttendances;
 
 @Repository
-public interface MstAttendancesRepository extends JpaRepository<MstAttendances, Integer>, JpaSpecificationExecutor<MstAttendances>{
-    
+public interface MstAttendancesRepository
+        extends JpaRepository<MstAttendances, Integer>, JpaSpecificationExecutor<MstAttendances> {
+
 }

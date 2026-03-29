@@ -18,14 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 public class LogInterceptor implements HandlerInterceptor {
 
     private final AuthUtil authUtil;
-        
+
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
+            Exception ex) {
         int status = response.getStatus();
         String userId = authUtil.getUserId() == null ? "Anonymous" : authUtil.getUserName();
-        
+
         String logMessage = String.format("User: %s | Method: %s | URI: %s | Status: %d",
-            userId, request.getMethod(), request.getRequestURI(), status);
+                userId, request.getMethod(), request.getRequestURI(), status);
 
         if (status >= 500) {
             log.error(logMessage);

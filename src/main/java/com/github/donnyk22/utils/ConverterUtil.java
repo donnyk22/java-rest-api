@@ -39,7 +39,8 @@ public class ConverterUtil {
 
     public <T> String genericToJson(T properties) {
         try {
-            if (properties == null) return "{}";
+            if (properties == null)
+                return "{}";
             return objectMapper.writeValueAsString(properties);
         } catch (Exception e) {
             log.warn("Failed to convert object to JSON: " + e.getMessage());

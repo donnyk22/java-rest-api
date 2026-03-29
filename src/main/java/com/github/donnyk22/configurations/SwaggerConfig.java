@@ -16,15 +16,16 @@ public class SwaggerConfig {
     @Bean
     OpenAPI apiInfo() {
         return new OpenAPI()
-        .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
-        .components(new Components().addSecuritySchemes("BearerAuth",
-            new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-        .info(new Info().title("Java REST API")
-            .description("Minimal and best practice of Rest API Java Spring with implementing some industry standard of back-end utility")
-            .version("v1.0.0")
-            .license(new License().name("Apache 2.0").url("https://springdoc.org")))
-            .externalDocs(new ExternalDocumentation()
-            .description("Author Profile")
-            .url("https://www.linkedin.com/in/donnyk22/"));
+                .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
+                .components(new Components().addSecuritySchemes("BearerAuth",
+                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
+                .info(new Info().title("Java REST API")
+                        .description(
+                                "Minimal and best practice of Rest API Java Spring with implementing some industry standard of back-end utility")
+                        .version("v1.0.0")
+                        .license(new License().name("Apache 2.0").url("https://springdoc.org")))
+                .externalDocs(new ExternalDocumentation()
+                        .description("Author Profile")
+                        .url("https://www.linkedin.com/in/donnyk22/"));
     }
 }

@@ -17,9 +17,10 @@ import lombok.experimental.Accessors;
 public class AuditTrailsFindForm extends SearchForm {
     private Integer userId;
     private Integer dataId;
-    @Schema(allowableValues = {"mst_attendances", "mst_classes", "mst_homeroom_teachers", "mst_students", "mst_teachers", "mst_users"})
+    @Schema(allowableValues = { "mst_attendances", "mst_classes", "mst_homeroom_teachers", "mst_students",
+            "mst_teachers", "mst_users" })
     private String table;
-    @Schema(implementation = Method.class, allowableValues = {"POST", "PUT", "PATCH", "DELETE"})
+    @Schema(implementation = Method.class, allowableValues = { "POST", "PUT", "PATCH", "DELETE" })
     private String method;
     @NotNull(message = "Start Date is required")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")

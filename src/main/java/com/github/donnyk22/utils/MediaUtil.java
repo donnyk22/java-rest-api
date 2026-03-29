@@ -16,9 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class MediaUtil {
 
-    public String ToBase64(MultipartFile photo) throws Exception{
+    public String ToBase64(MultipartFile photo) throws Exception {
         try {
-            if (photo == null) return null;
+            if (photo == null)
+                return null;
             validateImage(photo);
             byte[] fileBytes = photo.getBytes();
             return Base64.getEncoder().encodeToString(fileBytes);
@@ -32,7 +33,7 @@ public class MediaUtil {
         try {
             Tika tika = new Tika();
             String detectedType = tika.detect(photo.getInputStream());
-            
+
             if (!detectedType.startsWith("image/")) {
                 throw new BadRequestException("Invalid file type: " + detectedType);
             }

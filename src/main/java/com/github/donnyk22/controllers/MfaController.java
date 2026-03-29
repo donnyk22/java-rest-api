@@ -21,21 +21,15 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
-@Tag(
-    name = "MFA Authentication",
-    description = "User authentication with MFA implementation"
-)
+@Tag(name = "MFA Authentication", description = "User authentication with MFA implementation")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/mfa")
 public class MfaController {
-    
+
     private final MfaService mfaService;
 
-    @Operation(
-        summary = "User login",
-        description = "Minimal user login and return temporary credentials to verify MFA."
-    )
+    @Operation(summary = "User login", description = "Minimal user login and return temporary credentials to verify MFA.")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<MstUsersDto>> loginMfa(@RequestBody @Valid UserLoginForm form) {
         MstUsersDto result = mfaService.loginMfa(form);
@@ -47,30 +41,25 @@ public class MfaController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "Veryfy MFA code",
-        description = "Verify MFA code and return final user credentials."
-    )
+    @Operation(summary = "Veryfy MFA code", description = "Verify MFA code and return final user credentials.")
     @PostMapping("/verify")
-    public ResponseEntity<ApiResponse<MstUsersDto>> verifyMfa(@RequestParam @Valid @NotBlank(message = "Code is required") String code) {
+    public ResponseEntity<ApiResponse<MstUsersDto>> verifyMfa(
+            @RequestParam @Valid @NotBlank(message = "Code is required") String code) {
         MstUsersDto result = mfaService.verifyMfa(code);
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Login successfully",
-            result);
+                "Login successfully",
+                result);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "MFA QR code generator",
-        description = "Generate QR code to enable MFA and scan it with Authenticator app service."
-    )
+    @Operation(summary = "MFA QR code generator", description = "Generate QR code to enable MFA and scan it with Authenticator app service.")
     @PostMapping(value = "/qr-code", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> mfaQrCodeGenerate() {
         byte[] result = mfaService.mfaQrCodeGenerate();
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"mfa-qrcode.png\"")
-            .contentType(MediaType.IMAGE_PNG)
-            .body(result);
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"mfa-qrcode.png\"")
+                .contentType(MediaType.IMAGE_PNG)
+                .body(result);
     }
 
 }

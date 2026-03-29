@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Getter
 @Accessors(chain = true)
-public class UsersCreateForm extends UsersUpdateForm{
+public class UsersCreateForm extends UsersUpdateForm {
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
     @Schema(description = "Password must be at least 8 characters")

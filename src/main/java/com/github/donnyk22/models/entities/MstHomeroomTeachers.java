@@ -19,8 +19,9 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 @Entity
-//creating a new table in DB for audit, also inserting the transaction automatically
-@Audited 
+// creating a new table in DB for audit, also inserting the transaction
+// automatically
+@Audited
 @Table(name = "mst_homeroom_teachers")
 public class MstHomeroomTeachers extends BaseTimestampCreate {
     @Id
@@ -36,7 +37,7 @@ public class MstHomeroomTeachers extends BaseTimestampCreate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id", insertable = false, updatable = false)
     private MstClasses classData;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", insertable = false, updatable = false)
     private MstTeachers teacherData;

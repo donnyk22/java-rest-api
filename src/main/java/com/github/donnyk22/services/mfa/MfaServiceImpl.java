@@ -40,7 +40,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MfaServiceImpl implements MfaService{
+public class MfaServiceImpl implements MfaService {
 
     private final MstUsersRepository usersRepository;
     private final AuditTrailsService auditTrailsService;
@@ -54,14 +54,14 @@ public class MfaServiceImpl implements MfaService{
     @Override
     public MstUsersDto loginMfa(UserLoginForm form) {
         MstUsers user = usersRepository.findByEmail(form.getUsername());
-        if(user == null){
+        if (user == null) {
             user = usersRepository.findByUsername(form.getUsername());
-            if(user == null){
+            if (user == null) {
                 throw new ResourceNotFoundException("User not found");
             }
         }
         Boolean passwordMatch = new BCryptPasswordEncoder().matches(form.getPassword(), user.getPassword());
-        if(!passwordMatch){
+        if (!passwordMatch) {
             auditTrailsService.create(user.getId(), "Login failed");
             throw new BadRequestException("Invalid email or password");
         }
@@ -77,7 +77,7 @@ public class MfaServiceImpl implements MfaService{
     @Override
     public MstUsersDto verifyMfa(String code) {
         MstUsers user = usersRepository.findById(authUtil.getUserId())
-            .orElseThrow(() -> new ResourceNotFoundException("User not found: " + authUtil.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + authUtil.getUserId()));
 
         if (verifyCode(user.getMfaSecret(), code)) {
             return refreshToken(user, false);
@@ -90,7 +90,7 @@ public class MfaServiceImpl implements MfaService{
     public byte[] mfaQrCodeGenerate() {
         try {
             MstUsers user = usersRepository.findById(authUtil.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + authUtil.getUserId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found: " + authUtil.getUserId()));
 
             String email = user.getEmail();
             String secret = user.getMfaSecret();
@@ -102,8 +102,9 @@ public class MfaServiceImpl implements MfaService{
 
             user.setMfaEnabled(true);
             usersRepository.save(user);
-            
-            String qrCodeText = "otpauth://totp/" + APP_NAME + ":" + email + "?secret=" + secret + "&issuer=" + APP_NAME;
+
+            String qrCodeText = "otpauth://totp/" + APP_NAME + ":" + email + "?secret=" + secret + "&issuer="
+                    + APP_NAME;
 
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, 500, 500);
@@ -126,11 +127,11 @@ public class MfaServiceImpl implements MfaService{
             token = jwtUtil.generateMfaToken(user, sessionId);
         }
         redisUtil.storeToken(token, user.getEmail(), sessionId);
-        
+
         Claims claims = jwtUtil.extractClaims(token);
         return MstUsersMapper.toBaseDto(user).setToken(token)
-            .setIssuedAt(claims.getIssuedAt().toInstant())
-            .setExpiresAt(claims.getExpiration().toInstant());
+                .setIssuedAt(claims.getIssuedAt().toInstant())
+                .setExpiresAt(claims.getExpiration().toInstant());
     }
 
     private boolean verifyCode(String secret, String code) {

@@ -33,8 +33,9 @@ public class FileUtil {
     private String MAX_SIZE;
 
     public String saveProfilePic(MultipartFile photo) {
-        try{
-            if (photo == null) return null;
+        try {
+            if (photo == null)
+                return null;
 
             mediaUtil.validateImage(photo);
 
@@ -67,7 +68,8 @@ public class FileUtil {
     }
 
     public void deleteProfilePic(String filePath) {
-        if (!StringUtils.hasText(filePath)) return;
+        if (!StringUtils.hasText(filePath))
+            return;
 
         try {
             Path path = Paths.get(filePath);

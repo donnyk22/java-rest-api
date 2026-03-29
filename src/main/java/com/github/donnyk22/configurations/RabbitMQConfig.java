@@ -24,18 +24,18 @@ public class RabbitMQConfig {
 
     public static final String MESSAGE_ROUTING_KEY_OBJECT = "message.key.object";
     public static final String MESSAGE_ROUTING_KEY_TEXT = "message.key.text";
-    public static final String MESSAGE_ROUTING_KEY_ALL = "message.key.*"; //or "message.#"
+    public static final String MESSAGE_ROUTING_KEY_ALL = "message.key.*"; // or "message.#"
 
     // =================== Job-related queues ===================
-    
+
     public static final String JOB_EXCHANGE = "job.exchange";
     public static final String JOB_QUEUE = "job.queue";
     public static final String JOB_ROUTING_KEY = "job.key";
 
     // exchange is a gateway between producers and queues
-    // Producer A  \
-    // Producer B   --->  EXCHANGE (1) ---> Queues
-    // Producer C  /
+    // Producer A \
+    // Producer B ---> EXCHANGE (1) ---> Queues
+    // Producer C /
     @Bean
     public TopicExchange messageExchange() {
         return new TopicExchange(MESSAGE_EXCHANGE, true, false);
@@ -44,60 +44,64 @@ public class RabbitMQConfig {
     @Bean
     public Queue messageObject() {
         return QueueBuilder
-            .durable(MESSAGE_QUEUE_OBJECT)
-            .build();
+                .durable(MESSAGE_QUEUE_OBJECT)
+                .build();
     }
 
     @Bean
     public Queue messageText() {
         return QueueBuilder
-            .durable(MESSAGE_QUEUE_TEXT)
-            .build();
+                .durable(MESSAGE_QUEUE_TEXT)
+                .build();
     }
 
     @Bean
     public Queue messageAll() {
         return QueueBuilder
-            .durable(MESSAGE_QUEUE_ALL)
-            .build();
+                .durable(MESSAGE_QUEUE_ALL)
+                .build();
     }
 
     /**
      * Configures a Binding between a Queue and a TopicExchange.
-     * * Logic: "If a message arrives at 'messageExchange' with a routing key that matches 
+     * * Logic: "If a message arrives at 'messageExchange' with a routing key that
+     * matches
      * 'MESSAGE_ROUTING_KEY_OBJECT', route that message into 'messageObjectQueue'."
      * * Relationship Details:
-     * - Topic Exchange: Allows for wildcard matching (e.g., 'stock.*' or 'stock.#').
-     * - Many-to-Many Mapping: 
+     * - Topic Exchange: Allows for wildcard matching (e.g., 'stock.*' or
+     * 'stock.#').
+     * - Many-to-Many Mapping:
      * 1. One Routing Key can trigger multiple Queues (Fan-out behavior).
      * 2. One Queue can be bound to multiple Routing Keys/Exchanges.
      *
      * @param messageObjectQueue The destination queue injected via @Qualifier.
-     * @param messageExchange The source exchange where messages are initially published.
+     * @param messageExchange    The source exchange where messages are initially
+     *                           published.
      * @return A Binding object that defines the routing rule.
      */
     @Bean
-    public Binding messageObjectSent(@Qualifier("messageObject") Queue messageObjectQueue, TopicExchange messageExchange) {
+    public Binding messageObjectSent(@Qualifier("messageObject") Queue messageObjectQueue,
+            TopicExchange messageExchange) {
         return BindingBuilder
-            .bind(messageObjectQueue)
-            .to(messageExchange)
-            .with(MESSAGE_ROUTING_KEY_OBJECT);
+                .bind(messageObjectQueue)
+                .to(messageExchange)
+                .with(MESSAGE_ROUTING_KEY_OBJECT);
     }
 
     @Bean
     public Binding messageTextSent(@Qualifier("messageText") Queue messageTextQueue, TopicExchange messageExchange) {
         return BindingBuilder
-            .bind(messageTextQueue)
-            .to(messageExchange)
-            .with(MESSAGE_ROUTING_KEY_TEXT);
+                .bind(messageTextQueue)
+                .to(messageExchange)
+                .with(MESSAGE_ROUTING_KEY_TEXT);
     }
 
     @Bean
     public Binding messageAllSent(@Qualifier("messageAll") Queue messageAllQueue, TopicExchange messageExchange) {
         return BindingBuilder
-            .bind(messageAllQueue)
-            .to(messageExchange)
-            .with(MESSAGE_ROUTING_KEY_ALL);
+                .bind(messageAllQueue)
+                .to(messageExchange)
+                .with(MESSAGE_ROUTING_KEY_ALL);
     }
 
     // =================== Job-related queues ===================
@@ -124,9 +128,9 @@ public class RabbitMQConfig {
     @Bean
     public Binding jobSent(Queue jobQueue, TopicExchange jobExchange) {
         return BindingBuilder
-            .bind(jobQueue)
-            .to(jobExchange)
-            .with(JOB_ROUTING_KEY);
+                .bind(jobQueue)
+                .to(jobExchange)
+                .with(JOB_ROUTING_KEY);
     }
 
 }

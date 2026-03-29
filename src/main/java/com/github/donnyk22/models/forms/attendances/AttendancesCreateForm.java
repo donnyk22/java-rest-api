@@ -22,7 +22,8 @@ public class AttendancesCreateForm {
     @Schema(example = "2026-01-21", description = "Date of attendance (YYYY-MM-DD)")
     private LocalDate date; // For Json body (POST)
     @NotNull(message = "Status is required")
-    @Schema(implementation = StudentAttendanceStatus.class, allowableValues = {"PRESENT", "ABSENT", "LATE", "SICK", "PERMIT"})
+    @Schema(implementation = StudentAttendanceStatus.class, allowableValues = { "PRESENT", "ABSENT", "LATE", "SICK",
+            "PERMIT" })
     private StudentAttendanceStatus status;
     private String note;
 }

@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 public class BaseTimestampCreate {
-    
+
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
 

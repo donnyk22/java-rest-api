@@ -7,6 +7,8 @@ import com.github.donnyk22.models.forms.AuditTrailsFindForm;
 
 public interface AuditTrailsService {
     FindResponse<LogAuditTrailsDto> findAuditTrails(AuditTrailsFindForm form);
+
     <T> void create(Method method, T data, String details);
+
     void create(Integer userId, String details);
 }

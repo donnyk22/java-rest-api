@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class AuthUtil {
 
-    private Authentication getAuth(){
+    private Authentication getAuth() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             throw new InternalServerErrorException("No authentication found in security context");
@@ -44,19 +44,19 @@ public class AuthUtil {
         }
     }
 
-    public String getUserName(){
+    public String getUserName() {
         return (String) getDetails().get("username");
     }
 
-    public String getUserEmail(){
+    public String getUserEmail() {
         return (String) getDetails().get("email");
     }
 
-    public String getUserRole(){
+    public String getUserRole() {
         return (String) getDetails().get("role");
     }
 
-    public String getSessionId(){
+    public String getSessionId() {
         return (String) getDetails().get("sessionId");
     }
 

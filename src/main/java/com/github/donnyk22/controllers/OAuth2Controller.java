@@ -16,10 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(
-    name = "OAuth2 API",
-    description = "Login/Register with Google OAuth2 service"
-)
+@Tag(name = "OAuth2 API", description = "Login/Register with Google OAuth2 service")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/oauth2")
@@ -27,16 +24,13 @@ public class OAuth2Controller {
 
     private final OAuth2Service oAuth2Service;
 
-    @Operation(
-        summary = "Get user info from Google OAuth2",
-        description = "Get user info, and use the credentials to login or register (Please access via src/main/java/com/github/donnyk22/web/OAuth2Test.html)"
-    )
+    @Operation(summary = "Get user info from Google OAuth2", description = "Get user info, and use the credentials to login or register (Please access via src/main/java/com/github/donnyk22/web/OAuth2Test.html)")
     @GetMapping()
     public ResponseEntity<ApiResponse<MstUsersDto>> OAuth2GetInfo(@AuthenticationPrincipal OAuth2User principal) {
         MstUsersDto result = oAuth2Service.OAuth2GetInfo(principal);
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "OAuth2 login successfully",
-            result);
+                "OAuth2 login successfully",
+                result);
         return ResponseEntity.ok(response);
     }
 }

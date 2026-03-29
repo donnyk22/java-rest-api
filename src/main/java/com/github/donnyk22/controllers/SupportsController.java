@@ -22,10 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Tag(
-    name = "Supports",
-    description = "System and maintenance support APIs"
-)
+@Tag(name = "Supports", description = "System and maintenance support APIs")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/supports")
@@ -33,61 +30,45 @@ public class SupportsController {
 
     private final SupportsService supportsService;
 
-    @Operation(
-        summary = "Check Redis connection",
-        description = "Verify Redis connectivity and status."
-    )
+    @Operation(summary = "Check Redis connection", description = "Verify Redis connectivity and status.")
     @PostMapping("/redis-check-connection")
     public ResponseEntity<ApiResponse<String>> redisCheckConnection() {
         String result = supportsService.redisCheckConnection();
         ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Checking status success",
-            result);
+                "Checking status success",
+                result);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "Check login credential",
-        description = "Retrieve active user login credential details."
-    )
+    @Operation(summary = "Check login credential", description = "Retrieve active user login credential details.")
     @PostMapping("/user-check-login-credential")
     public ResponseEntity<ApiResponse<Map<String, Object>>> orders() {
         Map<String, Object> result = supportsService.checkUserLoginCredential();
         ApiResponse<Map<String, Object>> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Checking active login credential success",
-            result);
+                "Checking active login credential success",
+                result);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "Generate encoded password",
-        description = "Generate an encoded password using BCrypt."
-    )
+    @Operation(summary = "Generate encoded password", description = "Generate an encoded password using BCrypt.")
     @PostMapping("/encoded-password-generator")
     public ResponseEntity<ApiResponse<String>> encodedPasswordGenerator(
-            @RequestParam
-            @NotBlank(message = "Password is required")
-            @Size(min = 8, message = "Password must be at least 8 characters")
-            @Schema(description = "Password must be at least 8 characters")
-            String password) {
+            @RequestParam @NotBlank(message = "Password is required") @Size(min = 8, message = "Password must be at least 8 characters") @Schema(description = "Password must be at least 8 characters") String password) {
         String result = supportsService.encodedPasswordGenerator(password);
         ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Encoded password generated successfully",
-            result);
+                "Encoded password generated successfully",
+                result);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "Get system bean list",
-        description = "Retrieve all registered Spring beans."
-    )
+    @Operation(summary = "Get system bean list", description = "Retrieve all registered Spring beans.")
     @GetMapping("/system-get-bean-list")
     public ResponseEntity<ApiResponse<List<String>>> getBeanList() {
         List<String> result = supportsService.getBeanList();
         ApiResponse<List<String>> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Checking Bean list success",
-            result);
+                "Checking Bean list success",
+                result);
         return ResponseEntity.ok(response);
     }
-    
+
 }

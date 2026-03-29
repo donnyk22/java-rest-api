@@ -20,7 +20,7 @@ public class TeachersCreateForm {
     @NotBlank(message = "Full name is required")
     private String fullName;
     @NotNull(message = "Gender is required")
-    @Schema(implementation = UserGender.class, allowableValues = {"M", "F"})
+    @Schema(implementation = UserGender.class, allowableValues = { "M", "F" })
     private UserGender gender;
     @NotBlank(message = "Phone is required")
     @Schema(example = "081234567890")

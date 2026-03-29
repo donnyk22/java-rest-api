@@ -31,12 +31,11 @@ public class WebsocketServiceImpl implements WebSocketService {
 
     @Override
     public WebSocketForm sendMessagesToUsers(WebSocketUsersForm message) {
-        for (Integer userId: message.getUserIds()) {
+        for (Integer userId : message.getUserIds()) {
             messagingTemplate.convertAndSendToUser(
-                Integer.toString(userId),
-                "/queue/messages",
-                new WebSocketForm(message.getSubject(), message.getContent())
-            );
+                    Integer.toString(userId),
+                    "/queue/messages",
+                    new WebSocketForm(message.getSubject(), message.getContent()));
         }
         return new WebSocketForm(message.getSubject(), message.getContent());
     }
@@ -44,20 +43,19 @@ public class WebsocketServiceImpl implements WebSocketService {
     @Override
     public WebSocketUserSessionDto getActiveUsers() {
         List<WebSocketUserSessionDetailDto> users = simpUserRegistry.getUsers().stream()
-            .map(user -> new WebSocketUserSessionDetailDto(
-                user.getName(),
-                user.getSessions()
-                    .stream()
-                    .map(SimpSession::getId)
-                    .collect(Collectors.toSet())
-            ))
-            .collect(Collectors.toList());
+                .map(user -> new WebSocketUserSessionDetailDto(
+                        user.getName(),
+                        user.getSessions()
+                                .stream()
+                                .map(SimpSession::getId)
+                                .collect(Collectors.toSet())))
+                .collect(Collectors.toList());
 
         WebSocketUserSessionDto result = new WebSocketUserSessionDto()
-            .setCount(simpUserRegistry.getUserCount())
-            .setDetail(users);
+                .setCount(simpUserRegistry.getUserCount())
+                .setDetail(users);
 
         return result;
     }
-    
+
 }

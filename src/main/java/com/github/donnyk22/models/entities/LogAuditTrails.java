@@ -25,7 +25,7 @@ public class LogAuditTrails extends BaseTimestampCreate {
     @Column(name = "user_id")
     private Integer userId;
     private String method;
-    @Column(name = "`table`") //handle reserved keyword
+    @Column(name = "`table`") // handle reserved keyword
     private String table;
     private String details;
     @Column(name = "data_id")

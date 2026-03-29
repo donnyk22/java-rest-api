@@ -22,10 +22,9 @@ public class ApiCacheConfig {
         RedisSerializer<Object> serializer = RedisSerializer.json();
 
         return RedisCacheConfiguration.defaultCacheConfig()
-            .entryTtl(Duration.ofMinutes(EXPIRATION))
-            .disableCachingNullValues()
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(serializer)
-            );
+                .entryTtl(Duration.ofMinutes(EXPIRATION))
+                .disableCachingNullValues()
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(serializer));
     }
 }

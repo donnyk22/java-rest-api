@@ -26,12 +26,13 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 @Entity
-//creating a new table in DB for audit, also inserting the transaction automatically
+// creating a new table in DB for audit, also inserting the transaction
+// automatically
 @Audited
 @Table(name = "mst_teachers")
-//override delete behaviour by JPA to soft delete
+// override delete behaviour by JPA to soft delete
 @SQLDelete(sql = "UPDATE mst_teachers SET deleted = true WHERE id = ? AND version = ?")
-//automatically add "where deleted = false"
+// automatically add "where deleted = false"
 @SQLRestriction("deleted = false")
 public class MstTeachers extends BaseTimestampCreateUpdate {
     @Id
@@ -54,7 +55,7 @@ public class MstTeachers extends BaseTimestampCreateUpdate {
 
     @OneToMany(mappedBy = "teacherData", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MstHomeroomTeachers> homeroomTeachers;
-    
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     private MstUsers user;

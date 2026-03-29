@@ -9,5 +9,6 @@ import com.github.donnyk22.models.entities.MstUsers;
 @Repository
 public interface MstUsersRepository extends JpaRepository<MstUsers, Integer>, JpaSpecificationExecutor<MstUsers> {
     MstUsers findByEmail(String email);
+
     MstUsers findByUsername(String username);
 }

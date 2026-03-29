@@ -11,15 +11,15 @@ import com.github.donnyk22.models.forms.users.UsersUpdateForm;
 public class MstUsersMapper {
     public static MstUsersDto toBaseDto(MstUsers users) {
         MstUsersDto toBaseDto = new MstUsersDto()
-            .setId(users.getId())
-            .setUsername(users.getUsername())
-            .setEmail(users.getEmail())
-            .setPhoto(users.getPhoto())
-            .setRole(users.getRole())
-            .setMfaEnabled(users.getMfaEnabled())
-            .setVersion(users.getVersion())
-            .setCreatedAt(users.getCreatedAt())
-            .setUpdatedAt(users.getUpdatedAt());
+                .setId(users.getId())
+                .setUsername(users.getUsername())
+                .setEmail(users.getEmail())
+                .setPhoto(users.getPhoto())
+                .setRole(users.getRole())
+                .setMfaEnabled(users.getMfaEnabled())
+                .setVersion(users.getVersion())
+                .setCreatedAt(users.getCreatedAt())
+                .setUpdatedAt(users.getUpdatedAt());
         return toBaseDto;
     }
 
@@ -35,38 +35,38 @@ public class MstUsersMapper {
             teacherDto = MstTeachersMapper.toBaseDto(users.getTeacherData());
         }
         MstUsersDto dto = toBaseDto(users)
-            .setName(fullname)
-            .setStudent(studentDto)
-            .setTeacher(teacherDto);
+                .setName(fullname)
+                .setStudent(studentDto)
+                .setTeacher(teacherDto);
         return dto;
     }
 
     public static MstUsers toEntity(UserRegisterForm form, String encryptedPassword) {
         MstUsers users = new MstUsers()
-            .setUsername(form.getUsername())
-            .setEmail(form.getEmail())
-            .setRole(form.getRole().name())
-            .setPassword(encryptedPassword);
+                .setUsername(form.getUsername())
+                .setEmail(form.getEmail())
+                .setRole(form.getRole().name())
+                .setPassword(encryptedPassword);
         return users;
     }
 
     public static MstUsers toEntity(UsersCreateForm form, String photo, String encryptedPassword) {
         MstUsers users = new MstUsers()
-            .setUsername(form.getUsername())
-            .setEmail(form.getEmail())
-            .setPhoto(photo)
-            .setRole(form.getRole().name())
-            .setIsActive(form.getIsActive())
-            .setPassword(encryptedPassword);
+                .setUsername(form.getUsername())
+                .setEmail(form.getEmail())
+                .setPhoto(photo)
+                .setRole(form.getRole().name())
+                .setIsActive(form.getIsActive())
+                .setPassword(encryptedPassword);
         return users;
     }
 
     public static MstUsers toEntity(MstUsers user, UsersUpdateForm form, String photo) {
         user.setUsername(form.getUsername())
-            .setEmail(form.getEmail())
-            .setPhoto(photo)
-            .setRole(form.getRole().name())
-            .setIsActive(form.getIsActive());
+                .setEmail(form.getEmail())
+                .setPhoto(photo)
+                .setRole(form.getRole().name())
+                .setIsActive(form.getIsActive());
         return user;
     }
 }

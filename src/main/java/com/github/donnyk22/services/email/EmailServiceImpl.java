@@ -35,11 +35,11 @@ public class EmailServiceImpl implements EmailService {
     private String SENDER;
 
     @Override
-    @Async //implement async function
+    @Async // implement async function
     public CompletableFuture<List<String>> sendEmailSimple(EmailForm form) {
-        try{
+        try {
             SimpleMailMessage message = new SimpleMailMessage();
-            
+
             String[] recipientArray = form.getRecipients().toArray(new String[0]);
             message.setTo(recipientArray);
             message.setSubject(form.getSubject());
@@ -54,9 +54,9 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Async //implement async function
+    @Async // implement async function
     public CompletableFuture<List<String>> sendEmail(EmailForm form) {
-        try{
+        try {
             for (String to : form.getRecipients()) {
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -84,17 +84,17 @@ public class EmailServiceImpl implements EmailService {
 
                 String htmlContent = templateEngine.process("email-template", context);
 
-                helper.setTo(to); //use array to send to multiple recipients at once
+                helper.setTo(to); // use array to send to multiple recipients at once
                 helper.setSubject(form.getSubject());
                 helper.setText(htmlContent, true);
                 helper.setFrom(SENDER);
 
                 ClassPathResource imageResource = new ClassPathResource("images/company-logo.jpg");
-                helper.addInline("logoImage", imageResource); 
+                helper.addInline("logoImage", imageResource);
 
                 mailSender.send(message);
             }
-            
+
             return CompletableFuture.completedFuture(form.getRecipients());
         } catch (MessagingException e) {
             log.error("Error to send the message: ", e);
@@ -104,5 +104,5 @@ public class EmailServiceImpl implements EmailService {
             return CompletableFuture.failedFuture(e);
         }
     }
-    
+
 }

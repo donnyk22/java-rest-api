@@ -1,5 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+
   <head>
     <meta charset="UTF-8" />
     <style>
@@ -8,16 +9,19 @@
         padding: 20px;
         border: 1px solid #eee;
       }
+
       .logo-image {
         width: 100%;
         max-width: 200px;
         height: auto;
         border-radius: 8px;
       }
+
       .user-status {
         font-size: 12px;
         color: #888;
       }
+
       .footer {
         font-size: 12px;
         color: #888;
@@ -25,6 +29,7 @@
       }
     </style>
   </head>
+
   <body>
     <div class="container">
       <img th:src="|cid:logoImage|" alt="Welcome Logo" class="logo-image" />
@@ -42,4 +47,5 @@
       <div class="footer">Sent via Spring Boot & Mailtrap</div>
     </div>
   </body>
+
 </html>

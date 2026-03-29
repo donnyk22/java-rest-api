@@ -27,19 +27,20 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class JwtAuthFilterConfig extends OncePerRequestFilter{
+public class JwtAuthFilterConfig extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
         String header = req.getHeader("Authorization");
-        if(header != null) {
+        if (header != null) {
             String token;
-            if(header.startsWith("Bearer ")){
+            if (header.startsWith("Bearer ")) {
                 token = header.substring(7);
-            }else{
+            } else {
                 token = header;
             }
 
@@ -54,21 +55,33 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter{
             String role = claims.get("role", String.class);
             String sessionId = claims.get("sessionId", String.class);
 
-            if(!redisUtil.isTokenValid(email, sessionId)){
+            if (!redisUtil.isTokenValid(email, sessionId)) {
                 sendUnauthorizedResponse(res, "Token expired or invalid");
                 return;
             }
 
-            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())); // To handle @PreAuthorize("hasRole('ADMIN')") or @PreAuthorize("hasAnyRole('ADMIN')") in controller, we need to prefix role with "ROLE_"
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())); // To
+                                                                                                                    // handle
+                                                                                                                    // @PreAuthorize("hasRole('ADMIN')")
+                                                                                                                    // or
+                                                                                                                    // @PreAuthorize("hasAnyRole('ADMIN')")
+                                                                                                                    // in
+                                                                                                                    // controller,
+                                                                                                                    // we
+                                                                                                                    // need
+                                                                                                                    // to
+                                                                                                                    // prefix
+                                                                                                                    // role
+                                                                                                                    // with
+                                                                                                                    // "ROLE_"
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(id, null, authorities);
 
             auth.setDetails(Map.of(
-                "username", name,
-                "email", email,
-                "role", role,
-                "sessionId", sessionId
-            ));
+                    "username", name,
+                    "email", email,
+                    "role", role,
+                    "sessionId", sessionId));
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
@@ -79,10 +92,9 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter{
         res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         res.setContentType("application/json");
         ApiResponse<Object> response = new ApiResponse<>(
-            HttpServletResponse.SC_UNAUTHORIZED,
-            errorMessage,
-            null
-        );
+                HttpServletResponse.SC_UNAUTHORIZED,
+                errorMessage,
+                null);
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(response);
         res.getWriter().write(json);

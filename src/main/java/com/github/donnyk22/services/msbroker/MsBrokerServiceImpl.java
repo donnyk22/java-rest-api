@@ -24,24 +24,22 @@ public class MsBrokerServiceImpl implements MsBrokerService {
     @Override
     public MsBrokerForm sendToTopicObject(MsBrokerForm object) {
         rabbitTemplate.convertAndSend(
-            RabbitMQConfig.MESSAGE_EXCHANGE,
-            RabbitMQConfig.MESSAGE_ROUTING_KEY_OBJECT,
-            converterUtil.objectToBytes(object)
-        );
+                RabbitMQConfig.MESSAGE_EXCHANGE,
+                RabbitMQConfig.MESSAGE_ROUTING_KEY_OBJECT,
+                converterUtil.objectToBytes(object));
         return object;
     }
 
     @Override
     public String sendToTopicText(String text) {
         rabbitTemplate.convertAndSend(
-            RabbitMQConfig.MESSAGE_EXCHANGE,
-            RabbitMQConfig.MESSAGE_ROUTING_KEY_TEXT,
-            text
-        );
+                RabbitMQConfig.MESSAGE_EXCHANGE,
+                RabbitMQConfig.MESSAGE_ROUTING_KEY_TEXT,
+                text);
         return text;
     }
 
-    //Listeners
+    // Listeners
 
     @RabbitListener(queues = RabbitMQConfig.MESSAGE_QUEUE_OBJECT)
     private void object(byte[] object) {

@@ -22,7 +22,7 @@ public class UsersUpdateForm {
     @Email(message = "Email is not valid")
     private String email;
     @NotNull(message = "Role is required")
-    @Schema(implementation = UserRole.class, allowableValues = {"ADMIN", "STUDENT", "TEACHER"})
+    @Schema(implementation = UserRole.class, allowableValues = { "ADMIN", "STUDENT", "TEACHER" })
     private UserRole role;
     private MultipartFile photo;
     @NotNull(message = "Active status is required")

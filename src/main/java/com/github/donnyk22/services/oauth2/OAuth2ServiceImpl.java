@@ -27,7 +27,8 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     public MstUsersDto OAuth2GetInfo(OAuth2User principal) {
         String email = principal.getAttribute("email");
         if (email == null) {
-            throw new BadRequestException("Cannot find email information from google oauth2. Please use another account");
+            throw new BadRequestException(
+                    "Cannot find email information from google oauth2. Please use another account");
         }
         MstUsers user = usersRepository.findByEmail(email);
         if (user != null) {
@@ -37,15 +38,15 @@ public class OAuth2ServiceImpl implements OAuth2Service {
 
         String userName = principal.getAttribute("sub");
         String role = UserRole.STUDENT.name();
-        
+
         user = new MstUsers()
-            .setUsername(userName)
-            .setEmail(email)
-            .setRole(role);
+                .setUsername(userName)
+                .setEmail(email)
+                .setRole(role);
         user = usersRepository.saveAndFlush(user);
 
         auditTrailsService.create(user.getId(), "User registered with google oauth2");
         return authService.refreshToken(user);
     }
-    
+
 }

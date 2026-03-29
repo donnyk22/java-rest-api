@@ -77,7 +77,7 @@ import lombok.SneakyThrows;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SchoolServiceImpl implements SchoolService{
+public class SchoolServiceImpl implements SchoolService {
 
     private final MstAttendancesRepository attendancesRepository;
     private final MstClassesRepository classesRepository;
@@ -96,23 +96,22 @@ public class SchoolServiceImpl implements SchoolService{
         Pageable pageable = PageRequest.of(form.getPage(), form.getSize());
         Specification<MstAttendances> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            
+
             Join<MstAttendances, MstStudents> studentJoin = root.join("studentData", JoinType.LEFT);
             Join<MstStudents, MstClasses> classJoin = studentJoin.join("classroom", JoinType.LEFT);
 
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("status")), likePattern),
-                    cb.like(cb.lower(root.get("note")), likePattern),
-                    cb.like(cb.lower(studentJoin.get("fullName")), likePattern),
-                    cb.like(cb.lower(classJoin.get("className")), likePattern),
-                    cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern)
-                );
+                        cb.like(cb.lower(root.get("status")), likePattern),
+                        cb.like(cb.lower(root.get("note")), likePattern),
+                        cb.like(cb.lower(studentJoin.get("fullName")), likePattern),
+                        cb.like(cb.lower(classJoin.get("className")), likePattern),
+                        cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern));
                 predicates.add(predicate);
             }
 
-            if (StringUtils.hasText(form.getAcademicYear())){
+            if (StringUtils.hasText(form.getAcademicYear())) {
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
                 Predicate predicate = cb.like(cb.lower(classJoin.get("academicYear")), likePattern);
                 predicates.add(predicate);
@@ -128,18 +127,18 @@ public class SchoolServiceImpl implements SchoolService{
 
         Page<MstAttendances> result = attendancesRepository.findAll(spec, pageable);
         return new FindResponse<MstAttendancesDto>()
-            .setRecords(result.getContent().stream().map(MstAttendancesMapper::toDto).toList())
-            .setTotalPage(result.getTotalPages())
-            .setTotalItem((int) result.getTotalElements())
-            .setHasNext(result.hasNext())
-            .setHasPrev(result.hasPrevious());
+                .setRecords(result.getContent().stream().map(MstAttendancesMapper::toDto).toList())
+                .setTotalPage(result.getTotalPages())
+                .setTotalItem((int) result.getTotalElements())
+                .setHasNext(result.hasNext())
+                .setHasPrev(result.hasPrevious());
     }
 
     @Override
     @Cacheable(value = "attendance", key = "#id")
     public MstAttendancesDto readAttendance(Integer id) {
         MstAttendances attendance = attendancesRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Attendance not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Attendance not found: " + id));
         return MstAttendancesMapper.toDto(attendance);
     }
 
@@ -155,7 +154,7 @@ public class SchoolServiceImpl implements SchoolService{
     @CacheEvict(value = "attendance", key = "#id")
     public MstAttendancesDto deleteAttendance(Integer id) {
         MstAttendances attendance = attendancesRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Attendance not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Attendance not found: " + id));
         attendancesRepository.deleteById(id);
         auditTrailsService.create(Method.DELETE, attendance, "Delete attendance record");
         return MstAttendancesMapper.toBaseDto(attendance);
@@ -168,18 +167,17 @@ public class SchoolServiceImpl implements SchoolService{
         Pageable pageable = PageRequest.of(form.getPage(), form.getSize());
         Specification<MstClasses> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            
+
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("className")), likePattern),
-                    cb.like(cb.lower(root.get("gradeLevel")), likePattern),
-                    cb.like(cb.lower(root.get("academicYear")), likePattern)
-                );
+                        cb.like(cb.lower(root.get("className")), likePattern),
+                        cb.like(cb.lower(root.get("gradeLevel")), likePattern),
+                        cb.like(cb.lower(root.get("academicYear")), likePattern));
                 predicates.add(predicate);
             }
 
-            if (StringUtils.hasText(form.getAcademicYear())){
+            if (StringUtils.hasText(form.getAcademicYear())) {
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
                 Predicate predicate = cb.like(cb.lower(root.get("academicYear")), likePattern);
                 predicates.add(predicate);
@@ -190,18 +188,18 @@ public class SchoolServiceImpl implements SchoolService{
 
         Page<MstClasses> result = classesRepository.findAll(spec, pageable);
         return new FindResponse<MstClassesDto>()
-            .setRecords(result.getContent().stream().map(MstClassesMapper::toBaseDtoWithHomeroomTeachers).toList())
-            .setTotalPage(result.getTotalPages())
-            .setTotalItem((int) result.getTotalElements())            
-            .setHasNext(result.hasNext())
-            .setHasPrev(result.hasPrevious());
+                .setRecords(result.getContent().stream().map(MstClassesMapper::toBaseDtoWithHomeroomTeachers).toList())
+                .setTotalPage(result.getTotalPages())
+                .setTotalItem((int) result.getTotalElements())
+                .setHasNext(result.hasNext())
+                .setHasPrev(result.hasPrevious());
     }
 
     @Override
     @Cacheable(value = "classes", key = "#id")
     public MstClassesDto readClass(Integer id) {
         MstClasses classes = classesRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
         return MstClassesMapper.toDto(classes);
     }
 
@@ -217,7 +215,7 @@ public class SchoolServiceImpl implements SchoolService{
     @CachePut(value = "classes", key = "#id")
     public MstClassesDto updateClass(Integer id, ClassesUpdateForm body) {
         MstClasses classes = classesRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
         EntityUtil.compareVersion(classes.getVersion(), body.getVersion());
         classes = MstClassesMapper.toEntity(classes, body);
         classes = classesRepository.saveAndFlush(classes);
@@ -229,7 +227,7 @@ public class SchoolServiceImpl implements SchoolService{
     @CacheEvict(value = "classes", key = "#id")
     public MstClassesDto deleteClass(Integer id) {
         MstClasses classes = classesRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
         classesRepository.deleteById(id);
         auditTrailsService.create(Method.DELETE, classes, "Delete classroom record");
         return MstClassesMapper.toBaseDto(classes);
@@ -248,15 +246,14 @@ public class SchoolServiceImpl implements SchoolService{
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("fullName")), likePattern),
-                    cb.like(cb.lower(root.get("address")), likePattern),
-                    cb.like(cb.lower(classJoin.get("className")), likePattern),
-                    cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern)
-                );
+                        cb.like(cb.lower(root.get("fullName")), likePattern),
+                        cb.like(cb.lower(root.get("address")), likePattern),
+                        cb.like(cb.lower(classJoin.get("className")), likePattern),
+                        cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern));
                 predicates.add(predicate);
             }
 
-            if (StringUtils.hasText(form.getAcademicYear())){
+            if (StringUtils.hasText(form.getAcademicYear())) {
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
                 Predicate predicate = cb.like(cb.lower(classJoin.get("academicYear")), likePattern);
                 predicates.add(predicate);
@@ -267,18 +264,18 @@ public class SchoolServiceImpl implements SchoolService{
 
         Page<MstStudents> result = studentsRepository.findAll(spec, pageable);
         return new FindResponse<MstStudentsDto>()
-            .setRecords(result.getContent().stream().map(MstStudentsMapper::toBaseDto).toList())
-            .setTotalPage(result.getTotalPages())
-            .setTotalItem((int) result.getTotalElements())
-            .setHasNext(result.hasNext())
-            .setHasPrev(result.hasPrevious());
+                .setRecords(result.getContent().stream().map(MstStudentsMapper::toBaseDto).toList())
+                .setTotalPage(result.getTotalPages())
+                .setTotalItem((int) result.getTotalElements())
+                .setHasNext(result.hasNext())
+                .setHasPrev(result.hasPrevious());
     }
 
     @Override
     @Cacheable(value = "student", key = "#id")
     public MstStudentsDto readStudent(Integer id) {
         MstStudents student = studentsRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
         return MstStudentsMapper.toDto(student);
     }
 
@@ -286,7 +283,7 @@ public class SchoolServiceImpl implements SchoolService{
     public MstStudentsDto createStudent(StudentsCreateForm form) {
         if (form.getUserId() != null) {
             MstUsers user = usersRepository.findById(form.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
             if (user.getStudentData() != null) {
                 throw new ConflictException("User is already associated with a student: " + form.getUserId());
             }
@@ -304,18 +301,18 @@ public class SchoolServiceImpl implements SchoolService{
     @CachePut(value = "student", key = "#id")
     public MstStudentsDto updateStudent(Integer id, StudentsUpdateForm form) {
         MstStudents student = studentsRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
         EntityUtil.compareVersion(student.getVersion(), form.getVersion());
         if (form.getUserId() != null) {
             MstUsers user = usersRepository.findById(form.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
             if (user.getStudentData() != null && !user.getStudentData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a student: " + form.getUserId());
             }
             if (user.getTeacherData() != null && !user.getTeacherData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
             }
-            if (!user.getRole().equals(UserRole.STUDENT.name())){
+            if (!user.getRole().equals(UserRole.STUDENT.name())) {
                 throw new BadRequestException("User role must be student: " + form.getUserId());
             }
         }
@@ -349,7 +346,7 @@ public class SchoolServiceImpl implements SchoolService{
     @CacheEvict(value = "student", key = "#id")
     public MstStudentsDto deleteStudent(Integer id) {
         MstStudents student = studentsRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
         studentsRepository.deleteById(id);
         auditTrailsService.create(Method.DELETE, student, "Delete student record");
         return MstStudentsMapper.toBaseDto(student);
@@ -359,7 +356,7 @@ public class SchoolServiceImpl implements SchoolService{
     @CachePut(value = "student", key = "#id")
     public MstStudentsDto deleteStudentProfilePic(Integer id) {
         MstStudents student = studentsRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
         if (!StringUtils.hasLength(student.getPhoto())) {
             throw new ResourceNotFoundException("Student has no profile picture");
         }
@@ -386,16 +383,15 @@ public class SchoolServiceImpl implements SchoolService{
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("fullName")), likePattern),
-                    cb.like(cb.lower(root.get("phone")), likePattern),
-                    cb.like(cb.lower(root.get("address")), likePattern),
-                    cb.like(cb.lower(classJoin.get("className")), likePattern),
-                    cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern)
-                );
+                        cb.like(cb.lower(root.get("fullName")), likePattern),
+                        cb.like(cb.lower(root.get("phone")), likePattern),
+                        cb.like(cb.lower(root.get("address")), likePattern),
+                        cb.like(cb.lower(classJoin.get("className")), likePattern),
+                        cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern));
                 predicates.add(predicate);
             }
 
-            if (StringUtils.hasText(form.getAcademicYear())){
+            if (StringUtils.hasText(form.getAcademicYear())) {
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
                 Predicate predicate = cb.like(cb.lower(classJoin.get("academicYear")), likePattern);
                 predicates.add(predicate);
@@ -406,18 +402,18 @@ public class SchoolServiceImpl implements SchoolService{
 
         Page<MstTeachers> result = teachersRepository.findAll(spec, pageable);
         return new FindResponse<MstTeachersDto>()
-            .setRecords(result.getContent().stream().map(MstTeachersMapper::toDto).toList())
-            .setTotalPage(result.getTotalPages())
-            .setTotalItem((int) result.getTotalElements())
-            .setHasNext(result.hasNext())
-            .setHasPrev(result.hasPrevious());
+                .setRecords(result.getContent().stream().map(MstTeachersMapper::toDto).toList())
+                .setTotalPage(result.getTotalPages())
+                .setTotalItem((int) result.getTotalElements())
+                .setHasNext(result.hasNext())
+                .setHasPrev(result.hasPrevious());
     }
 
     @Override
     @Cacheable(value = "teacher", key = "#id")
     public MstTeachersDto readTeacher(Integer id) {
         MstTeachers teacher = teachersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
         return MstTeachersMapper.toDto(teacher);
     }
 
@@ -425,7 +421,7 @@ public class SchoolServiceImpl implements SchoolService{
     public MstTeachersDto createTeacher(TeachersCreateForm form) {
         if (form.getUserId() != null) {
             MstUsers user = usersRepository.findById(form.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
             if (user.getStudentData() != null) {
                 throw new ConflictException("User is already associated with a student: " + form.getUserId());
             }
@@ -443,18 +439,18 @@ public class SchoolServiceImpl implements SchoolService{
     @CachePut(value = "teacher", key = "#id")
     public MstTeachersDto updateTeacher(Integer id, TeachersUpdateForm form) {
         MstTeachers teacher = teachersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
         EntityUtil.compareVersion(teacher.getVersion(), form.getVersion());
         if (form.getUserId() != null) {
             MstUsers user = usersRepository.findById(form.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found: " + form.getUserId()));
             if (user.getTeacherData() != null && !user.getTeacherData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a student: " + form.getUserId());
             }
             if (user.getTeacherData() != null && !user.getTeacherData().getId().equals(id)) {
                 throw new ConflictException("User is already associated with a teacher: " + form.getUserId());
             }
-            if (!user.getRole().equals(UserRole.TEACHER.name())){
+            if (!user.getRole().equals(UserRole.TEACHER.name())) {
                 throw new BadRequestException("User role must be teacher: " + form.getUserId());
             }
         }
@@ -489,7 +485,7 @@ public class SchoolServiceImpl implements SchoolService{
     @CacheEvict(value = "teacher", key = "#id")
     public MstTeachersDto deleteTeacher(Integer id) {
         MstTeachers teacher = teachersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
         teachersRepository.deleteById(id);
         auditTrailsService.create(Method.DELETE, teacher, "Delete teacher record");
         return MstTeachersMapper.toBaseDto(teacher);
@@ -499,7 +495,7 @@ public class SchoolServiceImpl implements SchoolService{
     @CachePut(value = "teacher", key = "#id")
     public MstTeachersDto deleteTeacherProfilePic(Integer id) {
         MstTeachers teacher = teachersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
         if (!StringUtils.hasText(teacher.getPhoto())) {
             throw new ResourceNotFoundException("Teacher has no profile picture");
         }
@@ -526,16 +522,15 @@ public class SchoolServiceImpl implements SchoolService{
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(classJoin.get("className")), likePattern),
-                    cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern),
-                    cb.like(cb.lower(teacherJoin.get("fullName")), likePattern),
-                    cb.like(cb.lower(teacherJoin.get("phone")), likePattern),
-                    cb.like(cb.lower(teacherJoin.get("address")), likePattern)
-                );
+                        cb.like(cb.lower(classJoin.get("className")), likePattern),
+                        cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern),
+                        cb.like(cb.lower(teacherJoin.get("fullName")), likePattern),
+                        cb.like(cb.lower(teacherJoin.get("phone")), likePattern),
+                        cb.like(cb.lower(teacherJoin.get("address")), likePattern));
                 predicates.add(predicate);
             }
 
-            if (StringUtils.hasText(form.getAcademicYear())){
+            if (StringUtils.hasText(form.getAcademicYear())) {
                 String likePattern = "%" + form.getAcademicYear().toLowerCase() + "%";
                 Predicate predicate = cb.like(cb.lower(classJoin.get("academicYear")), likePattern);
                 predicates.add(predicate);
@@ -546,24 +541,25 @@ public class SchoolServiceImpl implements SchoolService{
 
         Page<MstHomeroomTeachers> result = homeroomTeachersRepository.findAll(spec, pageable);
         return new FindResponse<MstHomeroomTeachersDto>()
-            .setRecords(result.getContent().stream().map(MstHomeroomTeachersMapper::toDto).toList())
-            .setTotalPage(result.getTotalPages())
-            .setTotalItem((int) result.getTotalElements())
-            .setHasNext(result.hasNext())
-            .setHasPrev(result.hasPrevious());
+                .setRecords(result.getContent().stream().map(MstHomeroomTeachersMapper::toDto).toList())
+                .setTotalPage(result.getTotalPages())
+                .setTotalItem((int) result.getTotalElements())
+                .setHasNext(result.hasNext())
+                .setHasPrev(result.hasPrevious());
     }
 
     @Override
     @Cacheable(value = "homeroomTeacher", key = "#id")
     public MstHomeroomTeachersDto readHomeroomTeacher(Integer id) {
         MstHomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Homeroom teacher not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Homeroom teacher not found: " + id));
         return MstHomeroomTeachersMapper.toDto(homeroomTeachers);
     }
 
     @Override
     public MstHomeroomTeachersDto createHomeroomTeacher(HomeroomTeachersCreateForm body) {
-        MstHomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findByClassIdAndTeacherId(body.getClassId(), body.getTeacherId());
+        MstHomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findByClassIdAndTeacherId(body.getClassId(),
+                body.getTeacherId());
         if (homeroomTeachers != null) {
             throw new BadRequestException("The teacher already assigned to this class");
         }
@@ -577,7 +573,7 @@ public class SchoolServiceImpl implements SchoolService{
     @CachePut(value = "homeroomTeacher", key = "#id")
     public MstHomeroomTeachersDto deleteHomeroomTeacher(Integer id) {
         MstHomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Homeroom teacher not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Homeroom teacher not found: " + id));
         homeroomTeachersRepository.deleteById(id);
         auditTrailsService.create(Method.DELETE, homeroomTeachers, "Delete homeroom teacher record");
         return MstHomeroomTeachersMapper.toBaseDto(homeroomTeachers);
@@ -597,59 +593,59 @@ public class SchoolServiceImpl implements SchoolService{
             if (StringUtils.hasText(form.getKeyword())) {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
-                    cb.like(cb.lower(root.get("username")), likePattern),
-                    cb.like(cb.lower(root.get("email")), likePattern),
-                    cb.like(cb.lower(teacherJoin.get("fullName")), likePattern),
-                    cb.like(cb.lower(teacherJoin.get("phone")), likePattern),
-                    cb.like(cb.lower(teacherJoin.get("address")), likePattern),
-                    cb.like(cb.lower(studentJoin.get("fullName")), likePattern),
-                    cb.like(cb.lower(studentJoin.get("address")), likePattern)                    
-                );
+                        cb.like(cb.lower(root.get("username")), likePattern),
+                        cb.like(cb.lower(root.get("email")), likePattern),
+                        cb.like(cb.lower(teacherJoin.get("fullName")), likePattern),
+                        cb.like(cb.lower(teacherJoin.get("phone")), likePattern),
+                        cb.like(cb.lower(teacherJoin.get("address")), likePattern),
+                        cb.like(cb.lower(studentJoin.get("fullName")), likePattern),
+                        cb.like(cb.lower(studentJoin.get("address")), likePattern));
                 predicates.add(predicate);
             }
-            
+
             if (StringUtils.hasText(form.getRole())) {
                 predicates.add(cb.equal(root.get("role"), form.getRole()));
             }
-            
+
             Boolean isActive = form.getIsActive();
             if (isActive != null) {
                 predicates.add(cb.equal(root.get("isActive"), isActive));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
-            
+
         };
         Page<MstUsers> result = usersRepository.findAll(spec, pageable);
         return new FindResponse<MstUsersDto>()
-            .setRecords(result.getContent().stream().map(MstUsersMapper::toDto).toList())
-            .setTotalPage(result.getTotalPages())
-            .setTotalItem((int) result.getTotalElements())
-            .setHasNext(result.hasNext())
-            .setHasPrev(result.hasPrevious());
+                .setRecords(result.getContent().stream().map(MstUsersMapper::toDto).toList())
+                .setTotalPage(result.getTotalPages())
+                .setTotalItem((int) result.getTotalElements())
+                .setHasNext(result.hasNext())
+                .setHasPrev(result.hasPrevious());
     }
 
     @Override
     @Cacheable(value = "user", key = "#id")
     public MstUsersDto readUser(Integer id) {
         MstUsers user = usersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
         return MstUsersMapper.toDto(user);
     }
 
     @Override
     @SneakyThrows
     public MstUsersDto createUser(UsersCreateForm form) {
-        if(!form.getPassword().equals(form.getRePassword())){
+        if (!form.getPassword().equals(form.getRePassword())) {
             throw new BadRequestException("Retype password doesn't match. Please try again!");
         }
-        if(usersRepository.findByEmail(form.getEmail()) != null){
+        if (usersRepository.findByEmail(form.getEmail()) != null) {
             throw new ConflictException("Email already exist");
         }
-        if(usersRepository.findByUsername(form.getUsername()) != null){
+        if (usersRepository.findByUsername(form.getUsername()) != null) {
             throw new ConflictException("Username already exist");
         }
-        MstUsers user = MstUsersMapper.toEntity(form, mediaUtil.ToBase64(form.getPhoto()), new BCryptPasswordEncoder().encode(form.getPassword()));
+        MstUsers user = MstUsersMapper.toEntity(form, mediaUtil.ToBase64(form.getPhoto()),
+                new BCryptPasswordEncoder().encode(form.getPassword()));
         user = usersRepository.save(user);
         auditTrailsService.create(Method.POST, user, "Create user record");
         return MstUsersMapper.toBaseDto(user);
@@ -660,14 +656,14 @@ public class SchoolServiceImpl implements SchoolService{
     @CachePut(value = "user", key = "#id")
     public MstUsersDto updateUser(Integer id, UsersUpdateForm form) {
         MstUsers user = usersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
         EntityUtil.compareVersion(user.getVersion(), form.getVersion());
         MstUsers checkExistingEmail = usersRepository.findByEmail(form.getEmail());
-        if(checkExistingEmail != null && !checkExistingEmail.getId().equals(user.getId())){
+        if (checkExistingEmail != null && !checkExistingEmail.getId().equals(user.getId())) {
             throw new ConflictException("Email already exist");
         }
         MstUsers checkExistingUsername = usersRepository.findByUsername(form.getUsername());
-        if(checkExistingUsername != null && !checkExistingUsername.getId().equals(user.getId())){
+        if (checkExistingUsername != null && !checkExistingUsername.getId().equals(user.getId())) {
             throw new ConflictException("Username already exist");
         }
         user = MstUsersMapper.toEntity(user, form, mediaUtil.ToBase64(form.getPhoto()));
@@ -678,11 +674,11 @@ public class SchoolServiceImpl implements SchoolService{
 
     @Override
     public MstUsersDto updateUserPassword(Integer id, UsersUpdatePasswordForm form) {
-        if(!form.getPassword().equals(form.getRePassword())){
+        if (!form.getPassword().equals(form.getRePassword())) {
             throw new BadRequestException("Retype password doesn't match. Please try again!");
         }
         MstUsers user = usersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
         user.setPassword(new BCryptPasswordEncoder().encode(form.getPassword()));
         user = usersRepository.save(user);
         auditTrailsService.create(Method.PATCH, user, "Update user password");
@@ -693,10 +689,10 @@ public class SchoolServiceImpl implements SchoolService{
     @CacheEvict(value = "user", key = "#id")
     public MstUsersDto deleteUser(Integer id) {
         MstUsers user = usersRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
         usersRepository.deleteById(id);
         auditTrailsService.create(Method.DELETE, user, "Delete user record");
         return MstUsersMapper.toBaseDto(user);
     }
-    
+
 }

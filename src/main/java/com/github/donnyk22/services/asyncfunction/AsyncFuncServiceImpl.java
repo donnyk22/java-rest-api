@@ -33,14 +33,13 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
     public CompletableFuture<String> sendEmailDummy(String email) {
         try {
             log.info("Sending email to: " + email);
-            Thread.sleep(5000); //simulate the background process
+            Thread.sleep(5000); // simulate the background process
             log.info("Email sent to: " + email);
             return CompletableFuture.completedFuture("Email sent successfully");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return CompletableFuture.failedFuture(
-                new RuntimeException("Email sending was interrupted")
-            );
+                    new RuntimeException("Email sending was interrupted"));
         } catch (Exception e) {
             return CompletableFuture.failedFuture(e);
         }
@@ -52,7 +51,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
         try {
             setJobStatus(jobId, JobStatus.RUNNING.name());
             log.info("Sending email to: " + email);
-            Thread.sleep(20000); //simulate the background process
+            Thread.sleep(20000); // simulate the background process
             log.info("Email sent to: " + email);
             setJobStatus(jobId, JobStatus.SUCCESS.name());
             return CompletableFuture.completedFuture(null);
@@ -60,8 +59,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
             Thread.currentThread().interrupt();
             setJobStatus(jobId, JobStatus.FAILED.name());
             return CompletableFuture.failedFuture(
-                new RuntimeException("Email sending was interrupted")
-            );
+                    new RuntimeException("Email sending was interrupted"));
         } catch (Exception e) {
             setJobStatus(jobId, JobStatus.FAILED.name());
             return CompletableFuture.failedFuture(e);
@@ -71,12 +69,12 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
     @Override
     public AsyncJobResult getJobStatus(String jobId) {
         String status = redisUtil.get("AsyncJobStatus", jobId);
-        if(status == null) {
+        if (status == null) {
             throw new ResourceNotFoundException("Job not found: " + jobId);
         }
         return new AsyncJobResult()
-            .setJobId(jobId)
-            .setStatus(status);
+                .setJobId(jobId)
+                .setStatus(status);
     }
 
     @Override
@@ -87,14 +85,13 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
     @Override
     public void sendEmailDummyWithJobIdAndMsBroker(String jobId, String email) {
         AsyncJobData object = new AsyncJobData()
-            .setJobId(jobId)
-            .setEmail(email);
-            
+                .setJobId(jobId)
+                .setEmail(email);
+
         rabbitTemplate.convertAndSend(
-            RabbitMQConfig.JOB_EXCHANGE,
-            RabbitMQConfig.JOB_ROUTING_KEY,
-            converterUtil.objectToBytes(object)
-        );
+                RabbitMQConfig.JOB_EXCHANGE,
+                RabbitMQConfig.JOB_ROUTING_KEY,
+                converterUtil.objectToBytes(object));
     }
 
     // job listener with max worker
@@ -105,8 +102,9 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
         AsyncJobData data = converterUtil.bytesToObject(object, AsyncJobData.class);
         try {
             setJobStatus(data.getJobId(), JobStatus.RUNNING.name());
-            log.info("Worker " + Thread.currentThread().getName() + " processing job (sending email): " + data.getJobId());
-            Thread.sleep(20000); //simulate the background process
+            log.info("Worker " + Thread.currentThread().getName() + " processing job (sending email): "
+                    + data.getJobId());
+            Thread.sleep(20000); // simulate the background process
             log.info("Email sent to: " + data.getEmail());
             setJobStatus(data.getJobId(), JobStatus.SUCCESS.name());
         } catch (InterruptedException e) {
@@ -118,5 +116,5 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
             throw new RuntimeException("Job failed: " + data.getJobId(), e);
         }
     }
-    
+
 }

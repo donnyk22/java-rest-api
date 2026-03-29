@@ -7,8 +7,9 @@ import org.springframework.stereotype.Repository;
 import com.github.donnyk22.models.entities.MstHomeroomTeachers;
 
 @Repository
-public interface MstHomeroomTeachersRepository extends JpaRepository<MstHomeroomTeachers, Integer>, JpaSpecificationExecutor<MstHomeroomTeachers>{
-    
+public interface MstHomeroomTeachersRepository
+        extends JpaRepository<MstHomeroomTeachers, Integer>, JpaSpecificationExecutor<MstHomeroomTeachers> {
+
     MstHomeroomTeachers findByClassIdAndTeacherId(Integer classId, Integer teacherId);
 
 }

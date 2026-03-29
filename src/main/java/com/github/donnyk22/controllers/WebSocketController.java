@@ -22,10 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Tag(
-    name = "WebSocket APIs",
-    description = "WebSocket implementation APIs for testing purpose"
-)
+@Tag(name = "WebSocket APIs", description = "WebSocket implementation APIs for testing purpose")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/ws")
@@ -45,43 +42,35 @@ public class WebSocketController {
         return message;
     }
 
-    @Operation(
-        summary = "Send message to all users",
-        description = "Broadcast a message to all connected WebSocket users."
-    )
+    @Operation(summary = "Send message to all users", description = "Broadcast a message to all connected WebSocket users.")
     @PostMapping()
     public ResponseEntity<ApiResponse<WebSocketForm>> sendMessages(@RequestBody @Valid WebSocketForm message) {
         WebSocketForm result = websocketService.sendMessages(message);
         ApiResponse<WebSocketForm> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Message broadcasted successfully",
-            result);
+                "Message broadcasted successfully",
+                result);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "Send message to specific users",
-        description = "Send a message to specific WebSocket users."
-    )
+    @Operation(summary = "Send message to specific users", description = "Send a message to specific WebSocket users.")
     @PostMapping("/users")
-    public ResponseEntity<ApiResponse<WebSocketForm>> sendMessagesToUsers(@RequestBody @Valid WebSocketUsersForm message) {
+    public ResponseEntity<ApiResponse<WebSocketForm>> sendMessagesToUsers(
+            @RequestBody @Valid WebSocketUsersForm message) {
         WebSocketForm result = websocketService.sendMessagesToUsers(message);
         ApiResponse<WebSocketForm> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "Message sent to specific users successfully",
-            result);
+                "Message sent to specific users successfully",
+                result);
         return ResponseEntity.ok(response);
     }
 
-    @Operation(
-        summary = "Get active users [Admin Only]",
-        description = "Retrieve all active WebSocket users."
-    )
+    @Operation(summary = "Get active users [Admin Only]", description = "Retrieve all active WebSocket users.")
     @PreAuthorize("hasAuthority(UserRoles.ADMIN)")
     @GetMapping("/users/online")
     public ResponseEntity<ApiResponse<WebSocketUserSessionDto>> getActiveUsers() {
         WebSocketUserSessionDto result = websocketService.getActiveUsers();
         ApiResponse<WebSocketUserSessionDto> response = new ApiResponse<>(HttpStatus.OK.value(),
-            "User sessions retrieved successfully",
-            result);
+                "User sessions retrieved successfully",
+                result);
         return ResponseEntity.ok(response);
     }
 

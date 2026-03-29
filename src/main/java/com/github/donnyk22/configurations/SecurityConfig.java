@@ -30,65 +30,59 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-            // If in the front-end you are using cookies for authentication, you should enable CSRF protection
-            // Disable CRSF if using local storage or session storage for authentication tokens (e.g., JWT in Authorization header)
-            // .csrf(csrf -> csrf
-            //     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) 
-            //     .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-            // )
-            .authorizeHttpRequests(auth -> auth
-                .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll() // Allow async requests
-                .requestMatchers(
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/swagger-resources/**",
-                    "/api/v1/auth/register",
-                    "/api/v1/auth/login",
-                    "/api/v1/auth/logout",
-                    "/api/v1/mfa/login",
-                    "/ws/**",
-                    "/actuator/**"
-                ).permitAll()
-                // This is to handle temporary token with temporary role
-                // This endpoint only accessibe by role MFA_CHECK
-                .requestMatchers("/api/v1/mfa/verify").hasAuthority("ROLE_MFA_CHECK")
-                // All other endpoints are accessible by any authenticated user, except for role MFA_CHECK
-                .anyRequest().access((authentication, context) -> 
-                    new AuthorizationDecision(
-                        authentication.get().getAuthorities().stream()
-                            .noneMatch(a -> a.getAuthority().equals("ROLE_MFA_CHECK"))
-                    )
-                )
+                // If in the front-end you are using cookies for authentication, you should
+                // enable CSRF protection
+                // Disable CRSF if using local storage or session storage for authentication
+                // tokens (e.g., JWT in Authorization header)
+                // .csrf(csrf -> csrf
+                // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                // .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                // )
+                .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll() // Allow async requests
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/api/v1/auth/register",
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/logout",
+                                "/api/v1/mfa/login",
+                                "/ws/**",
+                                "/actuator/**")
+                        .permitAll()
+                        // This is to handle temporary token with temporary role
+                        // This endpoint only accessibe by role MFA_CHECK
+                        .requestMatchers("/api/v1/mfa/verify").hasAuthority("ROLE_MFA_CHECK")
+                        // All other endpoints are accessible by any authenticated user, except for role
+                        // MFA_CHECK
+                        .anyRequest().access((authentication, context) -> new AuthorizationDecision(
+                                authentication.get().getAuthorities().stream()
+                                        .noneMatch(a -> a.getAuthority().equals("ROLE_MFA_CHECK"))))
                 // If you don't use MFA feature, use this instead
                 // .anyRequest().authenticated()
-            )
-            // OAuth2 configuration
-            .oauth2Login(oauth2 -> oauth2
-                .defaultSuccessUrl("/api/v1/oauth2", true)
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        
+                )
+                // OAuth2 configuration
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/api/v1/oauth2", true))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         // Other filter chains configurations
         http.headers(headers -> headers
-            // XSS (Cross-Site Scripting) Protection
-            .contentSecurityPolicy(csp ->
-                csp.policyDirectives("default-src 'self'")
-            )
-            // Clickjacking Protection (iFrame)
-            .frameOptions(frame -> frame.deny())
-            // MIME-Sniffing Protection
-            .contentTypeOptions(Customizer.withDefaults())
-            // Origin Must Use HTTPS (with duration of 1 year)
-            // .httpStrictTransportSecurity(hsts ->
-            //     hsts.includeSubDomains(true).maxAgeInSeconds(31536000)
-            // )
-            // Referrer Policy
-            .referrerPolicy(referrer ->
-                referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy
-                    .STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
-            )
-        );
+                // XSS (Cross-Site Scripting) Protection
+                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
+                // Clickjacking Protection (iFrame)
+                .frameOptions(frame -> frame.deny())
+                // MIME-Sniffing Protection
+                .contentTypeOptions(Customizer.withDefaults())
+                // Origin Must Use HTTPS (with duration of 1 year)
+                // .httpStrictTransportSecurity(hsts ->
+                // hsts.includeSubDomains(true).maxAgeInSeconds(31536000)
+                // )
+                // Referrer Policy
+                .referrerPolicy(referrer -> referrer
+                        .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)));
 
         // Enable CORS Configuration
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
@@ -102,17 +96,14 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         // Allow specific origins only (e.g., your frontend app domains)
         config.setAllowedOrigins(List.of(
-            "https://donnyk22.carrd.co", // Replace with your frontend app domain
-            "http://localhost:8080"
-        ));
+                "https://donnyk22.carrd.co", // Replace with your frontend app domain
+                "http://localhost:8080"));
         // Allow specific HTTP methods
         config.setAllowedMethods(List.of(
-            Method.GET.name(), Method.POST.name(), Method.PUT.name(), Method.PATCH.name(), Method.DELETE.name()
-        ));
+                Method.GET.name(), Method.POST.name(), Method.PUT.name(), Method.PATCH.name(), Method.DELETE.name()));
         // Allow specific headers (e.g., Authorization for JWT tokens)
         config.setAllowedHeaders(List.of(
-            "Authorization", "Content-Type"
-        ));
+                "Authorization", "Content-Type"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
