@@ -3,7 +3,6 @@
 Minimal and best practice of Rest API Java Spring with implementing some industry standards of back-end utility
 
 <b>Features:</b>
-
 - JWT
 - Google OAuth2/SSO
 - MFA/TFA/2FA
@@ -20,6 +19,7 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 - Message Broker (RabbitMQ)
 - Async (simple async function, RabbitMQ implementation, max worker and max queue config)
 - Web Socket
+- Virtual Thread
 - CORS Configuration
 - XSS (Cross-Site Scripting) Protection
 - Clickjacking Protection
@@ -27,7 +27,6 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 - Referrer Policy
 
 <b>Coming Soon:</b>
-
 - Unit Test
 - Custom annotation implementation
 - 3rd Party service (Telegram bot, Payment gateway, AI Chatbot, Mapbox, etc)
@@ -38,7 +37,6 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 =============================================
 
 <b>Prerequisites:</b>
-
 - JDK 25
 - Maven
 - MySQL
@@ -46,7 +44,6 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 - RabbitMQ
 
 <b>Setup:</b>
-
 - Clone repo
 - Import DB from this folder project (school.sql)
 - Rename all files with the .example prefix (src > main > resources > application.properties, application-dev.properties, application-prd.properties) to the .properties prefix (remove the .example)
@@ -63,7 +60,6 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 - Start to use the app
 
 <b>Instructions:</b>
-
 - To use WebSockets, open the HTML page "WebSocket***.html" in the web folder (can be opened directly in the browser)
 - Email service is using my MailTrap (https://mailtrap.io/) credentials. The email will not be sent to the real recipient, but will go into my MailTrap inbox. Better change into your own credentials.
 - The audit trail in this project has two features. JPA automatically handles the first one with the @Audited endpoint, and the other one is manual by inserting into the database table.
