@@ -56,7 +56,7 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter {
             String role = claims.get("role", String.class);
             String sessionId = claims.get("sessionId", String.class);
 
-            if (!redisUtil.isTokenValid(email, sessionId)) {
+            if (Boolean.FALSE.equals(redisUtil.isTokenValid(email, sessionId))) {
                 sendUnauthorizedResponse(res, "Token expired or invalid");
                 return;
             }

@@ -16,7 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.github.donnyk22.models.enums.Method;
+import com.github.donnyk22.models.enums.Action;
 
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) {
         http.csrf(csrf -> csrf.disable())
                 // If in the front-end you are using cookies for authentication, you should
                 // enable CSRF protection
@@ -106,7 +106,7 @@ public class SecurityConfig {
                 "http://localhost:8080"));
         // Allow specific HTTP methods
         config.setAllowedMethods(List.of(
-                Method.GET.name(), Method.POST.name(), Method.PUT.name(), Method.PATCH.name(), Method.DELETE.name()));
+                Action.GET.name(), Action.POST.name(), Action.PUT.name(), Action.PATCH.name(), Action.DELETE.name()));
         // Allow specific headers (e.g., Authorization for JWT tokens)
         config.setAllowedHeaders(List.of(
                 "Authorization", "Content-Type"));

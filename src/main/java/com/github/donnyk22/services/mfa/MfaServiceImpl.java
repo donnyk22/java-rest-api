@@ -50,7 +50,7 @@ public class MfaServiceImpl implements MfaService {
     private final AuthUtil authUtil;
 
     @Value("${spring.application.name}")
-    private String APP_NAME;
+    private String appName;
 
     @Override
     public MstUsersDto loginMfa(UserLoginForm form) {
@@ -62,13 +62,13 @@ public class MfaServiceImpl implements MfaService {
             }
         }
         Boolean passwordMatch = passwordEncoder.matches(form.getPassword(), user.getPassword());
-        if (!passwordMatch) {
+        if (Boolean.FALSE.equals(passwordMatch)) {
             auditTrailsService.create(user.getId(), "Login failed");
             throw new BadRequestException("Invalid email or password");
         }
 
         String detailsMsg = "Login successfully";
-        if (user.getMfaEnabled()) {
+        if (Boolean.TRUE.equals(user.getMfaEnabled())) {
             detailsMsg = "Login with MFA activated successfully";
         }
         auditTrailsService.create(user.getId(), detailsMsg);
@@ -104,8 +104,8 @@ public class MfaServiceImpl implements MfaService {
             user.setMfaEnabled(true);
             usersRepository.save(user);
 
-            String qrCodeText = "otpauth://totp/" + APP_NAME + ":" + email + "?secret=" + secret + "&issuer="
-                    + APP_NAME;
+            String qrCodeText = "otpauth://totp/" + appName + ":" + email + "?secret=" + secret + "&issuer="
+                    + appName;
 
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeText, BarcodeFormat.QR_CODE, 500, 500);

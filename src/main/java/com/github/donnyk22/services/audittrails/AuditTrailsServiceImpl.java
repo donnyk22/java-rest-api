@@ -16,7 +16,7 @@ import com.github.donnyk22.models.dtos.LogAuditTrailsDto;
 import com.github.donnyk22.models.entities.LogAuditTrails;
 
 import com.github.donnyk22.models.entities.MstUsers;
-import com.github.donnyk22.models.enums.Method;
+import com.github.donnyk22.models.enums.Action;
 import com.github.donnyk22.models.forms.AuditTrailsFindForm;
 import com.github.donnyk22.models.mappers.LogAuditTrailsMapper;
 import com.github.donnyk22.repositories.LogAuditTrailsRepository;
@@ -85,13 +85,13 @@ public class AuditTrailsServiceImpl implements AuditTrailsService {
     }
 
     @Override
-    public <T> void create(Method method, T data, String details) {
+    public <T> void create(Action method, T data, String details) {
         try {
             java.lang.reflect.Method setPasswordMethod = data.getClass().getMethod("setPassword", String.class);
             setPasswordMethod.invoke(data, (Object) null);
             java.lang.reflect.Method setMfaSecretMethod = data.getClass().getMethod("setMfaSecret", String.class);
             setMfaSecretMethod.invoke(data, (Object) null);
-        } catch (Exception e) {
+        } catch (Exception _) {
             // ignore if dont have password or mfa secret property
         }
 

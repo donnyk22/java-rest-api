@@ -24,7 +24,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     private final AuditTrailsService auditTrailsService;
 
     @Override
-    public MstUsersDto OAuth2GetInfo(OAuth2User principal) {
+    public MstUsersDto oauth2GetInfo(OAuth2User principal) {
         String email = principal.getAttribute("email");
         if (email == null) {
             throw new BadRequestException(

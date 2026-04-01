@@ -41,16 +41,16 @@ public class AuthServiceImpl implements AuthService {
     private final Util util;
 
     @Value("${app.login.max-req}")
-    private Integer LOGIN_MAX_REQ;
+    private Integer loginMaxReq;
 
     @Value("${app.login.max-req-minutes}")
-    private Integer LOGIN_MAX_REQ_DURATION;
+    private Integer loginMaxReqDuration;
 
     @Value("${app.register.max-req}")
-    private Integer REGISTER_MAX_REQ;
+    private Integer registerMaxReq;
 
     @Value("${app.register.max-req-hours}")
-    private Integer REGISTER_MAX_REQ_DURATION;
+    private Integer registerMaxReqDuration;
 
     @Override
     public MstUsersDto register(UserRegisterForm form, HttpServletRequest httpRequest) {
@@ -95,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         Boolean passwordMatch = passwordEncoder.matches(form.getPassword(), user.getPassword());
-        if (!passwordMatch) {
+        if (Boolean.FALSE.equals(passwordMatch)) {
             bruteForceProtection("login", userIp);
             bruteForceProtection("login", form.getUsername());
             auditTrailsService.create(user.getId(), "Login failed");
@@ -147,13 +147,13 @@ public class AuthServiceImpl implements AuthService {
 
     private void bruteForceProtection(String type, String identifier) {
         TimeUnit timeUnit = TimeUnit.MINUTES;
-        Integer ttl = LOGIN_MAX_REQ_DURATION;
-        Integer maxReq = LOGIN_MAX_REQ;
+        Integer ttl = loginMaxReqDuration;
+        Integer maxReq = loginMaxReq;
 
         if (type.equals("register")) {
             timeUnit = TimeUnit.DAYS;
-            ttl = REGISTER_MAX_REQ_DURATION;
-            maxReq = REGISTER_MAX_REQ;
+            ttl = registerMaxReqDuration;
+            maxReq = registerMaxReq;
         }
 
         String value = redisUtil.get(type, identifier);
@@ -172,10 +172,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void checkAttempts(String type, String identifier) {
-        Integer maxReq = LOGIN_MAX_REQ;
+        Integer maxReq = loginMaxReq;
 
         if (type.equals("register")) {
-            maxReq = REGISTER_MAX_REQ;
+            maxReq = registerMaxReq;
         }
 
         String value = redisUtil.get(type, identifier);

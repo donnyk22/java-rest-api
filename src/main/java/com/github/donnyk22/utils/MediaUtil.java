@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class MediaUtil {
 
-    public String ToBase64(MultipartFile photo) throws Exception {
+    public String toBase64(MultipartFile photo) throws Exception {
         try {
             if (photo == null)
                 return null;
@@ -25,7 +25,7 @@ public class MediaUtil {
             return Base64.getEncoder().encodeToString(fileBytes);
         } catch (IOException e) {
             log.error("Failed to convert file: " + e.getMessage());
-            throw new Exception("Failed to convert file: " + e.getMessage());
+            throw new InternalServerErrorException("Failed to convert file: " + e.getMessage());
         }
     }
 
@@ -38,7 +38,7 @@ public class MediaUtil {
                 throw new BadRequestException("Invalid file type: " + detectedType);
             }
         } catch (IOException e) {
-            throw new InternalServerErrorException("MIME type detection failed");
+            throw new InternalServerErrorException("MIME type detection failed", e);
         }
     }
 

@@ -31,7 +31,7 @@ import com.github.donnyk22.models.entities.MstHomeroomTeachers;
 import com.github.donnyk22.models.entities.MstStudents;
 import com.github.donnyk22.models.entities.MstTeachers;
 import com.github.donnyk22.models.entities.MstUsers;
-import com.github.donnyk22.models.enums.Method;
+import com.github.donnyk22.models.enums.Action;
 import com.github.donnyk22.models.enums.UserRole;
 import com.github.donnyk22.models.forms.attendances.AttendancesCreateForm;
 import com.github.donnyk22.models.forms.attendances.AttendancesFindForm;
@@ -149,7 +149,7 @@ public class SchoolServiceImpl implements SchoolService {
     public MstAttendancesDto createAttendance(AttendancesCreateForm body) {
         MstAttendances attendance = MstAttendancesMapper.toEntity(new MstAttendances(), body);
         attendance = attendancesRepository.save(attendance);
-        auditTrailsService.create(Method.POST, attendance, "Create attendance record");
+        auditTrailsService.create(Action.POST, attendance, "Create attendance record");
         return MstAttendancesMapper.toBaseDto(attendance);
     }
 
@@ -160,7 +160,7 @@ public class SchoolServiceImpl implements SchoolService {
         MstAttendances attendance = attendancesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Attendance not found: " + id));
         attendancesRepository.deleteById(id);
-        auditTrailsService.create(Method.DELETE, attendance, "Delete attendance record");
+        auditTrailsService.create(Action.DELETE, attendance, "Delete attendance record");
         return MstAttendancesMapper.toBaseDto(attendance);
     }
 
@@ -214,7 +214,7 @@ public class SchoolServiceImpl implements SchoolService {
     public MstClassesDto createClass(ClassesCreateForm body) {
         MstClasses classes = MstClassesMapper.toEntity(body);
         classes = classesRepository.save(classes);
-        auditTrailsService.create(Method.POST, classes, "Create classroom record");
+        auditTrailsService.create(Action.POST, classes, "Create classroom record");
         return MstClassesMapper.toBaseDto(classes);
     }
 
@@ -227,7 +227,7 @@ public class SchoolServiceImpl implements SchoolService {
         EntityUtil.compareVersion(classes.getVersion(), body.getVersion());
         classes = MstClassesMapper.toEntity(classes, body);
         classes = classesRepository.saveAndFlush(classes);
-        auditTrailsService.create(Method.PUT, classes, "Updated classroom record");
+        auditTrailsService.create(Action.PUT, classes, "Updated classroom record");
         return MstClassesMapper.toDto(classes);
     }
 
@@ -238,7 +238,7 @@ public class SchoolServiceImpl implements SchoolService {
         MstClasses classes = classesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Class not found: " + id));
         classesRepository.deleteById(id);
-        auditTrailsService.create(Method.DELETE, classes, "Delete classroom record");
+        auditTrailsService.create(Action.DELETE, classes, "Delete classroom record");
         return MstClassesMapper.toBaseDto(classes);
     }
 
@@ -305,7 +305,7 @@ public class SchoolServiceImpl implements SchoolService {
         }
         MstStudents student = MstStudentsMapper.toEntity(form, fileUtil.saveProfilePic(form.getPhoto()));
         student = studentsRepository.save(student);
-        auditTrailsService.create(Method.POST, student, "Create student record");
+        auditTrailsService.create(Action.POST, student, "Create student record");
         return MstStudentsMapper.toBaseDto(student);
     }
 
@@ -345,7 +345,7 @@ public class SchoolServiceImpl implements SchoolService {
             if (isNewPhotoUploaded) {
                 fileUtil.deleteProfilePic(oldPhotoPath);
             }
-            auditTrailsService.create(Method.PUT, student, "Update student record");
+            auditTrailsService.create(Action.PUT, student, "Update student record");
             return result;
         } catch (Exception e) {
             if (isNewPhotoUploaded) {
@@ -362,7 +362,7 @@ public class SchoolServiceImpl implements SchoolService {
         MstStudents student = studentsRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found: " + id));
         studentsRepository.deleteById(id);
-        auditTrailsService.create(Method.DELETE, student, "Delete student record");
+        auditTrailsService.create(Action.DELETE, student, "Delete student record");
         return MstStudentsMapper.toBaseDto(student);
     }
 
@@ -380,7 +380,7 @@ public class SchoolServiceImpl implements SchoolService {
         student = studentsRepository.saveAndFlush(student);
         MstStudentsDto result = MstStudentsMapper.toDto(student);
         fileUtil.deleteProfilePic(oldPhotoPath);
-        auditTrailsService.create(Method.PATCH, student, "Delete student profile picture");
+        auditTrailsService.create(Action.PATCH, student, "Delete student profile picture");
         return result;
     }
 
@@ -449,7 +449,7 @@ public class SchoolServiceImpl implements SchoolService {
         }
         MstTeachers teacher = MstTeachersMapper.toEntity(form, fileUtil.saveProfilePic(form.getPhoto()));
         teacher = teachersRepository.save(teacher);
-        auditTrailsService.create(Method.POST, teacher, "Create teacher record");
+        auditTrailsService.create(Action.POST, teacher, "Create teacher record");
         return MstTeachersMapper.toBaseDto(teacher);
     }
 
@@ -490,7 +490,7 @@ public class SchoolServiceImpl implements SchoolService {
             if (isNewPhotoUploaded) {
                 fileUtil.deleteProfilePic(oldPhotoPath);
             }
-            auditTrailsService.create(Method.PUT, teacher, "Update teacher record");
+            auditTrailsService.create(Action.PUT, teacher, "Update teacher record");
             return result;
         } catch (Exception e) {
             if (isNewPhotoUploaded) {
@@ -507,7 +507,7 @@ public class SchoolServiceImpl implements SchoolService {
         MstTeachers teacher = teachersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Teacher not found: " + id));
         teachersRepository.deleteById(id);
-        auditTrailsService.create(Method.DELETE, teacher, "Delete teacher record");
+        auditTrailsService.create(Action.DELETE, teacher, "Delete teacher record");
         return MstTeachersMapper.toBaseDto(teacher);
     }
 
@@ -525,7 +525,7 @@ public class SchoolServiceImpl implements SchoolService {
         teacher = teachersRepository.saveAndFlush(teacher);
         MstTeachersDto result = MstTeachersMapper.toDto(teacher);
         fileUtil.deleteProfilePic(oldPhotoPath);
-        auditTrailsService.create(Method.PATCH, teacher, "Delete teacher profile picture");
+        auditTrailsService.create(Action.PATCH, teacher, "Delete teacher profile picture");
         return result;
     }
 
@@ -589,7 +589,7 @@ public class SchoolServiceImpl implements SchoolService {
         }
         homeroomTeachers = MstHomeroomTeachersMapper.toEntity(body);
         homeroomTeachers = homeroomTeachersRepository.save(homeroomTeachers);
-        auditTrailsService.create(Method.POST, homeroomTeachers, "Create homeroom teacher record");
+        auditTrailsService.create(Action.POST, homeroomTeachers, "Create homeroom teacher record");
         return MstHomeroomTeachersMapper.toBaseDto(homeroomTeachers);
     }
 
@@ -600,7 +600,7 @@ public class SchoolServiceImpl implements SchoolService {
         MstHomeroomTeachers homeroomTeachers = homeroomTeachersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Homeroom teacher not found: " + id));
         homeroomTeachersRepository.deleteById(id);
-        auditTrailsService.create(Method.DELETE, homeroomTeachers, "Delete homeroom teacher record");
+        auditTrailsService.create(Action.DELETE, homeroomTeachers, "Delete homeroom teacher record");
         return MstHomeroomTeachersMapper.toBaseDto(homeroomTeachers);
     }
 
@@ -672,10 +672,10 @@ public class SchoolServiceImpl implements SchoolService {
         if (usersRepository.findByUsername(form.getUsername()) != null) {
             throw new ConflictException("Username already exist");
         }
-        MstUsers user = MstUsersMapper.toEntity(form, mediaUtil.ToBase64(form.getPhoto()),
+        MstUsers user = MstUsersMapper.toEntity(form, mediaUtil.toBase64(form.getPhoto()),
                 passwordEncoder.encode(form.getPassword()));
         user = usersRepository.save(user);
-        auditTrailsService.create(Method.POST, user, "Create user record");
+        auditTrailsService.create(Action.POST, user, "Create user record");
         return MstUsersMapper.toBaseDto(user);
     }
 
@@ -695,9 +695,9 @@ public class SchoolServiceImpl implements SchoolService {
         if (checkExistingUsername != null && !checkExistingUsername.getId().equals(user.getId())) {
             throw new ConflictException("Username already exist");
         }
-        user = MstUsersMapper.toEntity(user, form, mediaUtil.ToBase64(form.getPhoto()));
+        user = MstUsersMapper.toEntity(user, form, mediaUtil.toBase64(form.getPhoto()));
         user = usersRepository.saveAndFlush(user);
-        auditTrailsService.create(Method.PUT, user, "Update user record");
+        auditTrailsService.create(Action.PUT, user, "Update user record");
         return MstUsersMapper.toDto(user);
     }
 
@@ -711,7 +711,7 @@ public class SchoolServiceImpl implements SchoolService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
         user.setPassword(passwordEncoder.encode(form.getPassword()));
         user = usersRepository.save(user);
-        auditTrailsService.create(Method.PATCH, user, "Update user password");
+        auditTrailsService.create(Action.PATCH, user, "Update user password");
         return MstUsersMapper.toBaseDto(user);
     }
 
@@ -722,7 +722,7 @@ public class SchoolServiceImpl implements SchoolService {
         MstUsers user = usersRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
         usersRepository.deleteById(id);
-        auditTrailsService.create(Method.DELETE, user, "Delete user record");
+        auditTrailsService.create(Action.DELETE, user, "Delete user record");
         return MstUsersMapper.toBaseDto(user);
     }
 

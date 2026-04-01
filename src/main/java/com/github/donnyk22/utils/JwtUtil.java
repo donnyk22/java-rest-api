@@ -20,13 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtUtil {
 
     @Value("${app.jwt.secret}")
-    private String SECRET;
+    private String secret;
 
     @Value("${app.jwt.ttl-minutes}")
-    private Integer EXPIRATION;
+    private Integer expiration;
 
     @Value("${app.jwt.mfa.ttl-minutes}")
-    private Integer MFA_EXPIRATION;
+    private Integer mfaExpiration;
 
     public String generateToken(MstUsers users, String sessionId) {
         return Jwts.builder()
@@ -36,8 +36,8 @@ public class JwtUtil {
                 .claim("role", users.getRole())
                 .claim("sessionId", sessionId)
                 .setIssuedAt(new Date())
-                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(EXPIRATION))))
-                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(expiration))))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
 
@@ -49,21 +49,21 @@ public class JwtUtil {
                 .claim("role", "MFA_CHECK")
                 .claim("sessionId", sessionId)
                 .setIssuedAt(new Date())
-                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(MFA_EXPIRATION))))
-                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(mfaExpiration))))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
 
     public Claims extractClaims(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(SECRET.getBytes())
+                    .setSigningKey(secret.getBytes())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
             log.warn("Token expired: " + e.getMessage());
-            return null;
+            return Jwts.claims();
         }
     }
 }

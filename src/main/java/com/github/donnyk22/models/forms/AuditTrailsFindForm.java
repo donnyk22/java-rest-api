@@ -3,7 +3,7 @@ package com.github.donnyk22.models.forms;
 import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.github.donnyk22.models.enums.Method;
+import com.github.donnyk22.models.enums.Action;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +20,7 @@ public class AuditTrailsFindForm extends SearchForm {
     @Schema(allowableValues = { "mst_attendances", "mst_classes", "mst_homeroom_teachers", "mst_students",
             "mst_teachers", "mst_users" })
     private String table;
-    @Schema(implementation = Method.class, allowableValues = { "POST", "PUT", "PATCH", "DELETE" })
+    @Schema(implementation = Action.class, allowableValues = { "POST", "PUT", "PATCH", "DELETE" })
     private String method;
     @NotNull(message = "Start Date is required")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")

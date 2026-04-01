@@ -3,6 +3,8 @@ package com.github.donnyk22.services.asyncfunction;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import com.github.donnyk22.exceptions.InternalServerErrorException;
+
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -39,7 +41,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return CompletableFuture.failedFuture(
-                    new RuntimeException("Email sending was interrupted"));
+                    new InternalServerErrorException("Email sending was interrupted", e));
         } catch (Exception e) {
             return CompletableFuture.failedFuture(e);
         }
@@ -59,7 +61,7 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
             Thread.currentThread().interrupt();
             setJobStatus(jobId, JobStatus.FAILED.name());
             return CompletableFuture.failedFuture(
-                    new RuntimeException("Email sending was interrupted"));
+                    new InternalServerErrorException("Email sending was interrupted", e));
         } catch (Exception e) {
             setJobStatus(jobId, JobStatus.FAILED.name());
             return CompletableFuture.failedFuture(e);
@@ -110,10 +112,10 @@ public class AsyncFuncServiceImpl implements AsyncFuncService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             setJobStatus(data.getJobId(), JobStatus.FAILED.name());
-            throw new RuntimeException("Email sending was interrupted");
+            throw new InternalServerErrorException("Email sending was interrupted", e);
         } catch (Exception e) {
             setJobStatus(data.getJobId(), JobStatus.FAILED.name());
-            throw new RuntimeException("Job failed: " + data.getJobId(), e);
+            throw new InternalServerErrorException("Job failed: " + data.getJobId(), e);
         }
     }
 

@@ -6,6 +6,6 @@ import com.github.donnyk22.models.dtos.MstUsersDto;
 
 public interface OAuth2Service {
 
-    MstUsersDto OAuth2GetInfo(OAuth2User principal);
+    MstUsersDto oauth2GetInfo(OAuth2User principal);
 
 }

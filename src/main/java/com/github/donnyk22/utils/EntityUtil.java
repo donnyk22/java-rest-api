@@ -9,6 +9,10 @@ import jakarta.persistence.Table;
 
 public class EntityUtil {
 
+    private EntityUtil() {
+        /* This utility class should not be instantiated */
+    }
+
     public static String getTableName(Object entity) {
         if (entity == null)
             return null;

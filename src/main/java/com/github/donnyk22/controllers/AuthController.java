@@ -64,7 +64,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Boolean>> logout(HttpServletRequest request) {
         Boolean result = authService.logout(request);
         ApiResponse<Boolean> response = new ApiResponse<>(HttpStatus.OK.value(),
-                result ? "Logout successfully" : "Already logged out or session invalid",
+                Boolean.TRUE.equals(result) ? "Logout successfully" : "Already logged out or session invalid",
                 result);
         return ResponseEntity.ok(response);
     }

@@ -49,13 +49,11 @@ public class WebsocketServiceImpl implements WebSocketService {
                                 .stream()
                                 .map(SimpSession::getId)
                                 .collect(Collectors.toSet())))
-                .collect(Collectors.toList());
+                .toList();
 
-        WebSocketUserSessionDto result = new WebSocketUserSessionDto()
+        return new WebSocketUserSessionDto()
                 .setCount(simpUserRegistry.getUserCount())
                 .setDetail(users);
-
-        return result;
     }
 
 }

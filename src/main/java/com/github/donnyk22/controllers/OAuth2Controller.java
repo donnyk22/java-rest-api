@@ -26,8 +26,8 @@ public class OAuth2Controller {
 
     @Operation(summary = "Get user info from Google OAuth2", description = "Get user info, and use the credentials to login or register (Please access via src/main/java/com/github/donnyk22/web/OAuth2Test.html)")
     @GetMapping()
-    public ResponseEntity<ApiResponse<MstUsersDto>> OAuth2GetInfo(@AuthenticationPrincipal OAuth2User principal) {
-        MstUsersDto result = oAuth2Service.OAuth2GetInfo(principal);
+    public ResponseEntity<ApiResponse<MstUsersDto>> oauth2GetInfo(@AuthenticationPrincipal OAuth2User principal) {
+        MstUsersDto result = oAuth2Service.oauth2GetInfo(principal);
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "OAuth2 login successfully",
                 result);

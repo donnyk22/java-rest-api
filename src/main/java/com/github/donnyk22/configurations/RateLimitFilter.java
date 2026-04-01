@@ -32,10 +32,10 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
     @Value("${app.ratelimit.max-req}")
-    private Integer MAX_REQUESTS;
+    private Integer maxRequests;
 
     @Value("${app.ratelimit.max-req-minutes}")
-    private Integer MAX_REQ_DURATION;
+    private Integer maxReqDuration;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -53,8 +53,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private Bucket createBucket(String key) {
         Bandwidth limit = Bandwidth.builder()
-                .capacity(MAX_REQUESTS)
-                .refillIntervally(MAX_REQUESTS, Duration.ofMinutes(MAX_REQ_DURATION))
+                .capacity(maxRequests)
+                .refillIntervally(maxRequests, Duration.ofMinutes(maxReqDuration))
                 .build();
 
         return Bucket.builder()

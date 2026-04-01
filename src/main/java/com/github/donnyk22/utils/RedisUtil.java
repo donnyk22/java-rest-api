@@ -16,10 +16,10 @@ public class RedisUtil {
     private final StringRedisTemplate redis;
 
     @Value("${app.jwt.ttl-minutes}")
-    private long TTL_MINUTES;
+    private long ttlMinutes;
 
     @Value("${app.session.max}")
-    private long MAX_SESSION_NUMBER;
+    private long maxSessionNumber;
 
     // uses same token will update the data
     public void store(String bucket, String identifier, String value, Integer ttl, TimeUnit unit) {
@@ -46,14 +46,14 @@ public class RedisUtil {
         String pattern = "session:" + email + ":*";
         Set<String> keys = redis.keys(pattern);
 
-        if (keys != null && keys.size() >= MAX_SESSION_NUMBER) {
+        if (keys != null && keys.size() >= maxSessionNumber) {
             // Delete the oldest session
             String oldestKey = keys.iterator().next();
             redis.delete(oldestKey);
         }
 
         String sessionKey = "session:" + email + ":" + sessionId;
-        redis.opsForValue().set(sessionKey, token, TTL_MINUTES, TimeUnit.MINUTES);
+        redis.opsForValue().set(sessionKey, token, ttlMinutes, TimeUnit.MINUTES);
     }
 
     public String getToken(String email, String sessionId) {

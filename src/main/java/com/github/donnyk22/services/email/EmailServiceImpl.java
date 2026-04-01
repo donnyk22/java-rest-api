@@ -32,7 +32,7 @@ public class EmailServiceImpl implements EmailService {
     private final MstUsersRepository usersRepository;
 
     @Value("${app.email.sender}")
-    private String SENDER;
+    private String sender;
 
     @Override
     @Async // implement async function
@@ -44,7 +44,7 @@ public class EmailServiceImpl implements EmailService {
             message.setTo(recipientArray);
             message.setSubject(form.getSubject());
             message.setText(form.getMessage());
-            message.setFrom(SENDER);
+            message.setFrom(sender);
 
             mailSender.send(message);
             return CompletableFuture.completedFuture(form.getRecipients());
@@ -87,7 +87,7 @@ public class EmailServiceImpl implements EmailService {
                 helper.setTo(to); // use array to send to multiple recipients at once
                 helper.setSubject(form.getSubject());
                 helper.setText(htmlContent, true);
-                helper.setFrom(SENDER);
+                helper.setFrom(sender);
 
                 ClassPathResource imageResource = new ClassPathResource("images/company-logo.jpg");
                 helper.addInline("logoImage", imageResource);

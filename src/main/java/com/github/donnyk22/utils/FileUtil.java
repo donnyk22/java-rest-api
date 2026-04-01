@@ -27,10 +27,10 @@ public class FileUtil {
     private final MediaUtil mediaUtil;
 
     @Value("${upload.profile-pic.path}")
-    private String PATH;
+    private String path;
 
     @Value("${upload.profile-pic.max-size}")
-    private String MAX_SIZE;
+    private String maxSize;
 
     public String saveProfilePic(MultipartFile photo) {
         try {
@@ -44,23 +44,23 @@ public class FileUtil {
                 throw new BadRequestException("File name is missing");
             }
 
-            long maxSizeBytes = DataSize.parse(MAX_SIZE).toBytes();
+            long maxSizeBytes = DataSize.parse(maxSize).toBytes();
             if (photo.getSize() > maxSizeBytes) {
-                throw new RuntimeException("Max file size is " + MAX_SIZE);
+                throw new BadRequestException("Max file size is " + maxSize);
             }
 
-            Path uploadPath = Paths.get(PATH);
+            Path uploadPath = Paths.get(path);
 
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
 
             String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(originalFilename);
-            Path path = uploadPath.resolve(fileName);
+            Path filePath = uploadPath.resolve(fileName);
 
-            Files.copy(photo.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(photo.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            return path.toString();
+            return filePath.toString();
         } catch (IOException e) {
             log.error("Disk/File error: " + e.getMessage());
             throw new InternalServerErrorException("Failed to save profile picture: " + e.getMessage());
@@ -72,8 +72,8 @@ public class FileUtil {
             return;
 
         try {
-            Path path = Paths.get(filePath);
-            Files.deleteIfExists(path);
+            Path targetPath = Paths.get(filePath);
+            Files.deleteIfExists(targetPath);
             log.info("Profile picture deleted successfully: " + filePath);
         } catch (IOException e) {
             log.error("Disk/File error: " + e.getMessage());

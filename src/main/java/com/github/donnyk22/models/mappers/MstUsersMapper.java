@@ -9,8 +9,13 @@ import com.github.donnyk22.models.forms.users.UsersCreateForm;
 import com.github.donnyk22.models.forms.users.UsersUpdateForm;
 
 public class MstUsersMapper {
+
+    private MstUsersMapper() {
+        /* This utility class should not be instantiated */
+    }
+
     public static MstUsersDto toBaseDto(MstUsers users) {
-        MstUsersDto toBaseDto = new MstUsersDto()
+        return new MstUsersDto()
                 .setId(users.getId())
                 .setUsername(users.getUsername())
                 .setEmail(users.getEmail())
@@ -20,7 +25,6 @@ public class MstUsersMapper {
                 .setVersion(users.getVersion())
                 .setCreatedAt(users.getCreatedAt())
                 .setUpdatedAt(users.getUpdatedAt());
-        return toBaseDto;
     }
 
     public static MstUsersDto toDto(MstUsers users) {
@@ -34,39 +38,35 @@ public class MstUsersMapper {
             fullname = users.getTeacherData().getFullName();
             teacherDto = MstTeachersMapper.toBaseDto(users.getTeacherData());
         }
-        MstUsersDto dto = toBaseDto(users)
+        return toBaseDto(users)
                 .setName(fullname)
                 .setStudent(studentDto)
                 .setTeacher(teacherDto);
-        return dto;
     }
 
     public static MstUsers toEntity(UserRegisterForm form, String encryptedPassword) {
-        MstUsers users = new MstUsers()
+        return new MstUsers()
                 .setUsername(form.getUsername())
                 .setEmail(form.getEmail())
                 .setRole(form.getRole().name())
                 .setPassword(encryptedPassword);
-        return users;
     }
 
     public static MstUsers toEntity(UsersCreateForm form, String photo, String encryptedPassword) {
-        MstUsers users = new MstUsers()
+        return new MstUsers()
                 .setUsername(form.getUsername())
                 .setEmail(form.getEmail())
                 .setPhoto(photo)
                 .setRole(form.getRole().name())
                 .setIsActive(form.getIsActive())
                 .setPassword(encryptedPassword);
-        return users;
     }
 
     public static MstUsers toEntity(MstUsers user, UsersUpdateForm form, String photo) {
-        user.setUsername(form.getUsername())
+        return user.setUsername(form.getUsername())
                 .setEmail(form.getEmail())
                 .setPhoto(photo)
                 .setRole(form.getRole().name())
                 .setIsActive(form.getIsActive());
-        return user;
     }
 }
