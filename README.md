@@ -9,6 +9,7 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 - File Upload
 - Multiple login sessions
 - ACL
+- Docker Compose
 - Swagger API Documentation
 - Brute force login and sign-up protection
 - Email service
@@ -39,14 +40,14 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
 <b>Prerequisites:</b>
 - JDK 25
 - Maven
-- MySQL
+- MariaDB (XAMPP)
 - Redis
 - RabbitMQ
 
 <b>Setup:</b>
 - Clone repo
-- Import DB from this folder project (school.sql)
-- Rename all files with the .example prefix (src > main > resources > application.properties, application-dev.properties, application-prd.properties) to the .properties prefix (remove the .example)
+- Import DB from this project folder (school.sql)
+- Make the environment variables file from the example files (src > main > resources > application.properties.example, application-dev.properties.example, application-prd.properties.example) or just rename all those files by removing the .example suffix
 - Change credentials if needed (src > main > resources > application-dev.properties)
 - run "mvn clean install"
 - run "mvn spring-boot:run"
@@ -72,3 +73,18 @@ Minimal and best practice of Rest API Java Spring with implementing some industr
   then verify the MFA with your authenticator app in the /api/v1/mfa/verify > finally, you successfully log in and get the real token. Replace the temporary token with this new token,
   because the temporary token can only access this /api/v1/mfa/verify endpoint. If you try to access the other endpoint, you will get a 403 forbidden error.
 - All configurations are available in the application-dev.properties
+
+<b>Docker Instruction</b>
+- Go to project folder, and run these commands:
+- docker compose up --build -d (For build and run in background. Do this perform when you run for the first time, or change the Dockerfile, program code, or pom.xml)
+- docker compose up -d (For run in background without build)
+- docker compose ps (For view list of containers. Make sure all status is "Up")
+- docker logs -f container_name (For view logs of app you want to check. Example: docker logs -f spring_app_container)
+- docker compose down (For stop and remove containers)
+
+- Other commands:
+- docker compose down -v (For stop and remove containers and volumes)
+- docker compose restart docker_service (For restart specific docker service. Example: docker compose restart db)
+- docker compose logs -f (For view all logs)
+- docker compose logs -f app --tail=100 (For view last 100 lines of logs)
+- docker compose logs -f app --tail=100 --since=1h (For view last 100 lines of logs in last 1 hour)
