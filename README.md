@@ -1,90 +1,179 @@
-# java-rest-api
+# ☕ java-rest-api
 
-Minimal and best practice of Rest API Java Spring with implementing some industry standards of back-end utility
+> Minimal yet feature-rich REST API built with **Java Spring Boot**, implementing industry-standard back-end patterns and security practices.
 
-<b>Features:</b>
-- JWT
-- Google OAuth2/SSO
-- MFA/TFA/2FA
-- File Upload
-- Multiple login sessions
-- ACL
-- Docker Compose
-- Swagger API Documentation
-- Brute force login and sign-up protection
-- Email service
-- Audit Trail
-- Request Tracing
-- API Caching
-- Rate Limiting
-- Message Broker (RabbitMQ)
-- Async (simple async function, RabbitMQ implementation, max worker and max queue config)
-- Web Socket
-- Virtual Thread
-- CORS Configuration
-- XSS (Cross-Site Scripting) Protection
-- Clickjacking Protection
-- MIME-Sniffing Protection
-- Referrer Policy
+---
 
-<b>Coming Soon:</b>
-- Unit Test
-- Custom annotation implementation
-- 3rd Party service (Telegram bot, Payment gateway, AI Chatbot, Mapbox, etc)
-- Excel & Word export
-- ZIP export
-- etc
+## ✨ Features
 
-=============================================
+### 🔐 Authentication & Security
+- **JWT** — Stateless token-based authentication
+- **Google OAuth2 / SSO** — Single sign-on via Google
+- **MFA / TFA / 2FA** — Multi-factor authentication support
+- **Multiple Login Sessions** — Manage concurrent user sessions
+- **Brute Force Protection** — Login and sign-up rate limiting
+- **ACL** — Access Control List for fine-grained permissions
 
-<b>Prerequisites:</b>
-- JDK 25
-- Maven
-- MariaDB (XAMPP)
-- Redis
-- RabbitMQ
+### 🛡️ Web Security
+- **XSS Protection** — Cross-Site Scripting defense
+- **Clickjacking Protection** — Frame-busting headers
+- **MIME-Sniffing Protection** — Content-type enforcement
+- **Referrer Policy** — Controls referrer information
+- **CORS Configuration** — Cross-Origin Resource Sharing setup
 
-<b>Setup:</b>
-- Clone repo
-- Import DB from this project folder (school.sql)
-- Make the environment variables file from the example files (src > main > resources > application.properties.example, application-dev.properties.example, application-prd.properties.example) or just rename all those files by removing the .example suffix
-- Change credentials if needed (src > main > resources > application-dev.properties)
-- run "mvn clean install"
-- run "mvn spring-boot:run"
-- Open http://localhost:8080/swagger-ui/index.html to access Swagger
-- Register/Login on the Authentication endpoint
-- Available credentials:<br/>
-  <b>[Admin]</b> admin / admin123456<br/>
-  <b>[Teacher]</b> budi.teacher / budi123456<br/>
-  <b>[Student]</b> arya@student.com / arya123456
-- Input token in the Swagger's Authorize section
-- Start to use the app
+### 📡 Communication & Performance
+- **WebSocket** — Real-time bidirectional communication
+- **Message Broker (RabbitMQ)** — Async message queuing
+- **Async** — Simple async functions, RabbitMQ integration, max worker & queue config
+- **API Caching** — Response caching for performance
+- **Rate Limiting** — Request throttling per client
+- **Virtual Thread** — Lightweight concurrency with Java virtual threads
 
-<b>Instructions:</b>
-- To use WebSockets, open the HTML page "WebSocket***.html" in the web folder (can be opened directly in the browser)
-- Email service is using my MailTrap (https://mailtrap.io/) credentials. The email will not be sent to the real recipient, but will go into my MailTrap inbox. Better change into your own credentials.
-- The audit trail in this project has two features. JPA automatically handles the first one with the @Audited endpoint, and the other one is manual by inserting into the database table.
-  The @Audited is creating history from the entity's transaction into a new table. Pros: automatic and minimal configuration, cons: difficult to customize and database bloat.
-  The other one is a highly customizable audit trail log with manual insert on every needed service. The cons is hard to maintain.
-- For testing OAuth2/SSO login with Google, you can open "OAuth2Test.html" in the web folder (can be opened directly in the browser). The configuration is in "SecurityConfig.java".
-  For Credentials, you must use your own private key (too risky to share my private key lol) by creating/using your existing project in the Google console (https://console.cloud.google.com/)
-- For testing MFA, you must log in first in /api/v1/auth/login > then go to /api/v1/mfa/qr-code to generate a QR code and scan it with your authenticator app >
-  Then you can log out and log in via /api/v1/mfa/login > you get the temporary token, set the token in the Swagger authorize button >
-  then verify the MFA with your authenticator app in the /api/v1/mfa/verify > finally, you successfully log in and get the real token. Replace the temporary token with this new token,
-  because the temporary token can only access this /api/v1/mfa/verify endpoint. If you try to access the other endpoint, you will get a 403 forbidden error.
-- All configurations are available in the application-dev.properties
+### 🗂️ Developer Experience
+- **File Upload** — Multipart file handling
+- **Email Service** — Transactional email support
+- **Audit Trail** — Automatic (JPA `@Audited`) and manual logging
+- **Request Tracing** — End-to-end request tracking
+- **Swagger API Docs** — Interactive API documentation
+- **Docker Compose** — Containerized multi-service setup
 
-<b>Docker Instruction</b>
-- Go to project folder, and run these commands:
-- docker compose up --build -d (For build and run in background. Do this perform when you run for the first time, or change the Dockerfile, program code, or pom.xml)
-- docker compose up -d (For run in background without build)
-- docker compose ps (For view list of containers. Make sure all status is "Up")
-- docker logs -f container_name (For view logs of app you want to check. Example: docker logs -f spring_app_container)
-- docker compose down (For stop and remove containers)
+---
 
-- Other commands:
-- docker compose down -v (For stop and remove containers and volumes)
-- docker compose restart docker_service (For restart specific docker service. Example: docker compose restart db)
-- docker compose logs -f (For view all logs)
-- docker compose logs -f app --tail=100 (For view last 100 lines of logs)
-- docker compose logs -f app --tail=100 --since=1h (For view last 100 lines of logs in last 1 hour)
+## 🚧 Coming Soon
+
+| Feature | Status |
+|---|---|
+| Unit Tests | 🔜 Planned |
+| Custom Annotation Implementation | 🔜 Planned |
+| 3rd Party Services (Telegram, Payment, AI, Mapbox) | 🔜 Planned |
+| Excel & Word Export | 🔜 Planned |
+| ZIP Export | 🔜 Planned |
+
+---
+
+## 🧰 Prerequisites
+
+| Tool | Notes |
+|---|---|
+| **JDK 25** | Required Java version |
+| **Maven** | Build tool |
+| **MariaDB** | Via XAMPP or standalone |
+| **Redis** | Caching & session store |
+| **RabbitMQ** | Message broker |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+```bash
+git clone <repo-url>
+cd java-rest-api
+```
+
+### 2. Set Up the Database
+Import the provided SQL file into your MariaDB instance:
+```
+school.sql  ← found in the project root
+```
+
+### 3. Configure Environment Variables
+Copy the example property files and rename them (remove the `.example` suffix):
+```
+src/main/resources/application.properties.example
+src/main/resources/application-dev.properties.example
+src/main/resources/application-prd.properties.example
+```
+Then update credentials in `application-dev.properties` as needed.
+
+### 4. Build & Run
+```bash
+mvn clean install
+mvn spring-boot:run
+```
+
+### 5. Access the App
+Open Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+### 6. Default Credentials
+
+| Role | Username | Password |
+|---|---|---|
+| 👑 Admin | `admin` | `admin123456` |
+| 🧑‍🏫 Teacher | `budi.teacher` | `budi123456` |
+| 🧑‍🎓 Student | `arya@student.com` | `arya123456` |
+
+> After logging in, copy your token and paste it into the **Authorize** button in Swagger UI.
+
+---
+
+## 🐳 Docker Setup
+
+### First Run (or after code/config changes)
+```bash
+docker compose up --build -d
+```
+
+### Subsequent Runs
+```bash
+docker compose up -d
+```
+
+### Useful Docker Commands
+
+| Command | Description |
+|---|---|
+| `docker compose ps` | List all containers and their status |
+| `docker logs -f <container_name>` | Stream logs for a specific container |
+| `docker compose down` | Stop and remove containers |
+| `docker compose down -v` | Stop and remove containers + volumes |
+| `docker compose restart <service>` | Restart a specific service |
+| `docker compose logs -f` | Stream all service logs |
+| `docker compose logs -f app --tail=100` | Last 100 lines from app |
+| `docker compose logs -f app --tail=100 --since=1h` | Last 100 lines from the past hour |
+
+---
+
+## 📖 Usage Instructions
+
+### 🌐 WebSocket
+Open any `WebSocket***.html` file from the `web/` folder directly in your browser.
+
+### 📧 Email Service
+Uses [MailTrap](https://mailtrap.io/) by default — emails are captured in a sandbox inbox and **not** delivered to real recipients. Replace the credentials in `application-dev.properties` with your own MailTrap account for best results.
+
+### 📋 Audit Trail
+This project supports two audit trail strategies:
+
+- **Automatic** — Uses JPA `@Audited` to auto-generate history tables on entity changes.
+  - ✅ Minimal configuration
+  - ⚠️ Limited customization, potential database bloat
+
+- **Manual** — Custom audit log entries inserted explicitly in service methods.
+  - ✅ Fully customizable
+  - ⚠️ Higher maintenance overhead
+
+### 🔑 Google OAuth2 / SSO
+Open `OAuth2Test.html` from the `web/` folder in your browser. You must supply your **own** Google API credentials via the [Google Cloud Console](https://console.cloud.google.com/). Configuration lives in `SecurityConfig.java`.
+
+### 🔐 MFA (Multi-Factor Authentication)
+
+Follow these steps to test MFA:
+
+1. Log in via `POST /api/v1/auth/login`
+2. Generate a QR code at `GET /api/v1/mfa/qr-code` and scan it with your authenticator app
+3. Log out, then log in via `POST /api/v1/mfa/login` — you'll receive a **temporary token**
+4. Set the temporary token in Swagger's **Authorize** dialog
+5. Verify your OTP at `POST /api/v1/mfa/verify` — you'll receive the **real token**
+6. Replace the temporary token with the real token
+
+> ⚠️ The temporary token grants access **only** to `/api/v1/mfa/verify`. Any other endpoint will return `403 Forbidden`.
+
+---
+
+## ⚙️ Configuration
+
+All application settings are managed in:
+```
+src/main/resources/application-dev.properties
+```
