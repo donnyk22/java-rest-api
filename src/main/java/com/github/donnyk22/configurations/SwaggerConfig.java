@@ -21,7 +21,7 @@ public class SwaggerConfig {
                         new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
                 .info(new Info().title("Java REST API")
                         .description(
-                                "Minimal and best practice of Rest API Java Spring with implementing some industry standard of back-end utility")
+                                "Minimal yet feature-rich REST API built with Java Spring Boot, implementing industry-standard back-end patterns and security practices.")
                         .version("v1.0.0")
                         .license(new License().name("Apache 2.0").url("https://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
