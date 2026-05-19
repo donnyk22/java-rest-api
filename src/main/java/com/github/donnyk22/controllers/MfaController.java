@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/mfa")
+@Validated
 public class MfaController {
 
     private final MfaService mfaService;
@@ -34,7 +36,7 @@ public class MfaController {
     public ResponseEntity<ApiResponse<MstUsersDto>> loginMfa(@RequestBody @Valid UserLoginForm form) {
         MstUsersDto result = mfaService.loginMfa(form);
         String message = "Login successfully";
-        if (result.getMfaEnabled()) {
+        if (Boolean.TRUE.equals(result.getMfaEnabled())) {
             message = "Login successfully, now please verify MFA code. Valid for 5 minutes";
         }
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(), message, result);
@@ -44,7 +46,7 @@ public class MfaController {
     @Operation(summary = "Veryfy MFA code", description = "Verify MFA code and return final user credentials.")
     @PostMapping("/verify")
     public ResponseEntity<ApiResponse<MstUsersDto>> verifyMfa(
-            @RequestParam @Valid @NotBlank(message = "Code is required") String code) {
+            @RequestParam @NotBlank(message = "Code is required") String code) {
         MstUsersDto result = mfaService.verifyMfa(code);
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Login successfully",

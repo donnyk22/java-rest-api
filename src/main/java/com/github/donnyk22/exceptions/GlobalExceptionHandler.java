@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.github.donnyk22.models.dtos.ApiResponse;
 
@@ -127,6 +128,24 @@ public class GlobalExceptionHandler {
                 "Data is updated by another user. Please refresh and try again.",
                 null);
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    // Handle method argument type mismatch (e.g. cast 'abc' to Integer, etc)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String paramName = ex.getName();
+
+        Class<?> requiredType = ex.getRequiredType();
+        String typeName = (requiredType != null) ? requiredType.getSimpleName() : "required type";
+
+        String message = String.format("Parameter '%s' must be a valid %s!", paramName, typeName);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                HttpStatus.BAD_REQUEST.value(),
+                message,
+                null);
+
+        return ResponseEntity.badRequest().body(response);
     }
 
 }

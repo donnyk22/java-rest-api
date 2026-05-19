@@ -46,14 +46,13 @@ import com.github.donnyk22.services.school.SchoolService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "School APIs", description = "School management APIs")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/school")
-@Validated // for validating @RequestParam, @PathVariable, @RequestHeader
+@Validated // for validating primitive data types
 public class SchoolController {
 
     private final SchoolService schoolService;
@@ -74,7 +73,7 @@ public class SchoolController {
     @Operation(summary = "Get student attendances", description = "Retrieve attendance records by attendance ID")
     @GetMapping("/attendances/{attendanceId}")
     public ResponseEntity<ApiResponse<MstAttendancesDto>> readAttendance(
-            @PathVariable @NotNull(message = "Attendance ID is required") Integer attendanceId) {
+            @PathVariable Integer attendanceId) {
         MstAttendancesDto result = schoolService.readAttendance(attendanceId);
         ApiResponse<MstAttendancesDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Attendances retrieved successfully",
@@ -98,7 +97,7 @@ public class SchoolController {
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @DeleteMapping("/attendances/{attendanceId}")
     public ResponseEntity<ApiResponse<MstAttendancesDto>> deleteAttendance(
-            @PathVariable @NotNull(message = "Attendance ID is required") Integer attendanceId) {
+            @PathVariable Integer attendanceId) {
         MstAttendancesDto result = schoolService.deleteAttendance(attendanceId);
         ApiResponse<MstAttendancesDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Attendance deleted successfully",
@@ -122,7 +121,7 @@ public class SchoolController {
     @Operation(summary = "Get class by ID", description = "Retrieve class details by class ID")
     @GetMapping("/classes/{classesId}")
     public ResponseEntity<ApiResponse<MstClassesDto>> readClass(
-            @PathVariable @NotNull(message = "Class ID is required") Integer classesId) {
+            @PathVariable Integer classesId) {
         MstClassesDto result = schoolService.readClass(classesId);
         ApiResponse<MstClassesDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Class retrieved successfully",
@@ -145,7 +144,7 @@ public class SchoolController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/classes/{classesId}")
     public ResponseEntity<ApiResponse<MstClassesDto>> updateClass(
-            @PathVariable @NotNull(message = "Class ID is required") Integer classesId,
+            @PathVariable Integer classesId,
             @RequestBody @Valid ClassesUpdateForm body) {
         MstClassesDto result = schoolService.updateClass(classesId, body);
         ApiResponse<MstClassesDto> response = new ApiResponse<>(HttpStatus.OK.value(),
@@ -158,7 +157,7 @@ public class SchoolController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/classes/{classesId}")
     public ResponseEntity<ApiResponse<MstClassesDto>> deleteClass(
-            @PathVariable @NotNull(message = "Class ID is required") Integer classesId) {
+            @PathVariable Integer classesId) {
         MstClassesDto result = schoolService.deleteClass(classesId);
         ApiResponse<MstClassesDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Class deleted successfully",
@@ -182,7 +181,7 @@ public class SchoolController {
     @Operation(summary = "Get student by ID", description = "Retrieve student details by student ID")
     @GetMapping("/students/{studentId}")
     public ResponseEntity<ApiResponse<MstStudentsDto>> readStudent(
-            @PathVariable @NotNull(message = "Student ID is required") Integer studentId) {
+            @PathVariable Integer studentId) {
         MstStudentsDto result = schoolService.readStudent(studentId);
         ApiResponse<MstStudentsDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Student retrieved successfully",
@@ -204,7 +203,7 @@ public class SchoolController {
     @Operation(summary = "Update student", description = "Update student details by student ID")
     @PutMapping(value = "/students/{studentId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<ApiResponse<MstStudentsDto>> updateStudent(
-            @PathVariable @NotNull(message = "Student ID is required") Integer studentId,
+            @PathVariable Integer studentId,
             @ModelAttribute @Valid StudentsUpdateForm form) {
         MstStudentsDto result = schoolService.updateStudent(studentId, form);
         ApiResponse<MstStudentsDto> response = new ApiResponse<>(HttpStatus.OK.value(),
@@ -217,7 +216,7 @@ public class SchoolController {
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @DeleteMapping("/students/{studentId}")
     public ResponseEntity<ApiResponse<MstStudentsDto>> deleteStudent(
-            @PathVariable @NotNull(message = "Student ID is required") Integer studentId) {
+            @PathVariable Integer studentId) {
         MstStudentsDto result = schoolService.deleteStudent(studentId);
         ApiResponse<MstStudentsDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Student deleted successfully",
@@ -228,7 +227,7 @@ public class SchoolController {
     @Operation(summary = "Delete student profile picture", description = "Delete a student's profile picture by student ID")
     @PatchMapping("/students/{studentId}/profile-pic")
     public ResponseEntity<ApiResponse<MstStudentsDto>> deleteStudentProfilePic(
-            @PathVariable @NotNull(message = "Student ID is required") Integer studentId) {
+            @PathVariable Integer studentId) {
         MstStudentsDto result = schoolService.deleteStudentProfilePic(studentId);
         ApiResponse<MstStudentsDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Student profile picture deleted successfully",
@@ -252,7 +251,7 @@ public class SchoolController {
     @Operation(summary = "Get teacher by ID", description = "Retrieve teacher details by teacher ID")
     @GetMapping("/teachers/{teacherId}")
     public ResponseEntity<ApiResponse<MstTeachersDto>> readTeacher(
-            @PathVariable @NotNull(message = "Teacher ID is required") Integer teacherId) {
+            @PathVariable Integer teacherId) {
         MstTeachersDto result = schoolService.readTeacher(teacherId);
         ApiResponse<MstTeachersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Teacher retrieved successfully",
@@ -275,7 +274,7 @@ public class SchoolController {
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PutMapping(value = "/teachers/{teacherId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<ApiResponse<MstTeachersDto>> updateTeacher(
-            @PathVariable @NotNull(message = "Teacher ID is required") Integer teacherId,
+            @PathVariable Integer teacherId,
             @ModelAttribute @Valid TeachersUpdateForm form) {
         MstTeachersDto result = schoolService.updateTeacher(teacherId, form);
         ApiResponse<MstTeachersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
@@ -288,7 +287,7 @@ public class SchoolController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/teachers/{teacherId}")
     public ResponseEntity<ApiResponse<MstTeachersDto>> deleteTeacher(
-            @PathVariable @NotNull(message = "Teacher ID is required") Integer teacherId) {
+            @PathVariable Integer teacherId) {
         MstTeachersDto result = schoolService.deleteTeacher(teacherId);
         ApiResponse<MstTeachersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Teacher deleted successfully",
@@ -300,7 +299,7 @@ public class SchoolController {
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @PatchMapping("/teachers/{teacherId}/profile-pic")
     public ResponseEntity<ApiResponse<MstTeachersDto>> deleteTeacherProfilePic(
-            @PathVariable @NotNull(message = "Teacher ID is required") Integer teacherId) {
+            @PathVariable Integer teacherId) {
         MstTeachersDto result = schoolService.deleteTeacherProfilePic(teacherId);
         ApiResponse<MstTeachersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Teacher profile picture deleted successfully",
@@ -326,7 +325,7 @@ public class SchoolController {
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @GetMapping("/homeroom-teachers/{homeroomTeacherId}")
     public ResponseEntity<ApiResponse<MstHomeroomTeachersDto>> readHomeroomTeacher(
-            @PathVariable @NotNull(message = "Homeroom teacher ID is required") Integer homeroomTeacherId) {
+            @PathVariable Integer homeroomTeacherId) {
         MstHomeroomTeachersDto result = schoolService.readHomeroomTeacher(homeroomTeacherId);
         ApiResponse<MstHomeroomTeachersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Homeroom teacher retrieved successfully",
@@ -350,7 +349,7 @@ public class SchoolController {
     @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
     @DeleteMapping("/homeroom-teachers/{homeroomTeacherId}")
     public ResponseEntity<ApiResponse<MstHomeroomTeachersDto>> deleteHomeroomTeacher(
-            @PathVariable @NotNull(message = "Homeroom teacher ID is required") Integer homeroomTeacherId) {
+            @PathVariable Integer homeroomTeacherId) {
         MstHomeroomTeachersDto result = schoolService.deleteHomeroomTeacher(homeroomTeacherId);
         ApiResponse<MstHomeroomTeachersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "Homeroom teacher deleted successfully",
@@ -374,7 +373,7 @@ public class SchoolController {
     @Operation(summary = "Get user by ID", description = "Retrieve user details by user ID")
     @GetMapping("/users/{userId}")
     public ResponseEntity<ApiResponse<MstUsersDto>> readUser(
-            @PathVariable @NotNull(message = "User ID is required") Integer userId) {
+            @PathVariable Integer userId) {
         MstUsersDto result = schoolService.readUser(userId);
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "User retrieved successfully",
@@ -396,7 +395,7 @@ public class SchoolController {
     @Operation(summary = "Update user", description = "Update user details by user ID")
     @PutMapping(value = "/users/{userId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<ApiResponse<MstUsersDto>> updateUser(
-            @PathVariable @NotNull(message = "User ID is required") Integer userId,
+            @PathVariable Integer userId,
             @ModelAttribute @Valid UsersUpdateForm form) {
         MstUsersDto result = schoolService.updateUser(userId, form);
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
@@ -408,7 +407,7 @@ public class SchoolController {
     @Operation(summary = "Update user password", description = "Update user password by user ID")
     @PatchMapping("/users/{userId}/password")
     public ResponseEntity<ApiResponse<MstUsersDto>> updateUserPassword(
-            @PathVariable @NotNull(message = "User ID is required") Integer userId,
+            @PathVariable Integer userId,
             @ModelAttribute @Valid UsersUpdatePasswordForm form) {
         MstUsersDto result = schoolService.updateUserPassword(userId, form);
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
@@ -421,7 +420,7 @@ public class SchoolController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<ApiResponse<MstUsersDto>> deleteUser(
-            @PathVariable @NotNull(message = "User ID is required") Integer userId) {
+            @PathVariable Integer userId) {
         MstUsersDto result = schoolService.deleteUser(userId);
         ApiResponse<MstUsersDto> response = new ApiResponse<>(HttpStatus.OK.value(),
                 "User deleted successfully",
