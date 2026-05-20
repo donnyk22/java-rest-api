@@ -76,8 +76,10 @@ public class SecurityConfig {
                                     && !(authObj instanceof AnonymousAuthenticationToken);
 
                             // Check that they aren't stuck on the MFA step
-                            boolean isNotMfaCheck = authObj.getAuthorities().stream()
-                                    .noneMatch(a -> a.getAuthority().equals("ROLE_MFA_CHECK"));
+                            boolean isNotMfaCheck = authObj != null
+                                    ? authObj.getAuthorities().stream()
+                                            .noneMatch(a -> a.getAuthority().equals("ROLE_MFA_CHECK"))
+                                    : Boolean.FALSE;
 
                             return new AuthorizationDecision(isAuthenticated && isNotMfaCheck);
                         }))
