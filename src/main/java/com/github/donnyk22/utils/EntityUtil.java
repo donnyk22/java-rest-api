@@ -30,7 +30,7 @@ public class EntityUtil {
             Method method = data.getClass().getMethod("getId");
             Object result = method.invoke(data);
             return (Integer) result;
-        } catch (Exception e) {
+        } catch (Exception _) {
             return null;
         }
     }

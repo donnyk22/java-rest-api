@@ -10,7 +10,7 @@ spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:mariadb://localhost:3306/scho
 spring.datasource.username=${SPRING_DATASOURCE_USERNAME:root}
 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:}
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-#auditing configuration (ddl-auto: global setting. jpa scanning everytime app start. if table/column not exist, will created automatically)
+#auditing configuration (spring.jpa.hibernate.ddl-auto is a global setting. jpa scanning everytime app start. if table/column not exist, will created automatically)
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.properties.org.hibernate.envers.audit_table_prefix=log_
 spring.jpa.properties.org.hibernate.envers.audit_table_suffix=_audit

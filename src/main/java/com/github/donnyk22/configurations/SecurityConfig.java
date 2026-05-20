@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,9 +17,12 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.donnyk22.models.dtos.ApiResponse;
 import com.github.donnyk22.models.enums.Action;
 
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -27,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final JwtAuthFilterConfig jwtAuthFilter;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -61,20 +66,42 @@ public class SecurityConfig {
                         // This is to handle temporary token with temporary role
                         // This endpoint only accessibe by role MFA_CHECK
                         .requestMatchers("/api/v1/mfa/verify").hasAuthority("ROLE_MFA_CHECK")
-                        // All other endpoints are accessible by any authenticated user, except for role
-                        // MFA_CHECK
-                        .anyRequest().access((authentication, context) -> new AuthorizationDecision(
-                                authentication.get().getAuthorities().stream()
-                                        .noneMatch(a -> a.getAuthority().equals("ROLE_MFA_CHECK"))))
-                // If you don't use MFA feature, use this instead
-                // .anyRequest().authenticated()
-                )
-                // OAuth2 configuration
+
+                        // Ensure the user is authenticated AND does not possess ROLE_MFA_CHECK
+                        .anyRequest().access((authentication, context) -> {
+                            var authObj = authentication.get();
+
+                            // Check if user is fully logged in (not anonymous)
+                            boolean isAuthenticated = authObj != null && authObj.isAuthenticated()
+                                    && !(authObj instanceof AnonymousAuthenticationToken);
+
+                            // Check that they aren't stuck on the MFA step
+                            boolean isNotMfaCheck = authObj.getAuthorities().stream()
+                                    .noneMatch(a -> a.getAuthority().equals("ROLE_MFA_CHECK"));
+
+                            return new AuthorizationDecision(isAuthenticated && isNotMfaCheck);
+                        }))
+                .exceptionHandling(exception -> exception
+                        // Handles unauthenticated users trying to hit protected routes (Returns 401)
+                        .authenticationEntryPoint((req, res, authException) -> {
+                            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            res.setContentType("application/json");
+                            res.getWriter().write(objectMapper.writeValueAsString(
+                                    new ApiResponse<>(401, "Unauthorized",
+                                            null)));
+                        })
+                        // Handles authenticated users who fail the .access() expression (Returns 403)
+                        .accessDeniedHandler((req, res, accessDeniedException) -> {
+                            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            res.setContentType("application/json");
+                            res.getWriter().write(objectMapper.writeValueAsString(
+                                    new ApiResponse<>(403, "Forbidden", null)));
+                        }))
                 .oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl("/api/v1/oauth2", true))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Other filter chains configurations
+        // Headers/Other filter chain configurations
         http.headers(headers -> headers
                 // XSS (Cross-Site Scripting) Protection
                 .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))

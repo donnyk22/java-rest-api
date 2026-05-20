@@ -36,20 +36,23 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws IOException, ServletException {
-        String header = req.getHeader("Authorization");
-        if (header != null) {
-            String token;
-            if (header.startsWith("Bearer ")) {
-                token = header.substring(7);
-            } else {
-                token = header;
-            }
 
+        String header = req.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        try {
             Claims claims = jwtUtil.extractClaims(token);
             if (claims == null) {
                 sendUnauthorizedResponse(res, "Token expired or invalid");
                 return;
             }
+
             Integer id = Integer.valueOf(claims.getSubject());
             String name = claims.get("username", String.class);
             String email = claims.get("email", String.class);
@@ -75,8 +78,12 @@ public class JwtAuthFilterConfig extends OncePerRequestFilter {
                     "sessionId", sessionId));
 
             SecurityContextHolder.getContext().setAuthentication(auth);
+
+            chain.doFilter(req, res);
+
+        } catch (Exception _) {
+            sendUnauthorizedResponse(res, "Token expired or invalid");
         }
-        chain.doFilter(req, res);
     }
 
     private void sendUnauthorizedResponse(HttpServletResponse res, String errorMessage) throws IOException {

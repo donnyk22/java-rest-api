@@ -76,8 +76,16 @@ Import the provided SQL file into your MariaDB instance:
 ```
 school.sql  ← found in the project root
 ```
+Then, run the MariaDB service.
 
-### 3. Configure Environment Variables
+### 3. Run the Other Services
+- Run your Redis service
+- Run your RabbitMQ service
+```
+Both can be run via Docker
+```
+
+### 4. Configure Environment Variables
 Copy the example property files and rename them (remove the `.example` suffix):
 ```
 src/main/resources/application.properties.example
@@ -86,16 +94,16 @@ src/main/resources/application-prd.properties.example
 ```
 Then update credentials in `application-dev.properties` as needed.
 
-### 4. Build & Run
+### 5. Build & Run
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
 
-### 5. Access the App
+### 6. Access the App
 Open Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
-### 6. Default Credentials
+### 7. Default Credentials
 
 | Role | Username | Password |
 |---|---|---|
