@@ -9,6 +9,16 @@ public enum UserGender {
         this.gender = gender;
     }
 
+    public static String getVal(Character gender) {
+        if (gender == 'M') {
+            return UserGender.M.getVal();
+        } else if (gender == 'F') {
+            return UserGender.F.getVal();
+        } else {
+            return "";
+        }
+    }
+
     public String getVal() {
         return this.gender;
     }

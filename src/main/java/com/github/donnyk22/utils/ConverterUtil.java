@@ -1,11 +1,14 @@
 package com.github.donnyk22.utils;
 
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.donnyk22.models.enums.TimeFormat;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,5 +49,15 @@ public class ConverterUtil {
             log.warn("Failed to convert object to JSON: " + e.getMessage());
             return "{}";
         }
+    }
+
+    public String offsetDateTimeToString(OffsetDateTime offsetDateTime, TimeFormat format) {
+        if (offsetDateTime == null) {
+            return "";
+        }
+        if (format == null) {
+            return offsetDateTime.toString();
+        }
+        return offsetDateTime.format(DateTimeFormatter.ofPattern(format.getVal()));
     }
 }
