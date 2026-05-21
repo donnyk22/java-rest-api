@@ -14,6 +14,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import com.github.donnyk22.models.dtos.ApiResponse;
 
+import org.springframework.http.MediaType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -59,8 +60,12 @@ public class GlobalExceptionHandler {
     // fallback
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> internal(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse<>(500, ex.getMessage(), null));
+        log.error("Unhandled exception caught in GlobalExceptionHandler: ", ex);
+        ApiResponse<Object> response = new ApiResponse<>(500, "Internal Server Error", null);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
     }
 
     // === Handle Other Errors ===

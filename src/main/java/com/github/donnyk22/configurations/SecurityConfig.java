@@ -60,8 +60,9 @@ public class SecurityConfig {
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/logout",
                                 "/api/v1/mfa/login",
-                                "/ws/**",
-                                "/actuator/**")
+                                "/error", // default error page by spring (must include)
+                                "/ws/**", // websockets
+                                "/actuator/**") // actuator for health check etc
                         .permitAll()
                         // This is to handle temporary token with temporary role
                         // This endpoint only accessibe by role MFA_CHECK
