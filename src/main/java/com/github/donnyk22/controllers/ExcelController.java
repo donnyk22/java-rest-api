@@ -3,6 +3,7 @@ package com.github.donnyk22.controllers;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,25 +32,29 @@ public class ExcelController {
 
     private final ExcelService excelService;
 
+    private static final String EXCEL_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
     @Operation(summary = "Export data to Excel", description = "Export find student data to Excel format")
-    @GetMapping(value = "/export-student-data", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @GetMapping(value = "/export-student-data", produces = EXCEL_MEDIA_TYPE)
     public ResponseEntity<byte[]> exportToNewExcel(@ModelAttribute @Valid StudentsFindForm form) {
         byte[] data = excelService.exportToNewExcel(form);
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=students-export.xlsx")
+                .headers(headers -> headers.setContentDisposition(
+                        ContentDisposition.attachment().filename("students-export.xlsx").build()))
                 .contentType(
-                        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                        MediaType.parseMediaType(EXCEL_MEDIA_TYPE))
                 .body(data);
     }
 
     @Operation(summary = "Export data to Excel", description = "Export find student data to existing Excel template")
-    @GetMapping(value = "/export-with-existing-template", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @GetMapping(value = "/export-with-existing-template", produces = EXCEL_MEDIA_TYPE)
     public ResponseEntity<byte[]> exportToExistingExcelTemplate(@ModelAttribute @Valid StudentsFindForm form) {
         byte[] data = excelService.exportToExistingExcelTemplate(form);
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=\"students-export-existing-template.xlsx\"")
+                .headers(headers -> headers.setContentDisposition(
+                        ContentDisposition.attachment().filename("students-export-existing-template.xlsx").build()))
                 .contentType(
-                        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                        MediaType.parseMediaType(EXCEL_MEDIA_TYPE))
                 .body(data);
     }
 

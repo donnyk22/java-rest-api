@@ -1,6 +1,6 @@
 package com.github.donnyk22.controllers;
 
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +59,8 @@ public class MfaController {
     public ResponseEntity<byte[]> mfaQrCodeGenerate() {
         byte[] result = mfaService.mfaQrCodeGenerate();
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"mfa-qrcode.png\"")
+                .headers(headers -> headers.setContentDisposition(
+                        ContentDisposition.attachment().filename("mfa-qrcode.png").build()))
                 .contentType(MediaType.IMAGE_PNG)
                 .body(result);
     }
