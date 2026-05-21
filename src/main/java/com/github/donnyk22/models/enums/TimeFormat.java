@@ -3,7 +3,8 @@ package com.github.donnyk22.models.enums;
 public enum TimeFormat {
     DD_MM_YYYY_HH_MM_SS("dd-MM-yyyy HH:mm:ss"),
     DD_MM_YYYY_HH_MM("dd-MM-yyyy HH:mm"),
-    DD_MM_YYYY("dd-MM-yyyy");
+    DD_MM_YYYY("dd-MM-yyyy"),
+    MMMM_D_YYYY("MMMM d, yyyy");
 
     private String format;
 

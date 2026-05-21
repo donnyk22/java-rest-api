@@ -32,18 +32,18 @@ public class ExcelController {
     private final ExcelService excelService;
 
     @Operation(summary = "Export data to Excel", description = "Export find student data to Excel format")
-    @GetMapping(value = "/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @GetMapping(value = "/export-student-data", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     public ResponseEntity<byte[]> exportToNewExcel(@ModelAttribute @Valid StudentsFindForm form) {
         byte[] data = excelService.exportToNewExcel(form);
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=\"students-export.xlsx\"")
+                .header("Content-Disposition", "attachment; filename=students-export.xlsx")
                 .contentType(
                         MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(data);
     }
 
     @Operation(summary = "Export data to Excel", description = "Export find student data to existing Excel template")
-    @GetMapping(value = "/export-existing-template", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @GetMapping(value = "/export-with-existing-template", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     public ResponseEntity<byte[]> exportToExistingExcelTemplate(@ModelAttribute @Valid StudentsFindForm form) {
         byte[] data = excelService.exportToExistingExcelTemplate(form);
         return ResponseEntity.ok()
@@ -54,7 +54,7 @@ public class ExcelController {
     }
 
     @Operation(summary = "Import Excel file", description = "Import and read them as a json array")
-    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/import-excel-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> importExcelFile(
             @ModelAttribute @Parameter(required = true) MultipartFile file) {
         List<Map<String, Object>> result = excelService.readImportedExcelFile(file);

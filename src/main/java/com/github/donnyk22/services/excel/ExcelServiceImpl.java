@@ -2,7 +2,6 @@ package com.github.donnyk22.services.excel;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.donnyk22.exceptions.BadRequestException;
@@ -46,7 +45,6 @@ public class ExcelServiceImpl implements ExcelService {
     private final ConverterUtil converterUtil;
 
     @Override
-    @Transactional(readOnly = true)
     @SneakyThrows
     public byte[] exportToNewExcel(StudentsFindForm form) {
         StudentsFindForm param = new StudentsFindForm()
@@ -137,7 +135,6 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     @SneakyThrows
     public byte[] exportToExistingExcelTemplate(StudentsFindForm form) {
         StudentsFindForm param = new StudentsFindForm()
@@ -200,7 +197,6 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     @SneakyThrows
     public List<Map<String, Object>> readImportedExcelFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {

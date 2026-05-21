@@ -226,12 +226,36 @@
             <scope>compile</scope>
 		</dependency>
 
+        <!-- Apache POI for Excel & Word export -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.5.1</version>
             <scope>compile</scope>
 		</dependency>
+
+        <!-- XDocReport for word export with existing template -->
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
+			<version>2.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+        <dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.xdocreport.document.odt</artifactId>
+            <version>2.2.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.opensagres.xdocreport</groupId>
+            <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
+            <version>2.2.0</version>
+            <scope>compile</scope>
+        </dependency>
+
 	</dependencies>
 
 	<build>

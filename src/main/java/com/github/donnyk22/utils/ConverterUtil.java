@@ -1,8 +1,10 @@
 package com.github.donnyk22.utils;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import org.springframework.stereotype.Component;
 
@@ -53,11 +55,21 @@ public class ConverterUtil {
 
     public String offsetDateTimeToString(OffsetDateTime offsetDateTime, TimeFormat format) {
         if (offsetDateTime == null) {
-            return "";
+            offsetDateTime = OffsetDateTime.now();
         }
         if (format == null) {
             return offsetDateTime.toString();
         }
-        return offsetDateTime.format(DateTimeFormatter.ofPattern(format.getVal()));
+        return offsetDateTime.format(DateTimeFormatter.ofPattern(format.getVal(), Locale.ENGLISH));
+    }
+
+    public String localDateToString(LocalDate localDate, TimeFormat format) {
+        if (localDate == null) {
+            localDate = LocalDate.now();
+        }
+        if (format == null) {
+            return localDate.toString();
+        }
+        return localDate.format(DateTimeFormatter.ofPattern(format.getVal(), Locale.ENGLISH));
     }
 }
