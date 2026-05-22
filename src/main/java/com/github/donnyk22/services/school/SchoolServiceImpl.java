@@ -108,7 +108,8 @@ public class SchoolServiceImpl implements SchoolService {
                         cb.like(cb.lower(root.get("note")), likePattern),
                         cb.like(cb.lower(studentJoin.get("fullName")), likePattern),
                         cb.like(cb.lower(classJoin.get("className")), likePattern),
-                        cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern));
+                        // gradeLevel is Integer. Must convert to String first
+                        cb.like(cb.lower(classJoin.get("gradeLevel").as(String.class)), likePattern));
                 predicates.add(predicate);
             }
 
@@ -177,7 +178,8 @@ public class SchoolServiceImpl implements SchoolService {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
                         cb.like(cb.lower(root.get("className")), likePattern),
-                        cb.like(cb.lower(root.get("gradeLevel")), likePattern),
+                        // gradeLevel is Integer. Must convert to String first
+                        cb.like(cb.lower(root.get("gradeLevel").as(String.class)), likePattern),
                         cb.like(cb.lower(root.get("academicYear")), likePattern));
                 predicates.add(predicate);
             }
@@ -259,7 +261,8 @@ public class SchoolServiceImpl implements SchoolService {
                         cb.like(cb.lower(root.get("fullName")), likePattern),
                         cb.like(cb.lower(root.get("address")), likePattern),
                         cb.like(cb.lower(classJoin.get("className")), likePattern),
-                        cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern));
+                        // gradeLevel is Integer. Must convert to String first
+                        cb.like(cb.lower(classJoin.get("gradeLevel").as(String.class)), likePattern));
                 predicates.add(predicate);
             }
 
@@ -403,7 +406,8 @@ public class SchoolServiceImpl implements SchoolService {
                         cb.like(cb.lower(root.get("phone")), likePattern),
                         cb.like(cb.lower(root.get("address")), likePattern),
                         cb.like(cb.lower(classJoin.get("className")), likePattern),
-                        cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern));
+                        // gradeLevel is Integer. Must convert to String first
+                        cb.like(cb.lower(classJoin.get("gradeLevel").as(String.class)), likePattern));
                 predicates.add(predicate);
             }
 
@@ -545,7 +549,8 @@ public class SchoolServiceImpl implements SchoolService {
                 String likePattern = "%" + form.getKeyword().toLowerCase() + "%";
                 Predicate predicate = cb.or(
                         cb.like(cb.lower(classJoin.get("className")), likePattern),
-                        cb.like(cb.lower(classJoin.get("gradeLevel")), likePattern),
+                        // gradeLevel is Integer. Must convert to String first
+                        cb.like(cb.lower(classJoin.get("gradeLevel").as(String.class)), likePattern),
                         cb.like(cb.lower(teacherJoin.get("fullName")), likePattern),
                         cb.like(cb.lower(teacherJoin.get("phone")), likePattern),
                         cb.like(cb.lower(teacherJoin.get("address")), likePattern));
