@@ -93,6 +93,11 @@ public class ZipCompressFileServiceImpl implements ZipCompressFileService {
 
         return outputStream -> {
             try (InputStream inputStream = new FileInputStream(tempZipFile)) {
+                // Stream by 4KB to keep RAM at a constant 4KB (Example: a 4MB file will trigger
+                // 1,024x read-write loops from disk to network, instead of loading 4MB at once
+                // into memory)
+                // 4KB is the standard size of one cluster/page in modern operating system and
+                // hard disk architectures (NTFS, EXT4)
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
