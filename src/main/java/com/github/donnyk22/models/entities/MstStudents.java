@@ -2,6 +2,8 @@ package com.github.donnyk22.models.entities;
 
 import java.util.List;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.SoftDelete;
 import org.hibernate.envers.Audited;
 
@@ -56,6 +58,8 @@ public class MstStudents extends BaseTimestampCreateUpdate {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @NotFound(action = NotFoundAction.IGNORE) // Use this if using @ManyToOne or @OneToOne relation, @SoftDelete, and
+                                              // FetchType.LAZY
     private MstUsers user;
 
     @OneToMany(mappedBy = "studentData", fetch = FetchType.LAZY)
