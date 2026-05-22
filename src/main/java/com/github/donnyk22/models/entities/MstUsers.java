@@ -2,8 +2,7 @@ package com.github.donnyk22.models.entities;
 
 import java.util.List;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.SoftDelete;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -30,10 +29,7 @@ import lombok.experimental.Accessors;
 // automatically
 @Audited
 @Table(name = "mst_users")
-// override delete behaviour by JPA to soft delete
-@SQLDelete(sql = "UPDATE mst_users SET deleted = true WHERE id = ? AND version = ?")
-// automatically add "where deleted = false"
-@SQLRestriction("deleted = false")
+@SoftDelete
 public class MstUsers extends BaseTimestampCreateUpdate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +46,6 @@ public class MstUsers extends BaseTimestampCreateUpdate {
     private String mfaSecret;
     @Column(name = "is_active")
     private Boolean isActive = true;
-    private Boolean deleted = false;
     // handle versioning
     @Version
     private Integer version;

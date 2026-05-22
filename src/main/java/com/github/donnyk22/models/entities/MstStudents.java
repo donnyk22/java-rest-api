@@ -2,8 +2,7 @@ package com.github.donnyk22.models.entities;
 
 import java.util.List;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.SoftDelete;
 import org.hibernate.envers.Audited;
 
 import jakarta.persistence.Column;
@@ -30,10 +29,7 @@ import lombok.experimental.Accessors;
 // automatically
 @Audited
 @Table(name = "mst_students")
-// override delete behaviour by JPA to soft delete
-@SQLDelete(sql = "UPDATE mst_students SET deleted = true WHERE id = ? AND version = ?")
-// automatically add "where deleted = false"
-@SQLRestriction("deleted = false")
+@SoftDelete
 public class MstStudents extends BaseTimestampCreateUpdate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +44,6 @@ public class MstStudents extends BaseTimestampCreateUpdate {
     private String address;
     private String phone;
     private String photo;
-    private Boolean deleted = false;
     // handle versioning
     @Version
     private Integer version;
