@@ -38,7 +38,7 @@ public class AuthUtil {
 
         try {
             return Integer.parseInt(principal.toString());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             log.warn("User not found in security context");
             return null;
         }
