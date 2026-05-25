@@ -11,12 +11,12 @@ import java.util.zip.ZipOutputStream;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import com.github.donnyk22.exceptions.InternalServerErrorException;
 import com.github.donnyk22.models.forms.students.StudentsFindForm;
 import com.github.donnyk22.services.excel.ExcelService;
 import com.github.donnyk22.services.word.WordService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -28,7 +28,6 @@ public class ZipCompressFileServiceImpl implements ZipCompressFileService {
     private final WordService wordService;
 
     @Override
-    @SneakyThrows
     public byte[] generateZipInMemory(StudentsFindForm form) {
         StudentsFindForm param = new StudentsFindForm()
                 .setAcademicYear(form.getAcademicYear());
@@ -55,11 +54,13 @@ public class ZipCompressFileServiceImpl implements ZipCompressFileService {
 
             zos.finish();
             return baos.toByteArray();
+        } catch (Exception e) {
+            log.error("Failed to generate ZIP in memory: " + e.getMessage());
+            throw new InternalServerErrorException("Failed to generate ZIP in memory: " + e.getMessage(), e);
         }
     }
 
     @Override
-    @SneakyThrows
     public StreamingResponseBody generateZipInDisk(StudentsFindForm form) {
         StudentsFindForm param = new StudentsFindForm()
                 .setAcademicYear(form.getAcademicYear());
@@ -69,26 +70,33 @@ public class ZipCompressFileServiceImpl implements ZipCompressFileService {
         byte[] excelBytes = excelService.exportToNewExcel(param);
         byte[] wordBytes = wordService.generateWordStudentData(param);
 
-        // temp name example on disk: export-data-482910472391.zip
-        File tempZipFile = File.createTempFile("export-data-", ".zip");
+        File tempZipFile;
 
-        // write the data to file in harddisk via fileoutputstream
-        try (FileOutputStream fos = new FileOutputStream(tempZipFile);
-                ZipOutputStream zos = new ZipOutputStream(fos)) {
+        try {
+            // temp name example on disk: export-data-482910472391.zip
+            tempZipFile = File.createTempFile("export-data-", ".zip");
 
-            // Put excel file into ZIP
-            ZipEntry excelEntry = new ZipEntry("students-export.xlsx");
-            zos.putNextEntry(excelEntry);
-            zos.write(excelBytes);
-            zos.closeEntry();
+            // write the data to file in harddisk via fileoutputstream
+            try (FileOutputStream fos = new FileOutputStream(tempZipFile);
+                    ZipOutputStream zos = new ZipOutputStream(fos)) {
 
-            // Put word file into ZIP
-            ZipEntry wordEntry = new ZipEntry("students-export.docx");
-            zos.putNextEntry(wordEntry);
-            zos.write(wordBytes);
-            zos.closeEntry();
+                // Put excel file into ZIP
+                ZipEntry excelEntry = new ZipEntry("students-export.xlsx");
+                zos.putNextEntry(excelEntry);
+                zos.write(excelBytes);
+                zos.closeEntry();
 
-            zos.finish();
+                // Put word file into ZIP
+                ZipEntry wordEntry = new ZipEntry("students-export.docx");
+                zos.putNextEntry(wordEntry);
+                zos.write(wordBytes);
+                zos.closeEntry();
+
+                zos.finish();
+            }
+        } catch (Exception e) {
+            log.error("Failed to generate ZIP on disk: " + e.getMessage());
+            throw new InternalServerErrorException("Failed to generate ZIP on disk: " + e.getMessage(), e);
         }
 
         return outputStream -> {

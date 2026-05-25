@@ -354,7 +354,7 @@ public class SchoolServiceImpl implements SchoolService {
             if (isNewPhotoUploaded) {
                 fileUtil.deleteProfilePic(newPhotoPath);
             }
-            throw new BadRequestException("Failed to update student data: " + e.getMessage());
+            throw new BadRequestException("Failed to update student data: " + e.getMessage(), e);
         }
     }
 
@@ -500,7 +500,7 @@ public class SchoolServiceImpl implements SchoolService {
             if (isNewPhotoUploaded) {
                 fileUtil.deleteProfilePic(newPhotoPath);
             }
-            throw new BadRequestException("Failed to update teacher data: " + e.getMessage());
+            throw new BadRequestException("Failed to update teacher data: " + e.getMessage(), e);
         }
     }
 
@@ -665,7 +665,6 @@ public class SchoolServiceImpl implements SchoolService {
     }
 
     @Override
-    @SneakyThrows
     @Transactional
     public MstUsersDto createUser(UsersCreateForm form) {
         if (!form.getPassword().equals(form.getRePassword())) {
@@ -677,15 +676,18 @@ public class SchoolServiceImpl implements SchoolService {
         if (usersRepository.findByUsername(form.getUsername()) != null) {
             throw new ConflictException("Username already exist");
         }
-        MstUsers user = MstUsersMapper.toEntity(form, mediaUtil.toBase64(form.getPhoto()),
-                passwordEncoder.encode(form.getPassword()));
-        user = usersRepository.save(user);
-        auditTrailsService.create(Action.POST, user, "Create user record");
-        return MstUsersMapper.toBaseDto(user);
+        try {
+            MstUsers user = MstUsersMapper.toEntity(form, mediaUtil.toBase64(form.getPhoto()),
+                    passwordEncoder.encode(form.getPassword()));
+            user = usersRepository.save(user);
+            auditTrailsService.create(Action.POST, user, "Create user record");
+            return MstUsersMapper.toBaseDto(user);
+        } catch (Exception e) {
+            throw new BadRequestException("Invalid photo format: " + e.getMessage(), e);
+        }
     }
 
     @Override
-    @SneakyThrows
     @CachePut(value = "user", key = "#id")
     @Transactional
     public MstUsersDto updateUser(Integer id, UsersUpdateForm form) {
@@ -700,10 +702,14 @@ public class SchoolServiceImpl implements SchoolService {
         if (checkExistingUsername != null && !checkExistingUsername.getId().equals(user.getId())) {
             throw new ConflictException("Username already exist");
         }
-        user = MstUsersMapper.toEntity(user, form, mediaUtil.toBase64(form.getPhoto()));
-        user = usersRepository.saveAndFlush(user);
-        auditTrailsService.create(Action.PUT, user, "Update user record");
-        return MstUsersMapper.toDto(user);
+        try {
+            user = MstUsersMapper.toEntity(user, form, mediaUtil.toBase64(form.getPhoto()));
+            user = usersRepository.saveAndFlush(user);
+            auditTrailsService.create(Action.PUT, user, "Update user record");
+            return MstUsersMapper.toDto(user);
+        } catch (Exception e) {
+            throw new BadRequestException("Invalid photo format: " + e.getMessage(), e);
+        }
     }
 
     @Override

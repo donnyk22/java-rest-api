@@ -1,6 +1,7 @@
 package com.github.donnyk22.services.word;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.donnyk22.exceptions.InternalServerErrorException;
 import com.github.donnyk22.models.dtos.FindResponse;
 import com.github.donnyk22.models.dtos.MstStudentsDto;
 import com.github.donnyk22.models.enums.TimeFormat;
@@ -27,12 +29,12 @@ import com.github.donnyk22.models.forms.students.StudentsFindForm;
 import com.github.donnyk22.services.school.SchoolService;
 import com.github.donnyk22.utils.ConverterUtil;
 
+import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 @Service
 @RequiredArgsConstructor
@@ -43,154 +45,157 @@ public class WordServiceImpl implements WordService {
     private final SchoolService schoolService;
 
     @Override
-    @SneakyThrows
     public byte[] generateWordApplicationLetter(ApplicationLetterForm form) {
-        try (XWPFDocument document = new XWPFDocument();
-                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        XWPFDocument document = new XWPFDocument();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            String fontName = "Arial";
-            int fontSize = 11;
+        String fontName = "Arial";
+        int fontSize = 11;
 
-            XWPFParagraph senderParagraph = document.createParagraph();
-            senderParagraph.setAlignment(ParagraphAlignment.RIGHT);
-            senderParagraph.setSpacingAfter(0);
+        XWPFParagraph senderParagraph = document.createParagraph();
+        senderParagraph.setAlignment(ParagraphAlignment.RIGHT);
+        senderParagraph.setSpacingAfter(0);
 
-            XWPFRun senderRun = senderParagraph.createRun();
-            senderRun.setText(form.getApplicantAddress());
-            senderRun.addBreak();
-            senderRun.setText(form.getApplicantPhone());
-            senderRun.addBreak();
-            senderRun.setText(form.getApplicantEmail());
-            senderRun.setFontFamily(fontName);
-            senderRun.setFontSize(fontSize);
+        XWPFRun senderRun = senderParagraph.createRun();
+        senderRun.setText(form.getApplicantAddress());
+        senderRun.addBreak();
+        senderRun.setText(form.getApplicantPhone());
+        senderRun.addBreak();
+        senderRun.setText(form.getApplicantEmail());
+        senderRun.setFontFamily(fontName);
+        senderRun.setFontSize(fontSize);
 
-            addEmptyParagraphs(document, 2);
+        addEmptyParagraphs(document, 2);
 
-            // 2. Recipient Data (Left Aligned)
-            XWPFParagraph recipientParagraph = document.createParagraph();
-            recipientParagraph.setAlignment(ParagraphAlignment.LEFT);
-            recipientParagraph.setSpacingAfter(0);
+        // 2. Recipient Data (Left Aligned)
+        XWPFParagraph recipientParagraph = document.createParagraph();
+        recipientParagraph.setAlignment(ParagraphAlignment.LEFT);
+        recipientParagraph.setSpacingAfter(0);
 
-            XWPFRun recNameRun = recipientParagraph.createRun();
-            recNameRun.setText(form.getRecipientName());
-            recNameRun.setBold(true);
-            recNameRun.setFontFamily(fontName);
-            recNameRun.setFontSize(fontSize);
-            recNameRun.addBreak();
+        XWPFRun recNameRun = recipientParagraph.createRun();
+        recNameRun.setText(form.getRecipientName());
+        recNameRun.setBold(true);
+        recNameRun.setFontFamily(fontName);
+        recNameRun.setFontSize(fontSize);
+        recNameRun.addBreak();
 
-            XWPFRun recTitleRun = recipientParagraph.createRun();
-            recTitleRun.setText(form.getRecipientTitle());
-            recTitleRun.setFontFamily(fontName);
-            recTitleRun.setFontSize(fontSize);
-            recTitleRun.addBreak();
+        XWPFRun recTitleRun = recipientParagraph.createRun();
+        recTitleRun.setText(form.getRecipientTitle());
+        recTitleRun.setFontFamily(fontName);
+        recTitleRun.setFontSize(fontSize);
+        recTitleRun.addBreak();
 
-            XWPFRun companyRun = recipientParagraph.createRun();
-            companyRun.setText(form.getRecipientCompany());
-            companyRun.setFontFamily(fontName);
-            companyRun.setFontSize(fontSize);
+        XWPFRun companyRun = recipientParagraph.createRun();
+        companyRun.setText(form.getRecipientCompany());
+        companyRun.setFontFamily(fontName);
+        companyRun.setFontSize(fontSize);
 
-            addEmptyParagraphs(document, 1);
+        addEmptyParagraphs(document, 1);
 
-            // 3. Date
-            XWPFParagraph dateParagraph = document.createParagraph();
-            dateParagraph.setAlignment(ParagraphAlignment.LEFT);
+        // 3. Date
+        XWPFParagraph dateParagraph = document.createParagraph();
+        dateParagraph.setAlignment(ParagraphAlignment.LEFT);
 
-            XWPFRun dateRun = dateParagraph.createRun();
-            String currentDate = converterUtil.localDateToString(null, TimeFormat.MMMM_D_YYYY);
-            dateRun.setText("Date: " + currentDate);
-            dateRun.setFontFamily(fontName);
-            dateRun.setFontSize(fontSize);
+        XWPFRun dateRun = dateParagraph.createRun();
+        String currentDate = converterUtil.localDateToString(null, TimeFormat.MMMM_D_YYYY);
+        dateRun.setText("Date: " + currentDate);
+        dateRun.setFontFamily(fontName);
+        dateRun.setFontSize(fontSize);
 
-            addEmptyParagraphs(document, 1);
+        addEmptyParagraphs(document, 1);
 
-            // 4. Greeting
-            XWPFParagraph greetingParagraph = document.createParagraph();
-            XWPFRun greetingRun = greetingParagraph.createRun();
-            greetingRun.setText("Dear " + form.getRecipientName() + ",");
-            greetingRun.setFontFamily(fontName);
-            greetingRun.setFontSize(fontSize);
+        // 4. Greeting
+        XWPFParagraph greetingParagraph = document.createParagraph();
+        XWPFRun greetingRun = greetingParagraph.createRun();
+        greetingRun.setText("Dear " + form.getRecipientName() + ",");
+        greetingRun.setFontFamily(fontName);
+        greetingRun.setFontSize(fontSize);
 
-            addEmptyParagraphs(document, 1);
+        addEmptyParagraphs(document, 1);
 
-            // 5. Paragraph 1: Position & Source Media
-            XWPFParagraph p1 = document.createParagraph();
-            p1.setAlignment(ParagraphAlignment.BOTH); // justify
+        // 5. Paragraph 1: Position & Source Media
+        XWPFParagraph p1 = document.createParagraph();
+        p1.setAlignment(ParagraphAlignment.BOTH); // justify
 
-            XWPFRun p1Run1 = p1.createRun();
-            p1Run1.setText("I am writing to apply for the post of the ");
-            p1Run1.setFontFamily(fontName);
-            p1Run1.setFontSize(fontSize);
+        XWPFRun p1Run1 = p1.createRun();
+        p1Run1.setText("I am writing to apply for the post of the ");
+        p1Run1.setFontFamily(fontName);
+        p1Run1.setFontSize(fontSize);
 
-            // Print bold target position in the middle of the sentence
-            XWPFRun p1Position = p1.createRun();
-            p1Position.setText(form.getTargetPosition());
-            p1Position.setBold(true);
-            p1Position.setFontFamily(fontName);
-            p1Position.setFontSize(fontSize);
+        // Print bold target position in the middle of the sentence
+        XWPFRun p1Position = p1.createRun();
+        p1Position.setText(form.getTargetPosition());
+        p1Position.setBold(true);
+        p1Position.setFontFamily(fontName);
+        p1Position.setFontSize(fontSize);
 
-            XWPFRun p1Run2 = p1.createRun();
-            p1Run2.setText(" which I saw advertised on ");
-            p1Run2.setFontFamily(fontName);
-            p1Run2.setFontSize(fontSize);
+        XWPFRun p1Run2 = p1.createRun();
+        p1Run2.setText(" which I saw advertised on ");
+        p1Run2.setFontFamily(fontName);
+        p1Run2.setFontSize(fontSize);
 
-            // Print bold source media
-            XWPFRun p1Media = p1.createRun();
-            p1Media.setText(form.getSourceMedia());
-            p1Media.setBold(true);
-            p1Media.setFontFamily(fontName);
-            p1Media.setFontSize(fontSize);
+        // Print bold source media
+        XWPFRun p1Media = p1.createRun();
+        p1Media.setText(form.getSourceMedia());
+        p1Media.setBold(true);
+        p1Media.setFontFamily(fontName);
+        p1Media.setFontSize(fontSize);
 
-            XWPFRun p1Run3 = p1.createRun();
-            p1Run3.setText(". Please find my enclosed CV.");
-            p1Run3.setFontFamily(fontName);
-            p1Run3.setFontSize(fontSize);
+        XWPFRun p1Run3 = p1.createRun();
+        p1Run3.setText(". Please find my enclosed CV.");
+        p1Run3.setFontFamily(fontName);
+        p1Run3.setFontSize(fontSize);
 
-            addEmptyParagraphs(document, 1);
+        addEmptyParagraphs(document, 1);
 
-            // 6. Paragraph 2: Qualification & Experience
-            XWPFParagraph p2 = document.createParagraph();
-            p2.setAlignment(ParagraphAlignment.BOTH);
+        // 6. Paragraph 2: Qualification & Experience
+        XWPFParagraph p2 = document.createParagraph();
+        p2.setAlignment(ParagraphAlignment.BOTH);
 
-            XWPFRun p2Run = p2.createRun();
-            p2Run.setText(
-                    "I feel I have the required qualifications for this role. I have extensive experience in the relevant industry and have successfully worked with modern architectures, bringing a solid track record of problem-solving and collaboration into development environments.");
-            p2Run.setFontFamily(fontName);
-            p2Run.setFontSize(fontSize);
+        XWPFRun p2Run = p2.createRun();
+        p2Run.setText(
+                "I feel I have the required qualifications for this role. I have extensive experience in the relevant industry and have successfully worked with modern architectures, bringing a solid track record of problem-solving and collaboration into development environments.");
+        p2Run.setFontFamily(fontName);
+        p2Run.setFontSize(fontSize);
 
-            addEmptyParagraphs(document, 1);
+        addEmptyParagraphs(document, 1);
 
-            // 7. Paragraph 3: Closing
-            XWPFParagraph p3 = document.createParagraph();
-            p3.setAlignment(ParagraphAlignment.BOTH);
+        // 7. Paragraph 3: Closing
+        XWPFParagraph p3 = document.createParagraph();
+        p3.setAlignment(ParagraphAlignment.BOTH);
 
-            XWPFRun p3Run = p3.createRun();
-            p3Run.setText(
-                    "Should you be interested in my qualifications and experience, please do not hesitate to contact me. I look forward to the possibility of discussing my application further in an interview.");
-            p3Run.setFontFamily(fontName);
-            p3Run.setFontSize(fontSize);
+        XWPFRun p3Run = p3.createRun();
+        p3Run.setText(
+                "Should you be interested in my qualifications and experience, please do not hesitate to contact me. I look forward to the possibility of discussing my application further in an interview.");
+        p3Run.setFontFamily(fontName);
+        p3Run.setFontSize(fontSize);
 
-            addEmptyParagraphs(document, 2);
+        addEmptyParagraphs(document, 2);
 
-            // 8. Signature & Name
-            XWPFParagraph closingParagraph = document.createParagraph();
-            closingParagraph.setAlignment(ParagraphAlignment.LEFT);
-            closingParagraph.setSpacingAfter(0);
+        // 8. Signature & Name
+        XWPFParagraph closingParagraph = document.createParagraph();
+        closingParagraph.setAlignment(ParagraphAlignment.LEFT);
+        closingParagraph.setSpacingAfter(0);
 
-            XWPFRun closingRun = closingParagraph.createRun();
-            closingRun.setText("Yours sincerely,");
-            addLineBreaks(closingRun, 4);
-            closingRun.setFontFamily(fontName);
-            closingRun.setFontSize(fontSize);
+        XWPFRun closingRun = closingParagraph.createRun();
+        closingRun.setText("Yours sincerely,");
+        addLineBreaks(closingRun, 4);
+        closingRun.setFontFamily(fontName);
+        closingRun.setFontSize(fontSize);
 
-            XWPFRun nameRun = closingParagraph.createRun();
-            nameRun.setText(form.getApplicantName());
-            nameRun.setBold(true);
-            nameRun.setFontFamily(fontName);
-            nameRun.setFontSize(fontSize);
+        XWPFRun nameRun = closingParagraph.createRun();
+        nameRun.setText(form.getApplicantName());
+        nameRun.setBold(true);
+        nameRun.setFontFamily(fontName);
+        nameRun.setFontSize(fontSize);
 
+        try {
             document.write(out);
-            return out.toByteArray();
+        } catch (Exception e) {
+            throw new InternalServerErrorException("Failed to generate Word document: " + e.getMessage(), e);
         }
+
+        return out.toByteArray();
     }
 
     private void addEmptyParagraphs(XWPFDocument document, int count) {
@@ -206,28 +211,31 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
-    @SneakyThrows
     public byte[] generateWordApplicationLetterWithExistingTemplate(ApplicationLetterForm form) {
-        // can handle docx or odt templates
-        InputStream in = new ClassPathResource("templates/word_template_example.odt").getInputStream();
+        try {
+            // can handle docx or odt templates
+            InputStream in = new ClassPathResource("templates/word_template_example.odt").getInputStream();
 
-        IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Freemarker);
+            IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Freemarker);
 
-        IContext context = report.createContext();
+            IContext context = report.createContext();
 
-        Map<String, Object> finalDataModel = objectMapper.convertValue(form, Map.class);
-        finalDataModel.put("letterDate", converterUtil.localDateToString(null, TimeFormat.MMMM_D_YYYY));
+            Map<String, Object> finalDataModel = objectMapper.convertValue(form, Map.class);
+            finalDataModel.put("letterDate", converterUtil.localDateToString(null, TimeFormat.MMMM_D_YYYY));
 
-        context.putMap(finalDataModel);
+            context.putMap(finalDataModel);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        report.process(context, out);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            report.process(context, out);
 
-        return out.toByteArray();
+            return out.toByteArray();
+        } catch (IOException | XDocReportException e) {
+            throw new InternalServerErrorException("Failed to generate Word document from template: " + e.getMessage(),
+                    e);
+        }
     }
 
     @Override
-    @SneakyThrows
     public byte[] generateWordStudentData(StudentsFindForm form) {
         StudentsFindForm param = new StudentsFindForm()
                 .setAcademicYear(form.getAcademicYear());
@@ -308,10 +316,12 @@ public class WordServiceImpl implements WordService {
                         ParagraphAlignment.CENTER);
             }
 
-            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                document.write(outputStream);
-                return outputStream.toByteArray();
-            }
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            document.write(outputStream);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            throw new InternalServerErrorException("Failed to generate Word document: " +
+                    e.getMessage(), e);
         }
     }
 

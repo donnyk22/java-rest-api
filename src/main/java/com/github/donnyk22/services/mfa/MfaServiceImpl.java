@@ -114,9 +114,9 @@ public class MfaServiceImpl implements MfaService {
 
             return outputStream.toByteArray();
         } catch (WriterException e) {
-            throw new BadRequestException("Failed to convert QR Code: " + e.getMessage());
+            throw new BadRequestException("Failed to convert QR Code: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new BadRequestException("Failed to write QR Code into file: " + e.getMessage());
+            throw new BadRequestException("Failed to write QR Code into file: " + e.getMessage(), e);
         }
     }
 

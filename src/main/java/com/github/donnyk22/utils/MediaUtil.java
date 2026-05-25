@@ -25,7 +25,7 @@ public class MediaUtil {
             return Base64.getEncoder().encodeToString(fileBytes);
         } catch (IOException e) {
             log.error("Failed to convert file: " + e.getMessage());
-            throw new InternalServerErrorException("Failed to convert file: " + e.getMessage());
+            throw new BadRequestException("Failed to convert file: " + e.getMessage(), e);
         }
     }
 
