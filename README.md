@@ -31,6 +31,9 @@
 
 ### 🗂️ Developer Experience
 - **File Upload** — Multipart file handling
+- **Excel Export** — Export data to `.xlsx` spreadsheet files
+- **Word Export** — Export data to `.docx` document files
+- **Compressed File Export** — Export files as `.zip` archives
 - **Email Service** — Transactional email support
 - **Audit Trail** — Automatic (JPA `@Audited`) and manual logging
 - **Request Tracing** — End-to-end request tracking
@@ -46,8 +49,7 @@
 | Unit Tests | 🔜 Planned |
 | Custom Annotation Implementation | 🔜 Planned |
 | 3rd Party Services (Telegram, Payment, AI, Mapbox) | 🔜 Planned |
-| Excel & Word Export | 🔜 Planned |
-| ZIP Export | 🔜 Planned |
+
 
 ---
 
@@ -78,14 +80,7 @@ school.sql  ← found in the project root
 ```
 Then, run the MariaDB service.
 
-### 3. Run the Other Services
-- Run your Redis service
-- Run your RabbitMQ service
-```
-Both can be run via Docker
-```
-
-### 4. Configure Environment Variables
+### 3. Configure Environment Variables
 Copy the example property files and rename them (remove the `.example` suffix):
 ```
 src/main/resources/application.properties.example
@@ -94,16 +89,16 @@ src/main/resources/application-prd.properties.example
 ```
 Then update credentials in `application-dev.properties` as needed.
 
-### 5. Build & Run
+### 4. Build & Run
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
 
-### 6. Access the App
+### 5. Access the App
 Open Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
-### 7. Default Credentials
+### 6. Default Credentials
 
 | Role | Username | Password |
 |---|---|---|

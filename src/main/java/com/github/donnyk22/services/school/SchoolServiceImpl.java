@@ -72,7 +72,6 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 @Service
 @RequiredArgsConstructor
