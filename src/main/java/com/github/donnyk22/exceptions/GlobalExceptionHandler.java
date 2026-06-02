@@ -23,36 +23,42 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResponse<Object>> badRequest(BadRequestException ex) {
+        log.warn("Bad Request Exception: {}", ex.getMessage());
         return ResponseEntity.badRequest()
                 .body(new ApiResponse<>(400, ex.getMessage(), null));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<Object>> unauthorized(UnauthorizedException ex) {
+        log.warn("Unauthorized Exception: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ApiResponse<>(401, ex.getMessage(), null));
     }
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ApiResponse<Object>> forbidden(ForbiddenException ex) {
+        log.warn("Forbidden Exception: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ApiResponse<>(403, ex.getMessage(), null));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> notFound(ResourceNotFoundException ex) {
+        log.warn("Resource Not Found Exception: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse<>(404, ex.getMessage(), null));
     }
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ApiResponse<Object>> conflict(ConflictException ex) {
+        log.warn("Conflict Exception: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ApiResponse<>(409, ex.getMessage(), null));
     }
 
     @ExceptionHandler(InternalServerErrorException.class)
     public ResponseEntity<ApiResponse<Object>> internalCustom(InternalServerErrorException ex) {
+        log.error("Internal Server Error Custom caught: {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiResponse<>(500, ex.getMessage(), null));
     }
@@ -60,7 +66,7 @@ public class GlobalExceptionHandler {
     // fallback
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> internal(Exception ex) {
-        log.error("Unhandled exception caught in GlobalExceptionHandler: ", ex);
+        log.error("Internal Server Error: {}", ex.getMessage(), ex);
         ApiResponse<Object> response = new ApiResponse<>(500, "Internal Server Error", null);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -102,6 +108,7 @@ public class GlobalExceptionHandler {
     // constraint)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        log.warn("Data Integrity Violation: {}", ex.getMessage());
         Throwable specificCause = ex.getMostSpecificCause();
         String rootMsg = specificCause.getMessage();
 

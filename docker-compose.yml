@@ -51,7 +51,9 @@ services:
     ports:
       - "8080:8080"
     volumes:
+    # Format: [Folder inserver] : [Folder in the container]. ex: /var/log/my-app:/app/logs. If using Named Volumes, it must be assigned into volumes section in the bottom of this config file
       - upload_data:/app/uploads/profilepic
+      - app_logs:/app/logs
     depends_on:
       db:
         condition: service_healthy # Using healthcheck to prevent race condition (app start before db is ready)
@@ -76,9 +78,8 @@ services:
       UPLOAD_PATH: /app/uploads/profilepic
 
 volumes:
-  # Docker will automatically handle it. Because we use named volume (mariadb_data, redis_data, upload_data).
-  # So, the directory (Volume Mount Point) must follow Docker's rule (documentation available in docker hub page of each image)
-  # The folder is also handled and managed by Docker. Usually in the: /var/lib/docker/volumes/ (on Linux)
+  # List of Named Volumes automatically managed by Docker Engine. These volumes are stored in Docker's default location (e.g., /var/lib/docker/volumes/ on Linux)
   mariadb_data:
+  redis_data:
   upload_data:
-  redis_data: 
+  app_logs:
