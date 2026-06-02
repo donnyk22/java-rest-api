@@ -56,10 +56,10 @@ public class MstStudents extends BaseTimestampCreateUpdate {
     @JoinColumn(name = "class_id", insertable = false, updatable = false)
     private MstClasses classroom;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER) // Cannot use LAZY if using @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
-    @NotFound(action = NotFoundAction.IGNORE) // Use this if using @ManyToOne or @OneToOne relation, @SoftDelete, and
-                                              // FetchType.LAZY
+    @NotFound(action = NotFoundAction.IGNORE) // Use @NotFound if using @SoftDelete, especially on @ManyToOne and
+                                              // @OneToOne relationship.
     private MstUsers user;
 
     @OneToMany(mappedBy = "studentData", fetch = FetchType.LAZY)

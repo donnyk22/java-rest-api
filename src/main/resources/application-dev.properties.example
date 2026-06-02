@@ -10,7 +10,7 @@ spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:mariadb://localhost:3306/scho
 spring.datasource.username=${SPRING_DATASOURCE_USERNAME:root}
 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:}
 spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-#use mysql dialect for mariadb, because mariadb is compatible with mysql, and hibernate does not have a specific dialect for mariadb
+#use mysql dialect for mariadb, because mariadb is compatible with mysql. If using mariadb dialect, it will cause error when running the app because of the version mismatch between hibernate and mariadb. (hibernate 5.6.15.Final is compatible with mysql 8.0, but not compatible with mariadb 10.5)
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 #auditing configuration (spring.jpa.hibernate.ddl-auto is a global setting. jpa scanning everytime app start. if table/column not exist, will created automatically)
 spring.jpa.hibernate.ddl-auto=update
