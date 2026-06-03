@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<!--
+    MyBatis Generator Configuration.
+    Run with: mvn mybatis-generator:generate
+
+    All generated code is directed to "generated" folder for easy exclusion from .gitignore and .dockerignore
+
+    All generated code:
+      - Java model: src/main/java/com/github/donnyk22/generated/mybatis/model
+      - Mapper interface: src/main/java/com/github/donnyk22/generated/mybatis/mapper
+      - XML mapper: src/main/resources/mapper/generated
+
+    All configuration files:
+        - MyBatis Generator (MBG) config: src/main/resources/my-batis-generator-config.xml
+        - MyBatis config: src/main/java/com/github/donnyk22/configurations/MyBatisConfig.java
+        - Mapper Interface: src/main/java/com/github/donnyk22/repositories/mybatis
+        - XML mapper: src/main/resources/mapper
+-->
+<generatorConfiguration>
+
+    <context id="mariadb" targetRuntime="MyBatis3" defaultModelType="flat">
+
+        <property name="javaFileEncoding" value="UTF-8"/>
+
+        <!-- Change to true for removing all comments in generated code -->
+        <commentGenerator>
+            <property name="suppressAllComments" value="false"/>
+            <property name="suppressDate" value="false"/>
+            <!-- opsional: date format -->
+            <property name="dateFormat" value="yyyy-MM-dd HH:mm:ss"/>
+        </commentGenerator>
+
+        <jdbcConnection driverClass="org.mariadb.jdbc.Driver"
+                        connectionURL="jdbc:mariadb://localhost:3306/school"
+                        userId="root"
+                        password="">
+            <!-- Important in MySQL/MariaDB to ensure metadata is only from the active database -->
+            <property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+
+        <!-- Use java.time.* types (OffsetDateTime/LocalDate etc.), not java.util.Date -->
+        <javaTypeResolver>
+            <property name="useJSR310Types" value="true"/>
+        </javaTypeResolver>
+
+        <!-- Generated POJO -->
+        <!-- Will generate Example model. Used for dynamic queries -->
+        <!-- Example:
+        private final com.github.donnyk22.generated.mybatis.mapper.MstUsersMapper mstUsersMapper;
+
+        MstUsersExample ex = new MstUsersExample();
+        ex.createCriteria()
+                .andRoleEqualTo("ADMIN")
+                .andIsActiveEqualTo(true)
+                .andDeletedEqualTo(false);
+        ex.setOrderByClause("id desc");
+
+        List<MstUsers> rows = mstUsersMapper.selectByExampleWithBLOBs(ex); // This also from the generated mapper interface
+        long total = mstUsersMapper.countByExample(ex);
+
+        ### With OR condition (multiple criteria) ###
+
+        MstUsersExample ex = new MstUsersExample();
+        ex.or().andUsernameLike("%budi%").andDeletedEqualTo(false);
+        ex.or().andEmailLike("%budi%").andDeletedEqualTo(false);
+        // WHERE (username LIKE ? AND deleted=?) OR (email LIKE ? AND deleted=?)
+         -->
+        <javaModelGenerator targetPackage="com.github.donnyk22.generated.mybatis.model"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- XML mapper hasil generate -->
+        <sqlMapGenerator targetPackage="generated"
+                         targetProject="src/main/resources/mapper">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+
+        <!-- Interface mapper hasil generate -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.github.donnyk22.generated.mybatis.mapper"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>
+
+        <!-- 
+            Option 1: generate ONLY mst_users table.
+
+            Class names are automatically derived from table names: mst_users -> MstUsers
+            (mapper -> MstUsersMapper). No conflict with JPA entity MstUsers because they 
+            are in different packages (generated.mybatis.model vs models.entities).
+        -->
+        <table tableName="mst_users"
+               enableCountByExample="true"
+               enableSelectByExample="true"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"/>
+
+        <!-- 
+            Option 2: generate ALL tables in the database.
+
+            (Uncomment code below and comment Option 1 above to use this option)
+        -->
+        <!--
+        <table tableName="%"
+               enableCountByExample="true"
+               enableSelectByExample="true"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"/>
+        -->
+
+        <!-- 
+            Option 3: generate all tables EXCEPT audit tables from @Audited (Envers).
+
+            Important note: MyBatis Generator does NOT have a built-in "exclude" feature for wildcards,
+            so there's no direct way to write "all tables minus those start with log_ and ends with _audit".
+
+            (Uncomment code below and comment Option 1 above to use this option)
+        -->
+        <!--
+        <table tableName="mst_%"
+               enableCountByExample="true"
+               enableSelectByExample="true"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"/>
+        
+        <table tableName="log_audit_trails"
+               enableCountByExample="true"
+               enableSelectByExample="true"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"/>
+        -->
+
+    </context>
+
+</generatorConfiguration>

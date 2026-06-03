@@ -68,6 +68,14 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
+        <!-- MyBatis -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>4.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
 		<!-- Email Service -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -278,6 +286,25 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+            <!-- MyBatis Generator -->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.mariadb.jdbc</groupId>
+                        <artifactId>mariadb-java-client</artifactId>
+                        <!-- Must be specified explicitly. Dependency level plugin does not inherit Spring Boot BOM -->
+                        <version>3.5.7</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configurationFile>src/main/resources/my-batis-generator-config.xml</configurationFile>
+                    <verbose>true</verbose>
+                    <overwrite>true</overwrite>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

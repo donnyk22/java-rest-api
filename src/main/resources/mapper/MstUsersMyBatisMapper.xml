@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.github.donnyk22.repositories.mybatis.MstUsersMyBatisMapper">
+
+    <!--
+        Mapping column (snake_case) -> MstUsersDto property (camelCase).
+        Because map-underscore-to-camel-case=true in the application properties,
+        the auto-mapping also works, but the explicit resultMap is clearer and less ambiguous.
+        Sensitive columns like password / mfa_secret are intentionally NOT selected to 
+        avoid being included in the response.
+    -->
+    <resultMap id="MstUsersDtoMap" type="com.github.donnyk22.models.dtos.MstUsersDto">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="email" column="email"/>
+        <result property="photo" column="photo"/>
+        <result property="role" column="role"/>
+        <result property="mfaEnabled" column="mfa_enabled"/>
+        <result property="version" column="version"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- Declared query to reused later -->
+    <sql id="baseColumns">
+        u.id, u.username, u.email, u.photo, u.role,
+        u.mfa_enabled, u.version, u.created_at, u.updated_at
+    </sql>
+
+    <sql id="searchFilter">
+        AND u.deleted = false
+        <if test="keyword != null and keyword != ''">
+            AND (
+                LOWER(u.username) LIKE CONCAT('%', LOWER(#{keyword}), '%')
+                OR LOWER(u.email) LIKE CONCAT('%', LOWER(#{keyword}), '%')
+            )
+        </if>
+        <if test="role != null and role != ''">
+            AND u.role = #{role}
+        </if>
+        <if test="isActive != null">
+            AND u.is_active = #{isActive}
+        </if>
+    </sql>
+
+    <!-- Main queries -->
+    <select id="search" resultMap="MstUsersDtoMap">
+        SELECT <include refid="baseColumns"/>
+        FROM mst_users u
+        <where>
+            <include refid="searchFilter"/>
+        </where>
+        ORDER BY u.id DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countSearch" resultType="long">
+        SELECT COUNT(*)
+        FROM mst_users u
+        <where>
+            <include refid="searchFilter"/>
+        </where>
+    </select>
+
+    <select id="findById" resultMap="MstUsersDtoMap">
+        SELECT <include refid="baseColumns"/>
+        FROM mst_users u
+        WHERE u.id = #{id}
+          AND u.deleted = false
+    </select>
+
+    <!--
+        Full entity mapping, including sensitive columns (password / mfa_secret).
+        Used internally for write operations: optimistic locking needs the current
+        version, and the audit trail serializes the entity (it nulls the sensitive
+        fields itself before persisting the log).
+    -->
+    <resultMap id="MstUsersEntityMap" type="com.github.donnyk22.models.entities.MstUsers">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="photo" column="photo"/>
+        <result property="role" column="role"/>
+        <result property="mfaEnabled" column="mfa_enabled"/>
+        <result property="mfaSecret" column="mfa_secret"/>
+        <result property="isActive" column="is_active"/>
+        <result property="version" column="version"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findEntityById" resultMap="MstUsersEntityMap">
+        SELECT id, username, email, password, photo, role,
+               mfa_enabled, mfa_secret, is_active, version, created_at, updated_at
+        FROM mst_users
+        WHERE id = #{id}
+          AND deleted = false
+    </select>
+
+    <select id="findIdByEmail" resultType="java.lang.Integer">
+        SELECT id FROM mst_users
+        WHERE email = #{email}
+          AND deleted = false
+        LIMIT 1
+    </select>
+
+    <select id="findIdByUsername" resultType="java.lang.Integer">
+        SELECT id FROM mst_users
+        WHERE username = #{username}
+          AND deleted = false
+        LIMIT 1
+    </select>
+
+    <!-- Generated id is written back to the entity's "id" property. -->
+    <insert id="insert" parameterType="com.github.donnyk22.models.entities.MstUsers"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO mst_users
+            (username, email, password, photo, role,
+             mfa_enabled, mfa_secret, is_active, version, deleted,
+             created_at, updated_at)
+        VALUES
+            (#{username}, #{email}, #{password}, #{photo}, #{role},
+             #{mfaEnabled}, #{mfaSecret}, #{isActive}, #{version}, false,
+             #{createdAt}, #{updatedAt})
+    </insert>
+
+    <!--
+        Optimistic locking: only updates the row when the supplied version still
+        matches, and bumps it. The caller checks the affected-row count: 0 means
+        the row was changed concurrently (mirrors JPA @Version behavior).
+        Password / mfa_secret are intentionally NOT updated here.
+    -->
+    <update id="update" parameterType="com.github.donnyk22.models.entities.MstUsers">
+        UPDATE mst_users
+        SET username = #{username},
+            email = #{email},
+            photo = #{photo},
+            role = #{role},
+            is_active = #{isActive},
+            updated_at = #{updatedAt},
+            version = version + 1
+        WHERE id = #{id}
+          AND version = #{version}
+          AND deleted = false
+    </update>
+
+    <update id="updatePassword">
+        UPDATE mst_users
+        SET password = #{password},
+            updated_at = #{updatedAt},
+            version = version + 1
+        WHERE id = #{id}
+          AND deleted = false
+    </update>
+
+    <update id="softDelete">
+        UPDATE mst_users
+        SET deleted = true
+        WHERE id = #{id}
+          AND deleted = false
+    </update>
+
+</mapper>
