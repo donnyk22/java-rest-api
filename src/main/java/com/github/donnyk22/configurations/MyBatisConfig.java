@@ -4,12 +4,10 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
 
 // Scan MyBatis mapper interfaces, both hardcoded and auto-generated.
-// The "generated.*" package may not exist yet (before running "mvn mybatis-generator:generate") — @MapperScan is safe if the package is empty/nonexistent.
+// @MapperScan is recursive, so this single base package also covers the
+// It is safe even before generation: @MapperScan tolerates an empty/nonexistent sub-package.
 @Configuration
-@MapperScan({
-        "com.github.donnyk22.repositories.mybatis",
-        "com.github.donnyk22.generated.mybatis.mapper"
-})
+@MapperScan("com.github.donnyk22.repositories.mybatis")
 public class MyBatisConfig {
 
 }
