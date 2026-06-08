@@ -29,6 +29,9 @@
 - **Rate Limiting** — Request throttling per client
 - **Virtual Thread** — Lightweight concurrency with Java virtual threads
 
+### 🗃️ Persistence
+- **Dual ORM** — Uses both **JPA/Hibernate** (entity mapping, auditing) and **MyBatis** (SQL-centric mapping with code generation)
+
 ### 🗂️ Developer Experience
 - **File Upload** — Multipart file handling
 - **Excel Export** — Export data to `.xlsx` spreadsheet files
@@ -80,7 +83,14 @@ school.sql  ← found in the project root
 ```
 Then, run the MariaDB service.
 
-### 3. Configure Environment Variables
+### 3. (Optional) Generate MyBatis Artifacts
+This project uses both **JPA** and **MyBatis**. To simulate / regenerate the MyBatis mappers, entities, and XML, run:
+```bash
+mvn mybatis-generator:generate
+```
+> ⚠️ Make sure the database connection is **alive** (MariaDB running and reachable) before running this — the generator introspects the live schema. See the [MyBatis](#-mybatis) section for file locations.
+
+### 4. Configure Environment Variables
 Copy the example property files and rename them (remove the `.example` suffix):
 ```
 src/main/resources/application.properties.example
@@ -89,16 +99,16 @@ src/main/resources/application-prd.properties.example
 ```
 Then update credentials in `application-dev.properties` as needed.
 
-### 4. Build & Run
+### 5. Build & Run
 ```bash
 mvn clean install
 mvn spring-boot:run
 ```
 
-### 5. Access the App
+### 6. Access the App
 Open Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
-### 6. Default Credentials
+### 7. Default Credentials
 
 | Role | Username | Password |
 |---|---|---|
@@ -138,6 +148,25 @@ docker compose up -d
 ---
 
 ## 📖 Usage Instructions
+
+### 🐬 MyBatis
+Alongside JPA/Hibernate, this project uses **MyBatis** for SQL-centric mapping with code generation.
+
+**File locations:**
+
+| Path | Purpose |
+|---|---|
+| `src/main/resources/my-batis-generator-config.xml` | MyBatis Generator configuration |
+| `src/main/resources/mybatis/` | Hand-written & generated SQL XML mappers |
+| `src/main/java/com/github/donnyk22/repositories/mybatis/` | Mapper interfaces (manual + auto-generated) |
+| `src/main/java/com/github/donnyk22/models/entities/mybatis/` | MyBatis entity / model classes |
+| `src/main/java/com/github/donnyk22/configurations/MyBatisConfig.java` | `@MapperScan` configuration |
+
+**To regenerate the MyBatis artifacts:**
+```bash
+mvn mybatis-generator:generate
+```
+> ⚠️ The database connection must be **alive** (MariaDB running and reachable) — the generator reads the live schema. If the files don't appear after running, double-check the DB connection and the target paths in `my-batis-generator-config.xml`.
 
 ### 🌐 WebSocket
 Open any `WebSocket***.html` file from the `web/` folder directly in your browser.
