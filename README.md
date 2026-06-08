@@ -106,7 +106,11 @@ mvn spring-boot:run
 ```
 
 ### 6. Access the App
-Open Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+Two interactive API references are available (both read the same OpenAPI document):
+- **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+- **Scalar:** [http://localhost:8080/scalar](http://localhost:8080/scalar)
+
+> ℹ️ Scalar loads its assets from a CDN, so the `/scalar` page needs internet access in the browser. A path-scoped Content-Security-Policy allows this for `/scalar` only; every other endpoint keeps the strict `default-src 'self'` policy.
 
 ### 7. Default Credentials
 
@@ -116,7 +120,19 @@ Open Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:
 | 🧑‍🏫 Teacher | `budi.teacher` | `budi123456` |
 | 🧑‍🎓 Student | `arya@student.com` | `arya123456` |
 
-> After logging in, copy your token and paste it into the **Authorize** button in Swagger UI.
+After logging in via `POST /api/v1/auth/login`, copy the returned token and set it in whichever docs UI you use:
+
+**🔵 Swagger UI**
+1. Click the **Authorize** button (top-right).
+2. Paste your token and confirm — it's now sent as `Authorization: Bearer <token>` on every request.
+
+**🟣 Scalar** — set it under **Introduction → Authentication → Bearer token**
+1. In the left sidebar, open **Introduction → Authentication**.
+2. Select the **Bearer token** scheme (`BearerAuth`).
+3. Paste **only the token value** (no `Bearer ` prefix — Scalar adds it for you).
+4. The token is now applied to every "Test Request" / "Send" call automatically.
+
+> 💡 Paste the raw JWT only. The `Bearer ` prefix is added automatically by both Swagger UI and Scalar.
 
 ---
 

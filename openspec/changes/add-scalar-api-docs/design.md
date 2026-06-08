@@ -10,7 +10,7 @@ Scalar is simply an alternative renderer of the same OpenAPI document. The goal 
 Constraints discovered in the codebase:
 - `SecurityConfig.java` already permits `/v3/api-docs/**`, `/swagger-ui/**`, `/swagger-ui.html`, `/swagger-resources/**`.
 - `SecurityConfig.java` sets a strict global CSP: `.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))`. Under this policy a browser will block any asset Scalar loads from a CDN.
-- The project runs Spring Boot 4.0.5 / Java 25, while springdoc is on `2.8.13` (a 2.8.x line that targets Spring Boot 3.x). It currently works, so a minor bump is expected to be safe but must be verified.
+- The project runs Spring Boot 4.0.5 / Java 25, while springdoc is on `2.8.13` (a 2.8.x line that targets Spring Boot 3.x) — a latent line mismatch. The springdoc `3.0.x` line is the one that targets Spring Boot 4 (v3.0.1 upgraded to Spring Boot 4.0.1), so this change aligns all springdoc artifacts to `3.0.3`.
 
 ## Goals / Non-Goals
 
@@ -35,8 +35,10 @@ Add `org.springdoc:springdoc-openapi-starter-webmvc-scalar`.
 - Alternative A — `com.scalar.maven:scalar` (standalone): a separate vendor library whose docs only claim Spring Boot 3.x / Java 17 support, adding more compatibility uncertainty on Spring Boot 4 / Java 25.
 - Alternative B — hand-rolled static HTML loading `@scalar/api-reference`: more control but more code to maintain, and not requested.
 
-### Decision 2: Align all springdoc artifacts to one version
-Bump `springdoc-openapi-starter-webmvc-ui` and `springdoc-openapi-starter-webmvc-api` from `2.8.13` to the version that ships the Scalar starter (e.g. `2.8.17`), so all three `org.springdoc` artifacts match. Mixing springdoc versions risks classpath conflicts. Consider a `springdoc.version` Maven property to keep them in sync.
+### Decision 2: Align all springdoc artifacts to the Spring Boot 4 line (3.0.3)
+Bump `springdoc-openapi-starter-webmvc-ui` and `springdoc-openapi-starter-webmvc-api` from `2.8.13` to `3.0.3`, and add `springdoc-openapi-starter-webmvc-scalar:3.0.3`, so all three `org.springdoc` artifacts match and sit on the line that targets Spring Boot 4. Use a single `<springdoc.version>` Maven property to keep them in sync. Mixing springdoc versions risks classpath conflicts.
+
+**Why over the 2.8.17 alternative:** 2.8.x targets Spring Boot 3.x; this project is on Spring Boot 4.0.5, so 2.8.x is a latent mismatch (works today but unsupported). 3.0.x is the official Spring Boot 4 line. The trade-off is a major bump (2.8.13 → 3.0.3): release notes mention a Jackson 2→3 migration and a HATEOAS incompatibility, but this project does not use spring-hateoas, so that issue should not apply. Must be validated by `mvn clean install`.
 
 ### Decision 3: Path-scoped CSP relaxation, not global
 The global CSP stays `default-src 'self'`. Only `/scalar` gets a relaxed policy that allows the Scalar CDN origin (jsdelivr) for the directives Scalar needs (script, style, font, connect/img as required).

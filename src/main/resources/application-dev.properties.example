@@ -4,7 +4,9 @@ server.port=8080
 spring.threads.virtual.enabled=true
 #swagger configuration
 #sort by path (URL)
-springdoc.swagger-ui.operationsSorter: alpha 
+springdoc.swagger-ui.operationsSorter: alpha
+#scalar api reference (springdoc-openapi-starter-webmvc-scalar)
+#served by default at /scalar from the same /v3/api-docs document; no extra config required
 #database configuration
 spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:mariadb://localhost:3306/school}
 spring.datasource.username=${SPRING_DATASOURCE_USERNAME:root}

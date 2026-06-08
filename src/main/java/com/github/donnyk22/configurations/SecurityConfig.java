@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
@@ -38,7 +39,45 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Dedicated filter chain for the Scalar API reference (/scalar).
+     * <p>
+     * It is intentionally ordered ahead of {@link #filterChain(HttpSecurity)} so the
+     * relaxed Content-Security-Policy below applies ONLY to the Scalar docs path. Every
+     * other path keeps the strict {@code default-src 'self'} policy from the main chain.
+     * The relaxed policy allows the Scalar assets loaded from the jsdelivr CDN.
+     * <p>
+     * NOTE: the exact CDN origin(s) and the minimal directive set must be confirmed by
+     * opening {@code /scalar} with browser devtools and reading any CSP violation reports
+     * (see change add-scalar-api-docs, task 3.3); widen only what Scalar actually needs.
+     */
     @Bean
+    @Order(1)
+    SecurityFilterChain scalarFilterChain(HttpSecurity http) {
+        String scalarCsp = "default-src 'self'; "
+                + "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; "
+                + "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
+                + "font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com https://fonts.scalar.com; "
+                + "img-src 'self' data: https:; "
+                + "connect-src 'self' https://cdn.jsdelivr.net https://proxy.scalar.com; "
+                + "worker-src 'self' blob:";
+
+        http.securityMatcher("/scalar", "/scalar/**")
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(scalarCsp))
+                        // Scalar renders in-page; allow it to be framed same-origin if needed
+                        .frameOptions(frame -> frame.sameOrigin())
+                        .contentTypeOptions(Customizer.withDefaults())
+                        .referrerPolicy(referrer -> referrer
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)));
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     SecurityFilterChain filterChain(HttpSecurity http) {
         http.csrf(csrf -> csrf.disable())
                 // If in the front-end you are using cookies for authentication, you should
@@ -52,6 +91,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll() // Allow async requests
                         .requestMatchers(
+                                "/favicon.svg",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
