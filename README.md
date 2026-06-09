@@ -42,6 +42,7 @@
 - **Request Tracing** — End-to-end request tracking
 - **Swagger API Docs** — Interactive API documentation
 - **Docker Compose** — Containerized multi-service setup
+- **OpenSpec** — Spec-driven development workflow (explore → propose → apply → archive) for planning and tracking features as living specs
 
 ---
 
@@ -216,6 +217,67 @@ Follow these steps to test MFA:
 6. Replace the temporary token with the real token
 
 > ⚠️ The temporary token grants access **only** to `/api/v1/mfa/verify`. Any other endpoint will return `403 Forbidden`.
+
+### 📐 OpenSpec (Spec-Driven Development)
+
+This project uses [**OpenSpec**](https://github.com/Fission-AI/OpenSpec) to plan and track features as living specifications. Instead of jumping straight to code, each change goes through a lightweight, AI-assisted workflow: **explore → propose → apply → archive**. The result is a reviewable trail of *what* changed and *why*, kept under version control alongside the code.
+
+**Folder layout:**
+
+| Path | Purpose |
+|---|---|
+| `openspec/config.yaml` | Project context & per-artifact rules shown to the AI |
+| `openspec/specs/` | Current source-of-truth specs (one folder per capability) |
+| `openspec/changes/` | In-progress changes (proposal, design, tasks, spec deltas) |
+| `openspec/changes/archive/` | Completed & archived changes (dated) |
+
+#### The Workflow
+
+The four steps are run as slash commands inside an OpenSpec-aware AI agent (e.g. Claude Code / Cursor). Each builds on the previous one:
+
+| Command | What it does |
+|---|---|
+| `/opsx:explore` | Think through an idea, investigate the codebase, and clarify requirements — **no files written yet** |
+| `/opsx:propose` | Create the change and generate all artifacts at once: `proposal.md`, `design.md`, `tasks.md`, and spec deltas |
+| `/opsx:apply` | Implement the change by working through `tasks.md` task by task |
+| `/opsx:archive` | Finalize the change: fold the spec deltas into `openspec/specs/` and move the change into `changes/archive/` |
+
+#### Worked Example — Adding Scalar API Docs
+
+The Scalar reference UI in this project ([http://localhost:8080/scalar](http://localhost:8080/scalar)) was built end-to-end with this workflow. Archived at `openspec/changes/archive/2026-06-08-add-scalar-api-docs/`:
+
+```text
+1. /opsx:explore  add a Scalar API reference alongside the existing Swagger UI
+   → discusses options, finds the springdoc setup, surfaces the CSP/CDN concern
+
+2. /opsx:propose  add Scalar API docs served at /scalar from the same OpenAPI document
+   → generates the change folder with:
+       proposal.md   — why & what
+       design.md     — path-scoped Content-Security-Policy for the CDN assets
+       tasks.md      — checklist of implementation steps
+       specs/api-documentation/spec.md  &  specs/web-security/spec.md  (deltas)
+
+3. /opsx:apply     implement all the tasks
+   → adds the dependency, wires the /scalar route, applies the scoped CSP, ticks off tasks.md
+
+4. /opsx:archive   archive the completed feature
+   → merges the deltas into openspec/specs/ and moves the change to changes/archive/
+```
+
+> 💡 The steps are not strictly linear — you can loop back to `/opsx:explore` mid-change to rethink, or re-run `/opsx:apply` to continue a partially-implemented task list.
+
+#### Essential CLI Commands
+
+These run in your terminal (require the OpenSpec CLI — install via `npm install -g @fission-ai/openspec` or see the [project README](https://github.com/Fission-AI/OpenSpec)):
+
+| Command | Description |
+|---|---|
+| `openspec init` | Initialize OpenSpec in the project for the first time — scaffolds the `openspec/` folder and AI agent config (already done here) |
+| `openspec init --tools cursor` | Add a new AI agent's integration (e.g. Cursor) to an existing setup; other values include `claude`, `windsurf`, etc. |
+| `openspec list` | List all active (non-archived) changes |
+| `openspec show <change>` | Show the details of a specific change |
+| `openspec validate <change>` | Validate a change's artifacts against the schema before applying |
+| `openspec archive <change>` | Archive a completed change from the CLI (the `/opsx:archive` command does this for you) |
 
 ---
 
